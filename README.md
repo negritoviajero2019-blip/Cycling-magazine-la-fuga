@@ -38,7 +38,7 @@ Abre `http://localhost:3000`. El login de `/admin` usa
 | `npm run lint` / `npm run typecheck` | Calidad de código |
 | `npm test` | Tests unitarios (Vitest) |
 | `npm run db:dev:migrate` | Migraciones contra SQLite local |
-| `npm run db:prod:migrate:deploy` | Migraciones contra MySQL de producción |
+| `npm run db:prod:push` | Sincroniza el schema contra MySQL de producción |
 
 ## Documentación
 

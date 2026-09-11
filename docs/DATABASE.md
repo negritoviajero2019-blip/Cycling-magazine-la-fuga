@@ -37,8 +37,20 @@ npm run db:dev:studio   # explorar la BD visualmente
 
 # Producción (MySQL, Hostinger)
 npm run db:prod:generate
-npm run db:prod:migrate:deploy   # nunca "migrate dev" en producción
+npm run db:prod:push   # nunca "migrate dev" ni "migrate deploy" en producción
 ```
+
+**Por qué `db push` y no `migrate deploy` en producción:** Prisma guarda el
+historial de migraciones en `prisma/migrations/`, y esa carpeta queda "atada"
+al primer provider con el que se generó — en este proyecto se generó desde
+`schema.dev.prisma` (SQLite). Aplicar ese historial contra MySQL falla con
+`P3019 (provider mismatch)`. Como el schema de producción no tiene su propio
+historial de migraciones independiente, `db push` sincroniza el schema
+directamente sin depender de ese historial — es seguro para este proyecto en
+su etapa actual. Si en el futuro se necesita un historial de migraciones real
+para producción (control de versiones de schema, rollbacks), hay que darle a
+`schema.prisma` su propia carpeta de migraciones separada (por ejemplo
+moviéndolo a `prisma/prod/schema.prisma`).
 
 ## Modelo de datos (resumen)
 

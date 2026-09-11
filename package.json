@@ -16,7 +16,7 @@
     "db:dev:seed": "tsx prisma/seed.ts",
     "db:dev:studio": "prisma studio --schema prisma/schema.dev.prisma",
     "db:prod:generate": "prisma generate --schema prisma/schema.prisma",
-    "db:prod:migrate:deploy": "prisma migrate deploy --schema prisma/schema.prisma",
+    "db:prod:push": "prisma db push --schema prisma/schema.prisma",
     "postinstall": "npm run db:dev:generate"
   },
   "dependencies": {

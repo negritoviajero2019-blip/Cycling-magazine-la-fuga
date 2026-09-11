@@ -39,6 +39,6 @@ total del servidor requiere reconfigurar todo desde cero.
 2. Restaurar el `.sql` más reciente en una BD MySQL nueva.
 3. Restaurar `public/uploads/`.
 4. Repoblar las variables de entorno desde el gestor de secretos.
-5. `npm run db:prod:migrate:deploy` (por si hay migraciones más nuevas
+5. `npm run db:prod:push` (por si hay cambios de schema más nuevos
    que el backup).
 6. Verificar `/`, `/admin`, `/sitemap.xml`, `/feed.xml`.

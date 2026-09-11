@@ -12,7 +12,8 @@ Jobs — no hace falta un VPS.
 2. Copia el `DATABASE_URL` resultante:
    `mysql://usuario:password@localhost:3306/nombre_bd` (normalmente
    `localhost` porque la app corre en el mismo servidor).
-3. Ejecuta la migración inicial: `npm run db:prod:migrate:deploy`
+3. Sincroniza el schema: `npm run db:prod:push` (ver `docs/DATABASE.md` sobre
+   por qué producción usa `db push` en vez de `migrate deploy`)
    (desde tu máquina con `DATABASE_URL` apuntando a producción, o vía
    SSH en el propio hosting).
 
