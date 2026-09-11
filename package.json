@@ -4,7 +4,9 @@
   "private": true,
   "description": "Revista digital profesional de ciclismo — editorial, automatizada y monetizable.",
   "scripts": {
+    "predev": "npm run db:dev:generate",
     "dev": "next dev",
+    "prebuild": "prisma generate --schema prisma/schema.prisma",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -16,8 +18,7 @@
     "db:dev:seed": "tsx prisma/seed.ts",
     "db:dev:studio": "prisma studio --schema prisma/schema.dev.prisma",
     "db:prod:generate": "prisma generate --schema prisma/schema.prisma",
-    "db:prod:push": "prisma db push --schema prisma/schema.prisma",
-    "postinstall": "npm run db:dev:generate"
+    "db:prod:push": "prisma db push --schema prisma/schema.prisma"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
