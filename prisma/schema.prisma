@@ -1,0 +1,316 @@
+// ─────────────────────────────────────────────────────────────
+// SCHEMA DE PRODUCCIÓN (MySQL / Hostinger)
+// Ver docs/DATABASE.md para el equivalente de desarrollo (SQLite,
+// prisma/schema.dev.prisma) y por qué existen dos archivos.
+// Los enums de estado se modelan como String (no enum nativo de
+// Prisma) para mantener este schema y el de desarrollo idénticos
+// campo a campo; los valores válidos se validan con Zod en
+// src/lib/*/schemas.ts — única fuente de verdad de los estados.
+// ─────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Contenido editorial ─────────────────────────────────────
+
+model Article {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String
+  subtitle    String?
+  excerpt     String   @db.Text
+  content     String   @db.Text
+
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  authorId    Int
+  author      Author   @relation(fields: [authorId], references: [id])
+
+  heroImageId Int?
+  heroImage   Media?   @relation(fields: [heroImageId], references: [id])
+  imageCredit String?
+  imageAlt    String?
+
+  sourceUrls  String?  @db.Text
+  sourceNames String?  @db.Text
+
+  status       String   @default("draft") // draft|review|scheduled|published|updated|archived
+  breakingNews Boolean  @default(false)
+  featured     Boolean  @default(false)
+
+  publishedAt DateTime?
+  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime  @default(now())
+
+  seoTitle       String?
+  seoDescription String?
+  canonicalUrl   String?
+  language       String  @default("es")
+  readingTime    Int     @default(1)
+
+  confidenceScore Int?
+  editorialNotes  String? @db.Text
+
+  // Contador real de vistas (se incrementa al servir /news/[slug]).
+  // Base del ranking "Más leído" — nunca se rellena artificialmente
+  // (§94: no inventar tendencias).
+  viewCount Int @default(0)
+
+  tags   Tag[]
+  riders Rider[]
+  teams  Team[]
+  races  Race[]
+
+  revisions ArticleRevision[]
+
+  @@index([status, publishedAt])
+  @@index([categoryId])
+  @@index([breakingNews])
+}
+
+model ArticleRevision {
+  id        Int      @id @default(autoincrement())
+  articleId Int
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  changedAt DateTime @default(now())
+  summary   String
+  editor    String?
+
+  @@index([articleId])
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  slug        String    @unique
+  name        String
+  description String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  articles    Article[]
+}
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  slug      String    @unique
+  name      String
+  type      String    @default("generic") // rider|team|race|generic|topic
+  createdAt DateTime  @default(now())
+  articles  Article[]
+}
+
+model Author {
+  id            Int       @id @default(autoincrement())
+  slug          String    @unique
+  name          String
+  avatarUrl     String?
+  bio           String?   @db.Text
+  specialty     String?
+  isAiAssisted  Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  articles      Article[]
+}
+
+// ── Dominio ciclista ────────────────────────────────────────
+
+model Race {
+  id          Int       @id @default(autoincrement())
+  slug        String    @unique
+  name        String
+  edition     Int?
+  year        Int
+  startDate   DateTime
+  endDate     DateTime
+  country     String?
+  category    String // grand-tour|classic|worldtour|women-worldtour|national|other
+  numStages   Int?
+  distanceKm  Float?
+  status      String    @default("upcoming") // upcoming|ongoing|finished
+  description String?   @db.Text
+
+  stages   Stage[]
+  results  Result[]
+  articles Article[]
+
+  @@index([year, status])
+}
+
+model Stage {
+  id            Int      @id @default(autoincrement())
+  raceId        Int
+  race          Race     @relation(fields: [raceId], references: [id], onDelete: Cascade)
+  number        Int
+  date          DateTime
+  startCity     String?
+  endCity       String?
+  distanceKm    Float?
+  type          String? // flat|hilly|mountain|itt|ttt|other
+  profileNotes  String?
+
+  results Result[]
+
+  @@index([raceId, number])
+}
+
+model Rider {
+  id           Int       @id @default(autoincrement())
+  slug         String    @unique
+  name         String
+  photoUrl     String?
+  nationality  String?
+  birthDate    DateTime?
+  currentTeamId Int?
+  currentTeam  Team?     @relation(fields: [currentTeamId], references: [id])
+  specialty    String?
+  bio          String?   @db.Text
+  stats        String?   @db.Text
+
+  results   Result[]
+  transfers Transfer[] @relation("RiderTransfers")
+  articles  Article[]
+
+  @@index([currentTeamId])
+}
+
+model Team {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  name        String
+  country     String?
+  category    String // worldtour|proteam|women-worldtour|continental|national
+  logoUrl     String?
+  sponsors    String?  @db.Text
+  description String?  @db.Text
+
+  riders           Rider[]
+  results          Result[]
+  transfersIn      Transfer[] @relation("TransferToTeam")
+  transfersOut     Transfer[] @relation("TransferFromTeam")
+  articles         Article[]
+}
+
+model Result {
+  id         Int      @id @default(autoincrement())
+  raceId     Int
+  race       Race     @relation(fields: [raceId], references: [id], onDelete: Cascade)
+  stageId    Int?
+  stage      Stage?   @relation(fields: [stageId], references: [id])
+  riderId    Int?
+  rider      Rider?   @relation(fields: [riderId], references: [id])
+  teamId     Int?
+  team       Team?    @relation(fields: [teamId], references: [id])
+  position   Int?
+  time       String?
+  points     Int?
+  date       DateTime
+  resultType String // stage|gc|points|kom|youth|team
+
+  @@index([raceId, resultType])
+}
+
+model Transfer {
+  id             Int       @id @default(autoincrement())
+  riderId        Int
+  rider          Rider     @relation("RiderTransfers", fields: [riderId], references: [id])
+  fromTeamId     Int?
+  fromTeam       Team?     @relation("TransferFromTeam", fields: [fromTeamId], references: [id])
+  toTeamId       Int
+  toTeam         Team      @relation("TransferToTeam", fields: [toTeamId], references: [id])
+  announcedDate  DateTime
+  effectiveDate  DateTime?
+  status         String    @default("rumor") // confirmed|rumor
+  sourceUrls     String?   @db.Text
+
+  @@index([riderId])
+  @@index([status])
+}
+
+// ── Soporte editorial / automatización ──────────────────────
+
+model Source {
+  id              Int      @id @default(autoincrement())
+  url             String   @unique
+  name            String?
+  credibilityTier String? // official|team|uci|agency|media|journalist|other
+  firstSeenAt     DateTime @default(now())
+}
+
+model Media {
+  id        Int       @id @default(autoincrement())
+  url       String
+  source    String // wikimedia-commons|editorial-card|licensed|own
+  author    String?
+  license   String?
+  credit    String?
+  altText   String?
+  width     Int?
+  height    Int?
+  createdAt DateTime  @default(now())
+  articles  Article[]
+}
+
+model NewsletterSubscriber {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  consentAt DateTime @default(now())
+  status    String   @default("pending") // pending|confirmed|unsubscribed
+  provider  String?
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  role         String   @default("editor") // admin|editor
+  createdAt    DateTime @default(now())
+}
+
+model SiteSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}
+
+model CronExecution {
+  id             Int       @id @default(autoincrement())
+  jobName        String // news-discovery|weekly-content-planner|scheduled-publisher
+  startedAt      DateTime  @default(now())
+  finishedAt     DateTime?
+  status         String    @default("running") // running|success|error|skipped
+  itemsFound     Int?
+  articlesCreated Int?
+  errorLog       String?   @db.Text
+
+  @@index([jobName, startedAt])
+}
+
+model NewsCandidate {
+  id              Int       @id @default(autoincrement())
+  headline        String
+  summary         String    @db.Text
+  sourceUrls      String    @db.Text
+  sourceNames     String    @db.Text
+  detectedAt      DateTime  @default(now())
+  eventDate       DateTime?
+  category        String?
+  entities        String?   @db.Text
+  relevanceScore  Int?
+  confidenceScore Int?
+  status          String    @default("new") // new|reviewing|approved|rejected|duplicate|published
+  duplicateOfId   Int?
+  reviewNotes     String?   @db.Text
+  editorialAction String? // auto_publish_safe|requires_review|do_not_publish
+  createdArticleId Int?
+
+  @@index([status])
+  @@index([detectedAt])
+}

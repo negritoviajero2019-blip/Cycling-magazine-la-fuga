@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Paleta y tokens actualizados (upgrade UI, agosto 2026): fondo hueso,
+ * tinta casi negra, acento lima. Dos acentos deliberadamente separados:
+ * --color-accent para texto/enlaces/hover sobre fondos claros, donde el
+ * lima puro no cumple contraste; --color-lime (#B7FF3C) reservado para
+ * rellenos sólidos (badges, botones) con texto oscuro encima. "breaking"
+ * se mantiene en rojo a propósito — la urgencia de última hora no debe
+ * competir visualmente con el lima de las CTA normales.
+ *
+ * accent/warning/success oscurecidos el 2026-09-09 tras una auditoría
+ * WCAG 2.1 AA (design:accessibility-review): los valores originales
+ * (#88C900, #D97706, #16A34A) no llegaban a 4.5:1 como texto sobre el
+ * fondo hueso ni sobre blanco — fallaban 1.4.3. Se mantiene el mismo
+ * matiz, solo se oscurece hasta pasar 4.5:1 en ambos fondos. --color-lime
+ * NO se toca — sigue siendo solo para rellenos sólidos con texto oscuro.
+ */
+:root {
+  --color-primary: 17 20 17; /* #111411 */
+  --color-secondary: 20 33 61; /* #14213D (sin uso actualmente, reservado) */
+  --color-accent: 82 121 0; /* #527900 — 4.7:1 sobre hueso, 5.1:1 sobre blanco */
+  --color-lime: 183 255 60; /* #B7FF3C — SOLO relleno sólido de badges/botones, nunca texto/ring sobre fondo claro */
+  --color-background: 245 246 243; /* #F5F6F3 */
+  --color-surface: 255 255 255;
+  --color-surface-soft: 238 240 236; /* #EEF0EC */
+  --color-text: 17 20 17; /* #111411 */
+  --color-muted: 98 104 96; /* #626860 */
+  --color-border: 224 225 221; /* ≈ rgba(17,20,17,.10) sobre el fondo hueso */
+  --color-success: 18 130 59; /* #12823B — 4.5:1+ sobre hueso y blanco */
+  --color-warning: 156 86 4; /* #9C5604 — 4.5:1+ como texto blanco sobre relleno */
+  --color-breaking: 225 29 46;
+  --radius: 0.625rem;
+  --radius-md: 1.125rem;
+  --radius-lg: 1.75rem;
+  --shadow-sm: 0 4px 20px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 18px 45px rgb(0 0 0 / 0.08);
+  --ease-editorial: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --font-heading: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+.dark {
+  --color-background: 15 15 13;
+  --color-surface: 26 28 24;
+  --color-surface-soft: 34 37 31;
+  --color-text: 240 241 238;
+  --color-muted: 156 162 150;
+  --color-border: 45 48 42;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-text));
+}
+
+::selection {
+  background-color: rgb(var(--color-lime));
+  color: rgb(var(--color-primary));
+}
+
+.prose-article {
+  max-width: 68ch;
+}
+.prose-article p {
+  margin-bottom: 1.25em;
+  line-height: 1.75;
+}
+.prose-article h2 {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+}
+.prose-article h3 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+.prose-article a {
+  color: rgb(var(--color-accent));
+  text-decoration: underline;
+}
+
+/* Reserva de espacio para anuncios: evita CLS (§43, §51) */
+.ad-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(var(--color-surface) / 0.6);
+  border: 1px dashed rgb(var(--color-primary) / 0.18);
+  border-radius: var(--radius-md);
+  color: rgb(var(--color-muted));
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  overflow: hidden;
+}
+
+/* Scroll-reveal progresivo (JS lo activa vía IntersectionObserver,
+   ver src/components/ui/Reveal.tsx). Sin JS, el contenido es visible
+   igualmente (no depende de esto para ser legible). */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s var(--ease-editorial);
+}
+.reveal.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
