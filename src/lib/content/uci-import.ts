@@ -1,0 +1,342 @@
+/**
+ * Lógica reutilizable para cargar datos UCI reales (calendario, equipos,
+ * ciclistas) y publicar el artículo real de la etapa 19 de la Vuelta
+ * 2026 — compartida entre los scripts de CLI en prisma/*.ts (uso local)
+ * y la ruta de administración /api/admin/import-uci (uso en
+ * producción, sin necesitar SSH). Ver prisma/import-uci-data.ts,
+ * prisma/import-uci-riders.ts y prisma/publish-vuelta-stage19-article.ts
+ * para el detalle de fuentes y verificación de cada dato.
+ */
+import { prisma } from '@/lib/db'
+import { toJsonField } from './json-field'
+import { buildStageProfileSvg } from './stage-profile-svg'
+
+const TODAY = new Date()
+
+function statusFor(start: string, end: string): 'upcoming' | 'ongoing' | 'finished' {
+  const startDate = new Date(start)
+  const endDate = new Date(end)
+  if (endDate < TODAY) return 'finished'
+  if (startDate <= TODAY && TODAY <= endDate) return 'ongoing'
+  return 'upcoming'
+}
+
+interface RaceInput {
+  slug: string
+  name: string
+  start: string
+  end: string
+  country: string
+  category: 'grand-tour' | 'classic' | 'worldtour' | 'women-worldtour'
+  numStages?: number
+}
+
+const MENS_RACES: RaceInput[] = [
+  { slug: 'tour-down-under-2026', name: 'Tour Down Under', start: '2026-01-20', end: '2026-01-25', country: 'Australia', category: 'worldtour', numStages: 6 },
+  { slug: 'cadel-evans-great-ocean-road-race-2026', name: 'Cadel Evans Great Ocean Road Race', start: '2026-02-01', end: '2026-02-01', country: 'Australia', category: 'classic' },
+  { slug: 'uae-tour-2026', name: 'UAE Tour', start: '2026-02-16', end: '2026-02-22', country: 'Emiratos Árabes Unidos', category: 'worldtour', numStages: 7 },
+  { slug: 'omloop-het-nieuwsblad-2026', name: 'Omloop Het Nieuwsblad', start: '2026-02-28', end: '2026-02-28', country: 'Bélgica', category: 'classic' },
+  { slug: 'strade-bianche-2026', name: 'Strade Bianche', start: '2026-03-07', end: '2026-03-07', country: 'Italia', category: 'classic' },
+  { slug: 'paris-nice-2026', name: 'París-Niza', start: '2026-03-08', end: '2026-03-15', country: 'Francia', category: 'worldtour', numStages: 8 },
+  { slug: 'tirreno-adriatico-2026', name: 'Tirreno-Adriático', start: '2026-03-09', end: '2026-03-15', country: 'Italia', category: 'worldtour', numStages: 7 },
+  { slug: 'milan-san-remo-2026', name: 'Milán-San Remo', start: '2026-03-21', end: '2026-03-21', country: 'Italia', category: 'classic' },
+  { slug: 'volta-a-catalunya-2026', name: 'Volta a Catalunya', start: '2026-03-23', end: '2026-03-29', country: 'España', category: 'worldtour', numStages: 7 },
+  { slug: 'ronde-van-brugge-2026', name: 'Ronde van Brugge', start: '2026-03-25', end: '2026-03-25', country: 'Bélgica', category: 'classic' },
+  { slug: 'e3-saxo-classic-2026', name: 'E3 Saxo Classic', start: '2026-03-27', end: '2026-03-27', country: 'Bélgica', category: 'classic' },
+  { slug: 'gante-wevelgem-2026', name: 'Gante-Wevelgem', start: '2026-03-29', end: '2026-03-29', country: 'Bélgica', category: 'classic' },
+  { slug: 'dwars-door-vlaanderen-2026', name: 'Dwars door Vlaanderen', start: '2026-04-01', end: '2026-04-01', country: 'Bélgica', category: 'classic' },
+  { slug: 'tour-of-flanders-2026', name: 'Tour de Flandes', start: '2026-04-05', end: '2026-04-05', country: 'Bélgica', category: 'classic' },
+  { slug: 'itzulia-basque-country-2026', name: 'Vuelta al País Vasco', start: '2026-04-06', end: '2026-04-11', country: 'España', category: 'worldtour', numStages: 6 },
+  { slug: 'paris-roubaix-2026', name: 'París-Roubaix', start: '2026-04-12', end: '2026-04-12', country: 'Francia', category: 'classic' },
+  { slug: 'amstel-gold-race-2026', name: 'Amstel Gold Race', start: '2026-04-19', end: '2026-04-19', country: 'Países Bajos', category: 'classic' },
+  { slug: 'la-fleche-wallonne-2026', name: 'La Flecha Valona', start: '2026-04-22', end: '2026-04-22', country: 'Bélgica', category: 'classic' },
+  { slug: 'liege-bastogne-liege-2026', name: 'Lieja-Bastoña-Lieja', start: '2026-04-26', end: '2026-04-26', country: 'Bélgica', category: 'classic' },
+  { slug: 'tour-de-romandie-2026', name: 'Tour de Romandía', start: '2026-04-28', end: '2026-05-03', country: 'Suiza', category: 'worldtour', numStages: 5 },
+  { slug: 'eschborn-frankfurt-2026', name: 'Eschborn-Fráncfort', start: '2026-05-01', end: '2026-05-01', country: 'Alemania', category: 'classic' },
+  { slug: 'giro-ditalia-2026', name: "Giro d'Italia", start: '2026-05-08', end: '2026-05-31', country: 'Italia', category: 'grand-tour', numStages: 21 },
+  { slug: 'tour-auvergne-rhone-alpes-2026', name: 'Tour Auvergne-Rhône-Alpes', start: '2026-06-07', end: '2026-06-14', country: 'Francia', category: 'worldtour', numStages: 8 },
+  { slug: 'copenhagen-sprint-2026', name: 'Copenhagen Sprint', start: '2026-06-14', end: '2026-06-14', country: 'Dinamarca', category: 'classic' },
+  { slug: 'tour-de-suisse-2026', name: 'Tour de Suiza', start: '2026-06-17', end: '2026-06-21', country: 'Suiza', category: 'worldtour', numStages: 5 },
+  { slug: 'tour-de-france-2026', name: 'Tour de Francia', start: '2026-07-04', end: '2026-07-26', country: 'Francia', category: 'grand-tour', numStages: 21 },
+  { slug: 'clasica-san-sebastian-2026', name: 'Clásica de San Sebastián', start: '2026-08-01', end: '2026-08-01', country: 'España', category: 'classic' },
+  { slug: 'tour-de-pologne-2026', name: 'Tour de Polonia', start: '2026-08-03', end: '2026-08-09', country: 'Polonia', category: 'worldtour', numStages: 7 },
+  { slug: 'hamburg-cyclassics-2026', name: 'Hamburg Cyclassics', start: '2026-08-16', end: '2026-08-16', country: 'Alemania', category: 'classic' },
+  { slug: 'renewi-tour-2026', name: 'Renewi Tour', start: '2026-08-19', end: '2026-08-23', country: 'Bélgica/Países Bajos', category: 'worldtour', numStages: 5 },
+  { slug: 'vuelta-a-espana-2026', name: 'Vuelta a España', start: '2026-08-22', end: '2026-09-13', country: 'España', category: 'grand-tour', numStages: 21 },
+  { slug: 'bretagne-classic-2026', name: 'Bretagne Classic', start: '2026-08-30', end: '2026-08-30', country: 'Francia', category: 'classic' },
+  { slug: 'gp-cycliste-quebec-2026', name: 'Grand Prix Cycliste de Québec', start: '2026-09-11', end: '2026-09-11', country: 'Canadá', category: 'classic' },
+  { slug: 'gp-cycliste-montreal-2026', name: 'Grand Prix Cycliste de Montréal', start: '2026-09-13', end: '2026-09-13', country: 'Canadá', category: 'classic' },
+  { slug: 'il-lombardia-2026', name: 'Il Lombardia', start: '2026-10-10', end: '2026-10-10', country: 'Italia', category: 'classic' },
+  { slug: 'tour-of-guangxi-2026', name: 'Tour of Guangxi', start: '2026-10-13', end: '2026-10-18', country: 'China', category: 'worldtour', numStages: 6 },
+]
+
+const WOMENS_RACES: RaceInput[] = [
+  { slug: 'womens-tour-down-under-2026', name: "Women's Tour Down Under", start: '2026-01-17', end: '2026-01-19', country: 'Australia', category: 'women-worldtour', numStages: 3 },
+  { slug: 'cadel-evans-great-ocean-road-race-women-2026', name: 'Cadel Evans Great Ocean Road Race (femenino)', start: '2026-01-31', end: '2026-01-31', country: 'Australia', category: 'women-worldtour' },
+  { slug: 'uae-tour-women-2026', name: 'UAE Tour Women', start: '2026-02-05', end: '2026-02-08', country: 'Emiratos Árabes Unidos', category: 'women-worldtour', numStages: 4 },
+  { slug: 'omloop-het-nieuwsblad-women-2026', name: 'Omloop Het Nieuwsblad (femenino)', start: '2026-02-28', end: '2026-02-28', country: 'Bélgica', category: 'women-worldtour' },
+  { slug: 'strade-bianche-donne-2026', name: 'Strade Bianche Donne', start: '2026-03-07', end: '2026-03-07', country: 'Italia', category: 'women-worldtour' },
+  { slug: 'trofeo-alfredo-binda-2026', name: 'Trofeo Alfredo Binda', start: '2026-03-15', end: '2026-03-15', country: 'Italia', category: 'women-worldtour' },
+  { slug: 'milan-san-remo-women-2026', name: 'Milán-San Remo (femenino)', start: '2026-03-21', end: '2026-03-21', country: 'Italia', category: 'women-worldtour' },
+  { slug: 'ronde-van-brugge-women-2026', name: 'Ronde van Brugge (femenino)', start: '2026-03-26', end: '2026-03-26', country: 'Bélgica', category: 'women-worldtour' },
+  { slug: 'gante-wevelgem-women-2026', name: 'Gante-Wevelgem (femenino)', start: '2026-03-29', end: '2026-03-29', country: 'Bélgica', category: 'women-worldtour' },
+  { slug: 'dwars-door-vlaanderen-women-2026', name: 'Dwars door Vlaanderen (femenino)', start: '2026-04-01', end: '2026-04-01', country: 'Bélgica', category: 'women-worldtour' },
+  { slug: 'tour-of-flanders-women-2026', name: 'Tour de Flandes (femenino)', start: '2026-04-05', end: '2026-04-05', country: 'Bélgica', category: 'women-worldtour' },
+  { slug: 'paris-roubaix-femmes-2026', name: 'París-Roubaix Femmes', start: '2026-04-12', end: '2026-04-12', country: 'Francia', category: 'women-worldtour' },
+  { slug: 'amstel-gold-race-women-2026', name: 'Amstel Gold Race (femenino)', start: '2026-04-19', end: '2026-04-19', country: 'Países Bajos', category: 'women-worldtour' },
+  { slug: 'la-fleche-wallonne-femmes-2026', name: 'La Flecha Valona Femmes', start: '2026-04-22', end: '2026-04-22', country: 'Bélgica', category: 'women-worldtour' },
+  { slug: 'liege-bastogne-liege-femmes-2026', name: 'Lieja-Bastoña-Lieja Femmes', start: '2026-04-26', end: '2026-04-26', country: 'Bélgica', category: 'women-worldtour' },
+  { slug: 'la-vuelta-femenina-2026', name: 'La Vuelta Femenina', start: '2026-05-03', end: '2026-05-09', country: 'España', category: 'women-worldtour', numStages: 7 },
+  { slug: 'itzulia-women-2026', name: 'Itzulia Women', start: '2026-05-15', end: '2026-05-17', country: 'España', category: 'women-worldtour', numStages: 3 },
+  { slug: 'vuelta-a-burgos-feminas-2026', name: 'Vuelta a Burgos Féminas', start: '2026-05-21', end: '2026-05-24', country: 'España', category: 'women-worldtour', numStages: 4 },
+  { slug: 'giro-ditalia-women-2026', name: "Giro d'Italia Women", start: '2026-05-30', end: '2026-06-07', country: 'Italia', category: 'women-worldtour', numStages: 9 },
+  { slug: 'copenhagen-sprint-women-2026', name: 'Copenhagen Sprint (femenino)', start: '2026-06-13', end: '2026-06-13', country: 'Dinamarca', category: 'women-worldtour' },
+  { slug: 'tour-de-suisse-women-2026', name: 'Tour de Suiza (femenino)', start: '2026-06-17', end: '2026-06-21', country: 'Suiza', category: 'women-worldtour', numStages: 5 },
+  { slug: 'tour-de-france-femmes-2026', name: 'Tour de Francia Femmes', start: '2026-08-01', end: '2026-08-09', country: 'Francia', category: 'women-worldtour', numStages: 9 },
+  { slug: 'tour-of-britain-women-2026', name: 'Tour of Britain Women', start: '2026-08-19', end: '2026-08-23', country: 'Reino Unido', category: 'women-worldtour', numStages: 5 },
+  { slug: 'classic-lorient-agglomeration-2026', name: 'Classic Lorient Agglomération', start: '2026-08-29', end: '2026-08-29', country: 'Francia', category: 'women-worldtour' },
+  { slug: 'tour-of-chongming-island-2026', name: 'Tour of Chongming Island', start: '2026-10-13', end: '2026-10-15', country: 'China', category: 'women-worldtour', numStages: 3 },
+]
+
+interface TeamInput {
+  slug: string
+  name: string
+  country: string
+  category: 'worldtour' | 'women-worldtour'
+}
+
+const MENS_TEAMS: TeamInput[] = [
+  { slug: 'alpecin-premier-tech', name: 'Alpecin–Premier Tech', country: 'Bélgica', category: 'worldtour' },
+  { slug: 'decathlon-cma-cgm', name: 'Decathlon–CMA CGM', country: 'Francia', category: 'worldtour' },
+  { slug: 'ef-education-easypost', name: 'EF Education–EasyPost', country: 'Estados Unidos', category: 'worldtour' },
+  { slug: 'groupama-fdj-united', name: 'Groupama–FDJ United', country: 'Francia', category: 'worldtour' },
+  { slug: 'lidl-trek', name: 'Lidl–Trek', country: 'Alemania', category: 'worldtour' },
+  { slug: 'lotto-intermarche', name: 'Lotto–Intermarché', country: 'Bélgica', category: 'worldtour' },
+  { slug: 'movistar-team', name: 'Movistar Team', country: 'España', category: 'worldtour' },
+  { slug: 'netcompany-ineos', name: 'Netcompany INEOS', country: 'Reino Unido', category: 'worldtour' },
+  { slug: 'nsn-cycling-team', name: 'NSN Cycling Team', country: 'Suiza', category: 'worldtour' },
+  { slug: 'red-bull-bora-hansgrohe', name: 'Red Bull–BORA–hansgrohe', country: 'Alemania', category: 'worldtour' },
+  { slug: 'soudal-quick-step', name: 'Soudal–Quick-Step', country: 'Bélgica', category: 'worldtour' },
+  { slug: 'team-bahrain-victorious', name: 'Team Bahrain Victorious', country: 'Baréin', category: 'worldtour' },
+  { slug: 'team-jayco-alula', name: 'Team Jayco–AlUla', country: 'Australia', category: 'worldtour' },
+  { slug: 'team-picnic-postnl', name: 'Team Picnic–PostNL', country: 'Países Bajos', category: 'worldtour' },
+  { slug: 'visma-lease-a-bike', name: 'Visma–Lease a Bike', country: 'Países Bajos', category: 'worldtour' },
+  { slug: 'uae-team-emirates-xrg', name: 'UAE Team Emirates–XRG', country: 'Emiratos Árabes Unidos', category: 'worldtour' },
+  { slug: 'uno-x-mobility', name: 'Uno-X Mobility', country: 'Noruega', category: 'worldtour' },
+  { slug: 'xds-astana-team', name: 'XDS Astana Team', country: 'Kazajistán', category: 'worldtour' },
+]
+
+const WOMENS_TEAMS: TeamInput[] = [
+  { slug: 'ag-insurance-soudal', name: 'AG Insurance–Soudal', country: 'Bélgica', category: 'women-worldtour' },
+  { slug: 'canyon-sram', name: 'Canyon//SRAM', country: 'Alemania', category: 'women-worldtour' },
+  { slug: 'ef-education-oatly', name: 'EF Education–Oatly', country: 'Estados Unidos', category: 'women-worldtour' },
+  { slug: 'fdj-united-suez', name: 'FDJ United–Suez', country: 'Francia', category: 'women-worldtour' },
+  { slug: 'fenix-premier-tech', name: 'Fenix–Premier Tech', country: 'Bélgica', category: 'women-worldtour' },
+  { slug: 'human-powered-health', name: 'Human Powered Health', country: 'Estados Unidos', category: 'women-worldtour' },
+  { slug: 'lidl-trek-women', name: 'Lidl–Trek (femenino)', country: 'Estados Unidos', category: 'women-worldtour' },
+  { slug: 'liv-alula-jayco', name: 'Liv AlUla Jayco', country: 'Australia', category: 'women-worldtour' },
+  { slug: 'movistar-team-women', name: 'Movistar Team (femenino)', country: 'España', category: 'women-worldtour' },
+  { slug: 'team-picnic-postnl-women', name: 'Team Picnic–PostNL (femenino)', country: 'Países Bajos', category: 'women-worldtour' },
+  { slug: 'team-sd-worx-protime', name: 'Team SD Worx–Protime', country: 'Países Bajos', category: 'women-worldtour' },
+  { slug: 'uae-team-limad', name: "UAE Team L'Imad", country: 'Emiratos Árabes Unidos', category: 'women-worldtour' },
+  { slug: 'uno-x-mobility-women', name: 'Uno-X Mobility (femenino)', country: 'Noruega', category: 'women-worldtour' },
+  { slug: 'visma-lease-a-bike-women', name: 'Visma–Lease a Bike (femenino)', country: 'Países Bajos', category: 'women-worldtour' },
+]
+
+
+function slugify(name: string): string {
+  return name
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+interface RosterEntry {
+  team: string
+  riders: [string, string][] // [nombre, país]
+}
+
+const ROSTERS: RosterEntry[] = [
+  { team: 'alpecin-premier-tech', riders: [['Maurice Ballerstedt', 'Alemania'], ['Tobias Bayer', 'Austria'], ['Lennert Belmans', 'Bélgica'], ['Francesco Busatto', 'Italia'], ['Lindsay De Vylder', 'Bélgica'], ['Ramses Debruyne', 'Bélgica'], ['Simon Dehairs', 'Bélgica'], ['Tibor Del Grosso', 'Países Bajos'], ['Silvan Dillier', 'Suiza'], ['Aaron Dockx', 'Bélgica'], ['Jonas Geens', 'Bélgica'], ['Gal Glivar', 'Eslovenia'], ['Michael Gogl', 'Austria'], ['Kaden Groves', 'Australia'], ['Hugo Houle', 'Canadá'], ['Tim Marsman', 'Países Bajos'], ['Jasper Philipsen', 'Bélgica'], ['Edward Planckaert', 'Bélgica'], ['Jensen Plowright', 'Australia'], ['Johan Price-Pejtersen', 'Dinamarca'], ['Senna Remijn', 'Países Bajos'], ['Jonas Rickaert', 'Bélgica'], ['Oscar Riesebeek', 'Países Bajos'], ['Florian Sénéchal', 'Francia'], ['Sente Sentjens', 'Bélgica'], ['Gerben Thijssen', 'Bélgica'], ['Henri Uhlig', 'Alemania'], ['Mathieu van der Poel', 'Países Bajos'], ['Luca Vergallito', 'Italia'], ['Emiel Verstrynge', 'Bélgica']] },
+  { team: 'decathlon-cma-cgm', riders: [['Tobias Lund Andresen', 'Dinamarca'], ['Tiesj Benoot', 'Bélgica'], ['Léo Bisiaux', 'Francia'], ['Stefan Bissegger', 'Suiza'], ['Cees Bol', 'Países Bajos'], ['Oscar Chamberlain', 'Australia'], ['Sander De Pestel', 'Bélgica'], ['Stan Dewulf', 'Bélgica'], ['Felix Gall', 'Austria'], ['Pierre Gautherat', 'Francia'], ['Robbe Ghys', 'Bélgica'], ['Tord Gudmestad', 'Noruega'], ['Daan Hoole', 'Países Bajos'], ['Noa Isidore', 'Francia'], ['Olav Kooij', 'Países Bajos'], ['Jordan Labrosse', 'Francia'], ['Paul Lapeira', 'Francia'], ["Antoine L'Hote", 'Francia'], ['Gregor Mühlberger', 'Austria'], ['Oliver Naesen', 'Bélgica'], ['Aurélien Paret-Peintre', 'Francia'], ['Rasmus Søjberg Pedersen', 'Dinamarca'], ['Gianluca Pollefliet', 'Bélgica'], ['Nicolas Prodhomme', 'Francia'], ['Matthew Riccitello', 'Estados Unidos'], ['Callum Scotson', 'Australia'], ['Paul Seixas', 'Francia'], ['Johannes Staune-Mittet', 'Noruega']] },
+  { team: 'ef-education-easypost', riders: [['Mattia Agostinacchio', 'Italia'], ['Vincenzo Albanese', 'Italia'], ['Kasper Asgreen', 'Dinamarca'], ['Samuele Battistella', 'Italia'], ['Alex Baudin', 'Francia'], ['Markel Beloki', 'España'], ['Richard Carapaz', 'Ecuador'], ['Jefferson Alexander Cepeda', 'Ecuador'], ['Ben Healy', 'Irlanda'], ['Noah Hobbs', 'Reino Unido'], ['Mikkel Frølich Honoré', 'Dinamarca'], ['Luke Lamperti', 'Estados Unidos'], ['Michael Leonard', 'Canadá'], ['Alastair Mackellar', 'Australia'], ['Madis Mihkels', 'Estonia'], ['Lukas Nerurkar', 'Reino Unido'], ['Neilson Powless', 'Estados Unidos'], ['Sean Quinn', 'Estados Unidos'], ['Darren Rafferty', 'Irlanda'], ['Juan Felipe Rodríguez', 'Colombia'], ['Archie Ryan', 'Irlanda'], ['Matthias Schwarzbacher', 'Eslovaquia'], ['James Shaw', 'Reino Unido'], ['Colby Simmons', 'Estados Unidos'], ['Georg Steinhauser', 'Alemania'], ['Harry Sweeny', 'Australia'], ['Michael Valgren', 'Dinamarca'], ['Marijn van den Berg', 'Países Bajos'], ['Jardi van der Lee', 'Países Bajos'], ['Max Walker', 'Reino Unido']] },
+  { team: 'groupama-fdj-united', riders: [['Cyril Barthe', 'Francia'], ['Clément Berthet', 'Francia'], ['Lewis Bower', 'Nueva Zelanda'], ['Clément Braz Afonso', 'Francia'], ['Rémi Cavagna', 'Francia'], ['Ewen Costiou', 'Francia'], ['Maxime Decomble', 'Francia'], ['Tom Donnenwirth', 'Francia'], ['Titouan Fontaine', 'Francia'], ['David Gaudu', 'Francia'], ['Kévin Geniets', 'Luxemburgo'], ['Lorenzo Germani', 'Italia'], ['Romain Grégoire', 'Francia'], ['Thibaud Gruel', 'Francia'], ['Axel Huens', 'Francia'], ['Johan Jacobs', 'Suiza'], ['Josh Kench', 'Nueva Zelanda'], ['Olivier Le Gac', 'Francia'], ['Valentin Madouas', 'Francia'], ['Guillaume Martin', 'Francia'], ['Matteo Milan', 'Italia'], ['Rudy Molard', 'Francia'], ['Quentin Pacher', 'Francia'], ['Enzo Paleni', 'Francia'], ['Paul Penhoët', 'Francia'], ['Rémy Rochas', 'Francia'], ['Brieuc Rolland', 'Francia'], ['Clément Russo', 'Francia'], ['Bastien Tronchon', 'Francia']] },
+  { team: 'lidl-trek', riders: [['Juan Ayuso', 'España'], ['Andrea Bagioli', 'Italia'], ['Julien Bernard', 'Francia'], ['Giulio Ciccone', 'Italia'], ['Simone Consonni', 'Italia'], ['Tao Geoghegan Hart', 'Reino Unido'], ['Amanuel Ghebreigzabhier', 'Eritrea'], ['Lennard Kämna', 'Alemania'], ['Patrick Konrad', 'Austria'], ['Søren Kragh Andersen', 'Dinamarca'], ['Jonathan Milan', 'Italia'], ['Bauke Mollema', 'Países Bajos'], ['Jacopo Mosca', 'Italia'], ['Mathias Norsgaard', 'Dinamarca'], ['Thibau Nys', 'Bélgica'], ['Sam Oomen', 'Países Bajos'], ['Mads Pedersen', 'Dinamarca'], ['Albert Withen Philipsen', 'Dinamarca'], ['Quinn Simmons', 'Estados Unidos'], ['Mattias Skjelmose', 'Dinamarca'], ['Toms Skujiņš', 'Letonia'], ['Matteo Sobrero', 'Italia'], ['Jakob Söderqvist', 'Suecia'], ['Tim Torn Teutenberg', 'Alemania'], ['Edward Theuns', 'Bélgica'], ['Mathias Vacek', 'República Checa'], ['Otto Vergaerde', 'Bélgica'], ['Carlos Verona', 'España'], ['Max Walscheid', 'Alemania']] },
+  { team: 'lotto-intermarche', riders: [['Toon Aerts', 'Bélgica'], ['Huub Artz', 'Países Bajos'], ['Jenno Berckmoes', 'Bélgica'], ['Cédric Beullens', 'Bélgica'], ['Vito Braet', 'Bélgica'], ['Lars Craps', 'Bélgica'], ['Jasper De Buyst', 'Bélgica'], ['Arnaud De Lie', 'Bélgica'], ['Steffen De Schuyteneer', 'Bélgica'], ['Matthew Fox', 'Australia'], ['Joshua Giddings', 'Reino Unido'], ['Sébastien Grignard', 'Bélgica'], ['Matys Grisel', 'Francia'], ['Simone Gualdi', 'Italia'], ['Mathieu Kockelmann', 'Luxemburgo'], ['Milan Menten', 'Bélgica'], ['Robin Orins', 'Bélgica'], ['Lorenzo Rota', 'Italia'], ['Jonas Rutsch', 'Alemania'], ['Liam Slock', 'Bélgica'], ['Lionel Taminiaux', 'Bélgica'], ['Reuben Thompson', 'Nueva Zelanda'], ['Luca Van Boven', 'Bélgica'], ['Taco van der Hoorn', 'Países Bajos'], ['Lennert Van Eetvelt', 'Bélgica'], ['Roel van Sintmaartensdijk', 'Países Bajos'], ['Baptiste Veistroffer', 'Francia'], ['Jarno Widar', 'Bélgica'], ['Georg Zimmermann', 'Alemania'], ['Felix Ørn-Kristoff', 'Noruega']] },
+  { team: 'movistar-team', riders: [['Roger Adrià', 'España'], ['Jorge Arcas', 'España'], ['Orluis Aular', 'Venezuela'], ['Jon Barrenetxea', 'España'], ['Carlos Canal', 'España'], ['Pablo Castrillo', 'España'], ['Jefferson Alveiro Cepeda', 'Ecuador'], ['Davide Formolo', 'Italia'], ['Iván García Cortina', 'España'], ['Raúl García Pierna', 'España'], ['Michel Hessmann', 'Alemania'], ['Juan Pedro López', 'España'], ['Enric Mas', 'España'], ['Lorenzo Milesi', 'Italia'], ['Manlio Moro', 'Italia'], ['Pavel Novák', 'República Checa'], ['Nelson Oliveira', 'Portugal'], ['Diego Pescador', 'Colombia'], ['Nairo Quintana', 'Colombia'], ['Iván Romeo', 'España'], ['Javier Romo', 'España'], ['Einer Rubio', 'Colombia'], ['Pelayo Sánchez', 'España'], ['Gonzalo Serrano', 'España'], ['Natnael Tesfatsion', 'Eritrea'], ['Albert Torres', 'España'], ['Cian Uijtdebroeks', 'Bélgica']] },
+  { team: 'netcompany-ineos', riders: [['Thymen Arensman', 'Países Bajos'], ['Andrew August', 'Estados Unidos'], ['Egan Bernal', 'Colombia'], ['Laurens De Plus', 'Bélgica'], ['Tobias Foss', 'Noruega'], ['Filippo Ganna', 'Italia'], ['Dorian Godon', 'Francia'], ['Jack Haig', 'Australia'], ['Lucas Hamilton', 'Australia'], ['Kim Heiduk', 'Alemania'], ['Bob Jungels', 'Luxemburgo'], ['Michał Kwiatkowski', 'Polonia'], ['Victor Langellotti', 'Mónaco'], ['Axel Laurance', 'Francia'], ['Oscar Onley', 'Reino Unido'], ['Brandon Rivera', 'Colombia'], ['Carlos Rodríguez', 'España'], ['Óscar Rodríguez', 'España'], ['Magnus Sheffield', 'Estados Unidos'], ['Artem Shmidt', 'Estados Unidos'], ['Embret Svestad-Bårdseng', 'Noruega'], ['Ben Swift', 'Reino Unido'], ['Connor Swift', 'Reino Unido'], ['Joshua Tarling', 'Reino Unido'], ['Ben Turner', 'Reino Unido'], ['Kévin Vauquelin', 'Francia'], ['Samuel Watson', 'Reino Unido'], ['Sam Welsford', 'Australia'], ['Peter Øxenberg', 'Dinamarca']] },
+  { team: 'nsn-cycling-team', riders: [['Lewis Askey', 'Reino Unido'], ['George Bennett', 'Nueva Zelanda'], ['Joseph Blackmore', 'Reino Unido'], ['Guillaume Boivin', 'Canadá'], ['Simon Clarke', 'Australia'], ['Pier-André Côté', 'Canadá'], ['Itamar Einhorn', 'Israel'], ['Marco Frigo', 'Italia'], ['Brady Gilmore', 'Australia'], ['Biniam Girmay', 'Eritrea'], ['Jan Hirt', 'República Checa'], ['Hugo Hofstetter', 'Francia'], ['Oded Kogut', 'Israel'], ['Matis Louvel', 'Francia'], ['Alexey Lutsenko', 'Kazajistán'], ['Pau Martí', 'España'], ['Ryan Mullen', 'Irlanda'], ['Krists Neilands', 'Letonia'], ['Alessandro Pinarello', 'Italia'], ['Nadav Raisberg', 'Israel'], ['Nick Schultz', 'Australia'], ['Riley Sheehan', 'Estados Unidos'], ['Jake Stewart', 'Reino Unido'], ['Corbin Strong', 'Nueva Zelanda'], ['Tom Van Asbroeck', 'Bélgica'], ['Floris Van Tricht', 'Bélgica'], ['Ethan Vernon', 'Reino Unido'], ['Stephen Williams', 'Reino Unido']] },
+  { team: 'red-bull-bora-hansgrohe', riders: [['Giovanni Aleotti', 'Italia'], ['Adrien Boichis', 'Francia'], ['Mattia Cattaneo', 'Italia'], ['Nico Denz', 'Alemania'], ['Jarrad Drizners', 'Australia'], ['Haimar Etxeberria', 'España'], ['Remco Evenepoel', 'Bélgica'], ['Finn Fisher-Black', 'Nueva Zelanda'], ['Alexander Hajek', 'Austria'], ['Emil Herzog', 'Alemania'], ['Jai Hindley', 'Australia'], ['Florian Lipowitz', 'Alemania'], ['Arne Marit', 'Bélgica'], ['Daniel Martínez', 'Colombia'], ['Jordi Meeus', 'Bélgica'], ['Gianni Moscon', 'Italia'], ['Giulio Pellizzari', 'Italia'], ['Laurence Pithie', 'Nueva Zelanda'], ['Primož Roglič', 'Eslovenia'], ['Callum Thornley', 'Reino Unido'], ['Jan Tratnik', 'Eslovenia'], ['Luke Tuckwell', 'Australia'], ['Mick van Dijke', 'Países Bajos'], ['Tim van Dijke', 'Países Bajos'], ['Maxim Van Gils', 'Bélgica'], ['Danny van Poppel', 'Países Bajos'], ['Gianni Vermeersch', 'Bélgica'], ['Aleksandr Vlasov', 'Rusia'], ['Frederik Wandahl', 'Dinamarca'], ['Ben Zwiehoff', 'Alemania']] },
+  { team: 'soudal-quick-step', riders: [['Ayco Bastiaens', 'Bélgica'], ['Steff Cras', 'Bélgica'], ['Alberto Dainese', 'Italia'], ['Pascal Eenkhoorn', 'Países Bajos'], ['Gianmarco Garofoli', 'Italia'], ['Gil Gelders', 'Bélgica'], ['Ethan Hayter', 'Reino Unido'], ['Yves Lampaert', 'Bélgica'], ['Mikel Landa', 'España'], ['Junior Lecerf', 'Bélgica'], ['Paul Magnier', 'Francia'], ['Tim Merlier', 'Bélgica'], ['Valentin Paret-Peintre', 'Francia'], ['Casper Pedersen', 'Dinamarca'], ['Pepijn Reinderink', 'Países Bajos'], ['Laurenz Rex', 'Bélgica'], ['Maximilian Schachmann', 'Alemania'], ['Jasper Stuyven', 'Bélgica'], ['Martin Svrček', 'Eslovaquia'], ['Dylan van Baarle', 'Países Bajos'], ['Fabio Van den Bossche', 'Bélgica'], ['Dries Van Gestel', 'Bélgica'], ['Bert Van Lerberghe', 'Bélgica'], ['Ilan Van Wilder', 'Bélgica'], ['Warre Vangheluwe', 'Bélgica'], ['Mauri Vansevenant', 'Bélgica'], ['Louis Vervaeke', 'Bélgica'], ['Filippo Zana', 'Italia']] },
+  { team: 'team-bahrain-victorious', riders: [['Nikias Arndt', 'Alemania'], ['Phil Bauhaus', 'Alemania'], ['Pello Bilbao', 'España'], ['Alessandro Borgo', 'Italia'], ['Alberto Bruttomesso', 'Italia'], ['Santiago Buitrago', 'Colombia'], ['Damiano Caruso', 'Italia'], ['Roman Ermakov', 'Rusia'], ['Žak Eržen', 'Eslovenia'], ['Afonso Eulálio', 'Portugal'], ['Matevž Govekar', 'Eslovenia'], ['Kamil Gradek', 'Polonia'], ['Rainer Kepplinger', 'Austria'], ['Lenny Martinez', 'Francia'], ['Fran Miholjević', 'Croacia'], ['Pau Miquel', 'España'], ['Matej Mohorič', 'Eslovenia'], ['Jakob Omrzel', 'Eslovenia'], ['Mathijs Paasschens', 'Países Bajos'], ['Alec Segaert', 'Bélgica'], ['Daniel Skerl', 'Italia'], ['Robert Stannard', 'Australia'], ['Oliver Stockwell', 'Reino Unido'], ['Antonio Tiberi', 'Italia'], ['Attila Valter', 'Hungría'], ['Max van der Meulen', 'Países Bajos'], ['Vlad Van Mechelen', 'Bélgica'], ['Edoardo Zambanini', 'Italia']] },
+  { team: 'team-jayco-alula', riders: [['Pascal Ackermann', 'Alemania'], ['Koen Bouwman', 'Países Bajos'], ['Amaury Capiot', 'Bélgica'], ['Filippo Conca', 'Italia'], ['Alessandro Covi', 'Italia'], ['Dries De Bondt', 'Bélgica'], ['Dries De Pooter', 'Bélgica'], ['Davide De Pretto', 'Italia'], ['Bob Donaldson', 'Reino Unido'], ['Paul Double', 'Reino Unido'], ['Luke Durbridge', 'Australia'], ['Felix Engelhardt', 'Alemania'], ['Anders Foldager', 'Dinamarca'], ['Patrick Gamper', 'Austria'], ['Alan Hatherly', 'Sudáfrica'], ['Asbjørn Hellemose', 'Dinamarca'], ['Christopher Juul-Jensen', 'Dinamarca'], ['Jelte Krijnsen', 'Países Bajos'], ['Michael Matthews', 'Australia'], ['Hamish McKenzie', 'Australia'], ['Luka Mezgec', 'Eslovenia'], ["Kelland O'Brien", 'Australia'], ["Ben O'Connor", 'Australia'], ['Finlay Pickering', 'Reino Unido'], ['Luke Plapp', 'Australia'], ['Rudy Porter', 'Australia'], ['Mauro Schmid', 'Suiza'], ['Jasha Sütterlin', 'Alemania'], ['Andrea Vendrame', 'Italia']] },
+  { team: 'team-picnic-postnl', riders: [['Warren Barguil', 'Francia'], ['Pavel Bittner', 'República Checa'], ['Dillon Corkery', 'Irlanda'], ['John Degenkolb', 'Alemania'], ['Robbe Dhondt', 'Bélgica'], ['Matthew Dinham', 'Australia'], ['Nils Eekhoff', 'Países Bajos'], ['Alexy Faure Prost', 'Francia'], ['Sean Flynn', 'Reino Unido'], ['Mattia Gaffuri', 'Italia'], ['Chris Hamilton', 'Australia'], ['Fabio Jakobsen', 'Países Bajos'], ['Timo de Jong', 'Países Bajos'], ['James Knox', 'Reino Unido'], ['Gijs Leemreize', 'Países Bajos'], ['Enzo Leijnse', 'Países Bajos'], ['Niklas Märkl', 'Alemania'], ['Tim Naberman', 'Países Bajos'], ['Max Poole', 'Reino Unido'], ['Timo Roosen', 'Países Bajos'], ['Julius van den Berg', 'Países Bajos'], ['Frank van den Broek', 'Países Bajos'], ['Casper van Uden', 'Países Bajos'], ['Bram Welten', 'Países Bajos']] },
+  { team: 'visma-lease-a-bike', riders: [['Edoardo Affini', 'Italia'], ['Bruno Armirail', 'Francia'], ['Louis Barré', 'Francia'], ['Niklas Behrens', 'Alemania'], ['Matthew Brennan', 'Reino Unido'], ['Victor Campenaerts', 'Bélgica'], ['Owain Doull', 'Reino Unido'], ['Filippo Fiorelli', 'Italia'], ['Tijmen Graat', 'Países Bajos'], ['Per Strand Hagenes', 'Noruega'], ['Menno Huising', 'Países Bajos'], ['Matteo Jorgenson', 'Estados Unidos'], ['Wilco Kelderman', 'Países Bajos'], ['Timo Kielich', 'Bélgica'], ['Steven Kruijswijk', 'Países Bajos'], ['Sepp Kuss', 'Estados Unidos'], ['Christophe Laporte', 'Francia'], ['Bart Lemmen', 'Países Bajos'], ['Jørgen Nordhagen', 'Noruega'], ['Pietro Mattio', 'Italia'], ['Davide Piganzoli', 'Italia'], ['Tim Rex', 'Bélgica'], ['Anton Schiffer', 'Alemania'], ['Ben Tulett', 'Reino Unido'], ['Wout van Aert', 'Bélgica'], ['Loe van Belle', 'Países Bajos'], ['Jonas Vingegaard', 'Dinamarca'], ['Axel Zingle', 'Francia']] },
+  { team: 'uae-team-emirates-xrg', riders: [['João Almeida', 'Portugal'], ['Igor Arrieta', 'España'], ['Filippo Baroncini', 'Italia'], ['Mikkel Bjerg', 'Dinamarca'], ['Jan Christen', 'Suiza'], ['Benoît Cosnefroy', 'Francia'], ['Isaac del Toro', 'México'], ['Luca Giaimi', 'Italia'], ['Felix Großschartner', 'Austria'], ['Rune Herregodts', 'Bélgica'], ['Julius Johansen', 'Dinamarca'], ['Vegard Stake Laengen', 'Noruega'], ['Brandon McNulty', 'Estados Unidos'], ['Juan Sebastián Molano', 'Colombia'], ['António Morgado', 'Portugal'], ['Jhonatan Narváez', 'Ecuador'], ['Domen Novak', 'Eslovenia'], ['Ivo Oliveira', 'Portugal'], ['Rui Oliveira', 'Portugal'], ['Adrià Pericas', 'España'], ['Tadej Pogačar', 'Eslovenia'], ['Nils Politt', 'Alemania'], ['Pavel Sivakov', 'Francia'], ['Marc Soler', 'España'], ['Pablo Torres', 'España'], ['Kevin Vermaerke', 'Estados Unidos'], ['Florian Vermeersch', 'Bélgica'], ['Jay Vine', 'Australia'], ['Tim Wellens', 'Bélgica'], ['Adam Yates', 'Reino Unido']] },
+  { team: 'uno-x-mobility', riders: [['Jonas Abrahamsen', 'Noruega'], ['Erlend Blikra', 'Noruega'], ['Martin Urianstad Bugge', 'Noruega'], ['Fredrik Dversnes', 'Noruega'], ['Stian Fredheim', 'Noruega'], ['Markus Hoelgaard', 'Noruega'], ['Ådne Holter', 'Noruega'], ['Jonas Iversby Hvideberg', 'Noruega'], ['Storm Ingebrigtsen', 'Noruega'], ['Anders Halland Johannessen', 'Noruega'], ['Tobias Halland Johannessen', 'Noruega'], ['Andreas Leknessund', 'Noruega'], ['Sakarias Koller Løland', 'Noruega'], ['Erik Resell', 'Noruega'], ['Anders Skaarseth', 'Noruega'], ['Rasmus Tiller', 'Noruega'], ['Martin Tjøtta', 'Noruega'], ['Søren Wærenskjold', 'Noruega'], ['Sven Erik Bystrøm', 'Noruega'], ['Torstein Træen', 'Noruega'], ['Carl-Frederik Bévort', 'Dinamarca'], ['William Blume Levy', 'Dinamarca'], ['Magnus Cort', 'Dinamarca'], ['Simon Dalby', 'Dinamarca'], ['Anthon Charmig', 'Dinamarca'], ['Andreas Kron', 'Dinamarca'], ['Johannes Kulset', 'Dinamarca'], ['Alexander Kamp', 'Dinamarca'], ['Henrik Pedersen', 'Dinamarca'], ['Tobias Svarre', 'Dinamarca']] },
+  { team: 'xds-astana-team', riders: [['Davide Ballerini', 'Italia'], ['Alberto Bettiol', 'Italia'], ['Clément Champoussin', 'Francia'], ['Nicola Conci', 'Italia'], ['Yevgeniy Fedorov', 'Kazajistán'], ['Lorenzo Fortunato', 'Italia'], ['Aaron Gate', 'Nueva Zelanda'], ['Lev Gonov', 'Rusia'], ['Sergio Higuita', 'Colombia'], ['Florian Samuel Kajamini', 'Italia'], ['Max Kanter', 'Alemania'], ['Anton Kuzmin', 'Kazajistán'], ['Arjen Livyns', 'Bélgica'], ['Harold Martín López', 'Ecuador'], ['Matteo Malucelli', 'Italia'], ['Henok Mulubrhan', 'Eritrea'], ['Cristián Rodríguez', 'España'], ['Alessandro Romele', 'Italia'], ['Christian Scaroni', 'Italia'], ['Marco Schrettl', 'Austria'], ['Thomas Silva', 'Uruguay'], ['Su Haoyu', 'China'], ['Gleb Syritsa', 'Rusia'], ['Harold Tejada', 'Colombia'], ['Mike Teunissen', 'Países Bajos'], ['Davide Toneatti', 'Italia'], ['Diego Ulissi', 'Italia'], ['Darren van Bekkum', 'Países Bajos'], ['Simone Velasco', 'Italia'], ['Nicolas Vinokurov', 'Kazajistán']] },
+  { team: 'ag-insurance-soudal', riders: [['Fauve Bastiaenssen', 'Bélgica'], ['Letizia Borghesi', 'Italia'], ['Shari Bossuyt', 'Bélgica'], ['Alana Castrique', 'Bélgica'], ['Kim Le Court-Pienaar', 'Mauricio'], ['Justine Ghekiere', 'Bélgica'], ['Sarah Gigante', 'Australia'], ['Marthe Goossens', 'Bélgica'], ['Anya Louw', 'Australia'], ['Alexandra Manly', 'Australia'], ['Ashleigh Moolman Pasio', 'Sudáfrica'], ['Mireia Benito Pellicer', 'España'], ['Ilse Pluimers', 'Países Bajos'], ['Lore De Schepper', 'Bélgica'], ['Julie Van de Velde', 'Bélgica'], ['Gladys Verhulst-Wild', 'Francia'], ['Urška Žigart', 'Eslovenia']] },
+  { team: 'canyon-sram', riders: [['Katarzyna Niewiadoma-Phinney', 'Polonia'], ['Cecilie Uttrup Ludwig', 'Dinamarca'], ['Zoë Bäckstedt', 'Reino Unido'], ['Wilma Aintila', 'Finlandia'], ['Neve Bradbury', 'Australia'], ['Chiara Consonni', 'Italia'], ['Tiffany Cromwell', 'Australia'], ['Justyna Czapla', 'Alemania'], ['Chloé Dygert', 'Estados Unidos'], ['Rosa Maria Klöser', 'Alemania'], ['Anastasiya Kolesava', 'Bielorrusia'], ['Maria Martins', 'Portugal'], ['Antonia Niedermaier', 'Alemania'], ['Soraya Paladin', 'Italia'], ['Agnieszka Skalniak-Sojka', 'Polonia'], ['Maike van der Duin', 'Países Bajos']] },
+  { team: 'ef-education-oatly', riders: [['Minke Solbjørk Anderson', 'Dinamarca'], ['Nina Berton', 'Luxemburgo'], ['Auke De Buysser', 'Bélgica'], ['Kim Cadzow', 'Nueva Zelanda'], ['Henrietta Christie', 'Nueva Zelanda'], ['Axelle Dubau-Prévot', 'Francia'], ['Kristen Faulkner', 'Estados Unidos'], ['Stina Kagevi', 'Suecia'], ['Cédrine Kerbaol', 'Francia'], ['Mirre Knaven', 'Países Bajos'], ['Alexis Magner', 'Estados Unidos'], ['Magdeleine Vallières', 'Canadá'], ["Caoimhe O'Brien", 'Irlanda'], ['Noemi Rüegg', 'Suiza'], ['Alice Towers', 'Reino Unido'], ['Alexandra Volstad', 'Canadá'], ['Babette van der Wolf', 'Países Bajos']] },
+  { team: 'fdj-united-suez', riders: [['Sofia Bertizzolo', 'Italia'], ['Juliette Berthet', 'Francia'], ['Elise Chabbey', 'Suiza'], ['Kate Courtney', 'Estados Unidos'], ['Léa Curinier', 'Francia'], ['Lauren Dickson', 'Reino Unido'], ['Célia Géry', 'Francia'], ['Vittoria Guazzini', 'Italia'], ['Franziska Koch', 'Alemania'], ['Amber Kraak', 'Países Bajos'], ['Marie Le Net', 'Francia'], ['Evita Muzic', 'Francia'], ['Eglantine Rayer', 'Francia'], ['Eva van Agt', 'Países Bajos'], ['Demi Vollering', 'Países Bajos'], ['Jade Wiel', 'Francia'], ['Ally Wollaston', 'Nueva Zelanda']] },
+  { team: 'fenix-premier-tech', riders: [['Puck Pieterse', 'Países Bajos'], ['Charlotte Kool', 'Países Bajos'], ['Ceylin del Carmen Alvarado', 'Países Bajos'], ['Sara Casasola', 'Italia'], ['Lotte Claes', 'Bélgica'], ['Millie Couzens', 'Reino Unido'], ['Julie De Wilde', 'Bélgica'], ['Flora Perkins', 'Reino Unido'], ['Yara Kastelijn', 'Países Bajos'], ['Evy Kuijpers', 'Países Bajos'], ['Carina Schrempf', 'Austria'], ['Christina Schweinberger', 'Austria'], ['Marthe Truyen', 'Bélgica'], ['Aniek van Alphen', 'Países Bajos'], ['Inge van der Heijden', 'Países Bajos'], ['Mylene de Zoete', 'Países Bajos'], ['Xaydée Van Sinaey', 'Bélgica'], ['Fien Van Eynde', 'Bélgica']] },
+  { team: 'human-powered-health', riders: [['Yurani Blanco', 'España'], ['Giada Borghesi', 'Italia'], ['Nina Buijsman', 'Países Bajos'], ['Carlotta Cipressi', 'Italia'], ['Maggie Coles-Lyster', 'Canadá'], ['Jente Koops', 'Países Bajos'], ['Thalita de Jong', 'Países Bajos'], ['Ruth Edwards', 'Estados Unidos'], ['Marta Jaskulska', 'Polonia'], ['Barbara Malcotti', 'Italia'], ['Mona Mitterwallner', 'Austria'], ['Daria Pikulik', 'Polonia'], ['Wiktoria Pikulik', 'Polonia'], ['Marit Raaijmakers', 'Países Bajos'], ['Katia Ragusa', 'Italia'], ['Titia Ryo', 'Francia'], ['Kathrin Schweinberger', 'Austria'], ['Petra Stiasny', 'Suiza'], ['Lily Williams', 'Estados Unidos'], ['Silvia Zanardi', 'Italia']] },
+  { team: 'lidl-trek-women', riders: [['Loes Adegeest', 'Países Bajos'], ['Shirin van Anrooij', 'Países Bajos'], ['Elisa Balsamo', 'Italia'], ['Ricarda Bauernfeind', 'Alemania'], ['Lucinda Brand', 'Países Bajos'], ['Clara Copponi', 'Francia'], ['Niamh Fisher-Black', 'Nueva Zelanda'], ['Lauretta Hanson', 'Australia'], ['Anna Henderson', 'Reino Unido'], ['Ava Holmgren', 'Canadá'], ['Isabella Holmgren', 'Canadá'], ['Marine Lenehan', 'Irlanda'], ['Riejanne Markus', 'Países Bajos'], ['Fleur Moors', 'Bélgica'], ['Emma Norsgaard', 'Dinamarca'], ['Gaia Realini', 'Italia'], ['Amanda Spratt', 'Australia'], ['Margot Vanpachtenbeke', 'Bélgica'], ['Felicity Wilson-Haffenden', 'Australia']] },
+  { team: 'liv-alula-jayco', riders: [['Caroline Andersson', 'Suecia'], ['Georgia Baker', 'Australia'], ['Monica Trinca Colonel', 'Italia'], ['Mackenzie Coupland', 'Australia'], ['Nadia Gontova', 'Canadá'], ['Noa Jansen', 'Países Bajos'], ['Jeanne Korevaar', 'Países Bajos'], ['Amber Pate', 'Australia'], ['Letizia Paternoster', 'Italia'], ['Ruby Roseman-Gannon', 'Australia'], ['Silke Smulders', 'Países Bajos'], ['Josie Talbot', 'Australia'], ['Quinty Ton', 'Países Bajos'], ['Matilde Vitillo', 'Italia'], ['Ella Wyllie', 'Nueva Zelanda']] },
+  { team: 'movistar-team-women', riders: [['Marlen Reusser', 'Suiza'], ['Liane Lippert', 'Alemania'], ['Aude Biannic', 'Francia'], ['Olivia Baril', 'Canadá'], ['Francesca Barale', 'Italia'], ['Sheyla Gutiérrez', 'España'], ['Cat Ferguson', 'Reino Unido'], ['Floortje Mackaij', 'Países Bajos'], ['Ana Magalhães', 'Brasil'], ['Sara Martín', 'España'], ['Mareille Meijering', 'Países Bajos'], ['Carys Lloyd', 'Reino Unido'], ['Laura Ruiz', 'España'], ['Lucía Ruiz', 'España'], ['Arlenis Sierra', 'Cuba'], ['Claire Steels', 'Reino Unido'], ['Paula Ostiz', 'España']] },
+  { team: 'team-picnic-postnl-women', riders: [['Megan Arens', 'Países Bajos'], ['Rachele Barbieri', 'Italia'], ['Eleonora Ciabocco', 'Italia'], ['Robyn Clay', 'Reino Unido'], ['Lucie Fityus', 'Australia'], ['Pfeiffer Georgi', 'Reino Unido'], ['Mia Griffin', 'Irlanda'], ['Daniela Hezinová', 'República Checa'], ['Ella Heremans', 'Bélgica'], ['Audrey De Keersmaeker', 'Bélgica'], ['Juliana Londoño', 'Colombia'], ['Gaia Masetti', 'Italia'], ['Dilyxine Miermont', 'Francia'], ['Josie Nelson', 'Reino Unido'], ['Mara Roldan', 'Canadá'], ['Becky Storrie', 'Reino Unido'], ['Elise Uijen', 'Países Bajos']] },
+  { team: 'team-sd-worx-protime', riders: [['Mischa Bredewold', 'Países Bajos'], ['Valentina Cavallar', 'Austria'], ['Elena Cecchini', 'Italia'], ['Femke Gerritse', 'Países Bajos'], ['Barbara Guarischi', 'Italia'], ['Steffi Häberlin', 'Suiza'], ['Mikayla Harvey', 'Nueva Zelanda'], ['Julia Kopecký', 'República Checa'], ['Lotte Kopecky', 'Bélgica'], ['Marta Lach', 'Polonia'], ['Femke Markus', 'Países Bajos'], ['Marie Schreiber', 'Luxemburgo'], ['Lisa van Belle', 'Países Bajos'], ['Anna van der Breggen', 'Países Bajos'], ['Blanka Vas', 'Hungría'], ['Nienke Vinke', 'Países Bajos'], ['Lorena Wiebes', 'Países Bajos']] },
+  { team: 'uae-team-limad', riders: [['Alena Amialiusik', 'Bielorrusia'], ['Paula Blasi', 'España'], ['Elisa Longo Borghini', 'Italia'], ['Elynor Bäckstedt', 'Reino Unido'], ['Brodie Chapman', 'Australia'], ['Febe Jooris', 'Bélgica'], ['Mavi García', 'España'], ['Eleonora Gasparrini', 'Italia'], ['Lara Gillespie', 'Irlanda'], ['Alena Ivanchenko', 'Rusia'], ['Megan Jastrab', 'Estados Unidos'], ['Erica Magnaldi', 'Italia'], ['Greta Marturano', 'Italia'], ['Silvia Persico', 'Italia'], ['Pauliena Rooijakkers', 'Países Bajos'], ['Sofie van Rooijen', 'Países Bajos'], ['Safia Al-Sayegh', 'EAU'], ['Maëva Squiban', 'Francia'], ['Karlijn Swinkels', 'Países Bajos'], ['Federica Venturelli', 'Italia'], ['Dominika Włodarczyk', 'Polonia']] },
+  { team: 'uno-x-mobility-women', riders: [['Katrine Aalerud', 'Noruega'], ['Kamilla Aasebø', 'Noruega'], ['Anniina Ahtosalo', 'Finlandia'], ['Susanne Andersen', 'Noruega'], ['Elinor Barker', 'Reino Unido'], ['Teuntje Beekhuis', 'Países Bajos'], ['Marte Berg Edseth', 'Noruega'], ['Jelena Erić', 'Serbia'], ['Mia Gjertsen', 'Noruega'], ['Alberte Greve', 'Dinamarca'], ['Ingvild Gåskjenn', 'Noruega'], ['Sigrid Ytterhus Haugset', 'Noruega'], ['Rebecca Koerner', 'Dinamarca'], ['Anouska Koster', 'Países Bajos'], ['Mie Bjørndal Ottestad', 'Noruega'], ['Francesca Pellegrini', 'Italia'], ['Laura Tomasi', 'Italia'], ['Alessia Vigilia', 'Italia'], ['Anne Dorthe Ysland', 'Noruega'], ['Linda Zanetti', 'Suiza']] },
+  { team: 'visma-lease-a-bike-women', riders: [['Marion Bunel', 'Francia'], ['Viktória Chladoňová', 'Eslovaquia'], ['Sarah van Dam', 'Canadá'], ['Fem van Empel', 'Países Bajos'], ['Pauline Ferrand-Prévot', 'Francia'], ['Martina Fidanza', 'Italia'], ['Daniek Hengeveld', 'Países Bajos'], ['Lieke Nooijen', 'Países Bajos'], ['Maud Oudeman', 'Países Bajos'], ['Rosita Reijnhout', 'Países Bajos'], ['Katharina Sadnik', 'Austria'], ['Nienke Veenhoven', 'Países Bajos'], ['Margaux Vigié', 'Francia'], ['Marianne Vos', 'Países Bajos'], ['Femke de Vries', 'Países Bajos'], ['Imogen Wolff', 'Reino Unido']] },
+]
+
+
+export async function importUciRacesAndTeams() {
+  let raceCount = 0
+  for (const race of [...MENS_RACES, ...WOMENS_RACES]) {
+    const { slug, name, start, end, country, category, numStages } = race
+    await prisma.race.upsert({
+      where: { slug },
+      update: { name, startDate: new Date(start), endDate: new Date(end), country, category, numStages, status: statusFor(start, end), year: 2026 },
+      create: {
+        slug,
+        name,
+        year: 2026,
+        startDate: new Date(start),
+        endDate: new Date(end),
+        country,
+        category,
+        numStages,
+        status: statusFor(start, end),
+      },
+    })
+    raceCount++
+  }
+
+  let teamCount = 0
+  for (const team of [...MENS_TEAMS, ...WOMENS_TEAMS]) {
+    await prisma.team.upsert({
+      where: { slug: team.slug },
+      update: { name: team.name, country: team.country, category: team.category },
+      create: team,
+    })
+    teamCount++
+  }
+
+  return { raceCount, teamCount }
+}
+
+export async function importUciRiders() {
+  let riderCount = 0
+  const skippedTeams: string[] = []
+
+  for (const { team: teamSlug, riders } of ROSTERS) {
+    const team = await prisma.team.findUnique({ where: { slug: teamSlug } })
+    if (!team) {
+      skippedTeams.push(teamSlug)
+      continue
+    }
+
+    for (const [name, nationality] of riders) {
+      const slug = slugify(name)
+      await prisma.rider.upsert({
+        where: { slug },
+        update: { name, nationality, currentTeamId: team.id },
+        create: { slug, name, nationality, currentTeamId: team.id },
+      })
+      riderCount++
+    }
+  }
+
+  return { riderCount, skippedTeams }
+}
+
+/** Puertos y desnivel reales según la organización de La Vuelta (lavuelta.es/en/stage-19). */
+const stageProfileSvg = buildStageProfileSvg({
+  distanceKm: 210.8,
+  startTown: 'Vélez-Málaga',
+  finishTown: 'Peñas Blancas (Estepona)',
+  finishAltitudeM: 1268,
+  climbs: [
+    { name: 'Puerto de las Abejas', category: '2ª', km: 91, gainM: 617, distanceKm: 14.5, avgGradient: 4.3 },
+    { name: 'Puerto del Viento', category: '2ª', km: 111.3, gainM: 498, distanceKm: 13.1, avgGradient: 3.7 },
+    { name: 'Peñas Blancas', category: '1ª', km: 210.8, gainM: 1216, distanceKm: 18.7, avgGradient: 6.5 },
+  ],
+})
+
+const vueltaStage19Content = `
+<figure class="stage-profile">
+  ${stageProfileSvg}
+  <figcaption>Perfil ilustrativo de la etapa 19, con los puertos categorizados oficiales — datos de La Vuelta.</figcaption>
+</figure>
+<p>Eddie Dunbar (Q36.5 Pro Cycling Team) se impuso en solitario en la decimonovena etapa de la Vuelta a España 2026, un recorrido de 210,8&nbsp;km entre Vélez-Málaga y el alto de Peñas Blancas, en Estepona, con final en un puerto de primera categoría. Dunbar salió en una larga fuga formada a mitad de etapa y distanció a sus acompañantes en los kilómetros finales del ascenso para cruzar la meta en solitario.</p>
+
+<p>Santiago Buitrago (Team Bahrain Victorious) fue segundo a 14 segundos, y Thomas Gloag completó el podio a 23 segundos del ganador. Urko Berrade entró cuarto, a 44 segundos.</p>
+
+<p>En la clasificación general, Enric Mas (Movistar Team) conservó el maillot rojo de líder tras cruzar la meta junto al grupo de sus principales rivales. Mas mantiene una ventaja de 1 minuto y 37 segundos sobre Primož Roglič (Red Bull-BORA-hansgrohe), segundo clasificado. Felix Gall (Decathlon CMA CGM) es tercero a 3 minutos y 1 segundo, seguido de Richard Carapaz (EF Education-EasyPost) a 5:17 y Oscar Onley (Netcompany Ineos) a 6:03.</p>
+
+<p>A la carrera le quedan dos etapas. Este sábado 12 de septiembre se disputa la vigésima etapa, una jornada de montaña de 186,8&nbsp;km entre La Calahorra y el Collado del Alguacil que podría ser la última oportunidad real para mover la general antes de Granada. La Vuelta 2026 cierra su recorrido el domingo 13 de septiembre con una etapa llana de 99,4&nbsp;km en la propia ciudad de Granada.</p>
+
+<p>Con Mas a menos de 48 horas de sellar su primera Vuelta a España, la etapa del sábado será determinante: una ventaja de 1:37 sobre Roglič es defendible pero no intocable en una etapa de montaña de este perfil.</p>
+`.trim()
+
+export async function publishVueltaStage19Article() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'grand-tours' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riders = await prisma.rider.findMany({
+    where: { slug: { in: ['enric-mas', 'primoz-roglic', 'felix-gall', 'richard-carapaz'] } },
+    select: { id: true },
+  })
+  const teams = await prisma.team.findMany({
+    where: { slug: { in: ['movistar-team', 'red-bull-bora-hansgrohe'] } },
+    select: { id: true },
+  })
+  const race = await prisma.race.findUniqueOrThrow({ where: { slug: 'vuelta-a-espana-2026' }, select: { id: true } })
+
+  const baseFields = {
+    title: 'Dunbar gana en Peñas Blancas y Enric Mas defiende el liderato a dos etapas del final',
+    subtitle: 'El irlandés se impuso en solitario en la etapa reina del sur; Mas mantiene 1:37 sobre Roglič antes de la última cita de montaña',
+    excerpt:
+      'Eddie Dunbar ganó la etapa 19 de la Vuelta a España en el alto de Peñas Blancas tras una larga fuga. Enric Mas conserva el maillot rojo con 1:37 de ventaja sobre Primož Roglič a falta de dos etapas.',
+    content: vueltaStage19Content,
+    categoryId: category.id,
+    authorId: author.id,
+    status: 'published',
+    breakingNews: true,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://www.lavuelta.es/en/stage-19',
+      'https://www.eurosport.es/ciclismo/vuelta-a-espana/2026/clasificacion-general-maillot-rojo-resultados-tiempos-diferencias-favoritos-hoy_sto23330213/story.shtml',
+      'https://www.infobae.com/america/agencias/2026/09/11/eddie-dunbar-gana-la-etapa-19-y-enric-mas-controla-su-liderato-rojo-en-la-cima-de-penas-blancas/',
+    ]),
+    sourceNames: toJsonField(['La Vuelta (oficial)', 'Eurosport España', 'Infobae']),
+    seoTitle: 'Dunbar gana la etapa 19 de la Vuelta y Enric Mas sigue líder',
+    seoDescription:
+      'Eddie Dunbar se impone en Peñas Blancas en una fuga. Enric Mas defiende el maillot rojo con 1:37 sobre Roglič a dos etapas del final en Granada.',
+    readingTime: 2,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'dunbar-gana-etapa-19-vuelta-espana-mas-lidera' },
+    update: {
+      ...baseFields,
+      riders: { set: riders.map((r) => ({ id: r.id })) },
+      teams: { set: teams.map((t) => ({ id: t.id })) },
+      races: { set: [{ id: race.id }] },
+    },
+    create: {
+      slug: 'dunbar-gana-etapa-19-vuelta-espana-mas-lidera',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: { connect: riders.map((r) => ({ id: r.id })) },
+      teams: { connect: teams.map((t) => ({ id: t.id })) },
+      races: { connect: [{ id: race.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
