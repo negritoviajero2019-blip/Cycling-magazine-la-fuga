@@ -62,4 +62,4 @@ jobs:
             -e "ssh -i ~/.ssh/deploy_key" \
             ./ "$SSH_USER@$SSH_HOST:$APP_PATH"
           ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
-            "cd $APP_PATH && npm ci --omit=dev && npx prisma db push --schema prisma/schema.prisma && npx tsx prisma/import-uci-data.ts && npx tsx prisma/import-uci-riders.ts && mkdir -p tmp && touch tmp/restart.txt"
+            "cd $APP_PATH && npm ci --omit=dev && npx prisma db push --schema prisma/schema.prisma && npx tsx prisma/import-uci-data.ts && npx tsx prisma/import-uci-riders.ts && npx tsx prisma/publish-vuelta-stage19-article.ts && mkdir -p tmp && touch tmp/restart.txt"

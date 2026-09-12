@@ -21,8 +21,8 @@ async function main() {
     update: {},
     create: {
       slug: 'redaccion',
-      name: 'Redacción [CYCLING MAGAZINE]',
-      bio: 'Equipo editorial de la revista.',
+      name: 'Redacción La Fuga',
+      bio: 'Equipo editorial de La Fuga — Cycling Magazine.',
       specialty: 'Ciclismo profesional',
       isAiAssisted: true,
     },
