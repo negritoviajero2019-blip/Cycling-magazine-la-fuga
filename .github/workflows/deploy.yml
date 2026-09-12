@@ -46,20 +46,70 @@ jobs:
         run: |
           npx prisma generate --schema prisma/schema.prisma
           npm run build
-      - name: Deploy vía rsync sobre SSH
+      - name: Preparar clave SSH
         env:
           SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
-          SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
           SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
-          APP_PATH: ${{ secrets.HOSTINGER_APP_PATH }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+      - name: Sincronizar archivos (rsync)
+        env:
+          SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          APP_PATH: ${{ secrets.HOSTINGER_APP_PATH }}
+        run: |
           rsync -az --delete \
             --exclude='.git' --exclude='node_modules/.cache' \
             -e "ssh -i ~/.ssh/deploy_key" \
             ./ "$SSH_USER@$SSH_HOST:$APP_PATH"
+      - name: Instalar dependencias en el servidor
+        env:
+          SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          APP_PATH: ${{ secrets.HOSTINGER_APP_PATH }}
+        run: |
           ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
-            "cd $APP_PATH && npm ci --omit=dev && npx prisma db push --schema prisma/schema.prisma && npx tsx prisma/import-uci-data.ts && npx tsx prisma/import-uci-riders.ts && npx tsx prisma/publish-vuelta-stage19-article.ts && mkdir -p tmp && touch tmp/restart.txt"
+            "cd $APP_PATH && npm ci --omit=dev"
+      - name: Sincronizar esquema de base de datos
+        env:
+          SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          APP_PATH: ${{ secrets.HOSTINGER_APP_PATH }}
+        run: |
+          ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
+            "cd $APP_PATH && npx prisma db push --schema prisma/schema.prisma"
+      - name: Importar calendario y equipos UCI
+        env:
+          SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          APP_PATH: ${{ secrets.HOSTINGER_APP_PATH }}
+        run: |
+          ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
+            "cd $APP_PATH && npx tsx prisma/import-uci-data.ts"
+      - name: Importar ciclistas UCI
+        env:
+          SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          APP_PATH: ${{ secrets.HOSTINGER_APP_PATH }}
+        run: |
+          ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
+            "cd $APP_PATH && npx tsx prisma/import-uci-riders.ts"
+      - name: Publicar artículo de la Vuelta (temporal, un solo uso)
+        env:
+          SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          APP_PATH: ${{ secrets.HOSTINGER_APP_PATH }}
+        run: |
+          ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
+            "cd $APP_PATH && npx tsx prisma/publish-vuelta-stage19-article.ts"
+      - name: Reiniciar aplicación
+        env:
+          SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          APP_PATH: ${{ secrets.HOSTINGER_APP_PATH }}
+        run: |
+          ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
+            "cd $APP_PATH && mkdir -p tmp && touch tmp/restart.txt"
