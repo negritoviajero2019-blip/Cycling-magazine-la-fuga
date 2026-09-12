@@ -50,3 +50,14 @@ export function formatRelativeTime(date: Date): string {
 
   return formatDate(date)
 }
+
+/** "Hoy", "Mañana", "En 3 días" — para la franja de próxima carrera. */
+export function formatDaysUntil(date: Date): string {
+  const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate())
+  const diffDays = Math.round((startOfDay(date).getTime() - startOfDay(new Date()).getTime()) / 86_400_000)
+
+  if (diffDays < 0) return 'En curso'
+  if (diffDays === 0) return 'Hoy'
+  if (diffDays === 1) return 'Mañana'
+  return `En ${diffDays} días`
+}

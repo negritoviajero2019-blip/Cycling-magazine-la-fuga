@@ -27,7 +27,7 @@ const summarySelect = {
  * Un mismo artículo nunca se repite entre Hero/Últimas/Radar.
  */
 export async function getHomeSections() {
-  const [featuredPool, recentPool, analysis, upcomingRaces, mostRead] = await Promise.all([
+  const [featuredPool, recentPool, analysis, upcomingRaces, nextRace, mostRead] = await Promise.all([
     safeQuery(
       () =>
         prisma.article.findMany({
@@ -59,6 +59,7 @@ export async function getHomeSections() {
       [] as ArticleSummary[],
     ),
     getUpcomingRaces(),
+    getNextRace(),
     getMostReadArticles(),
   ])
 
@@ -85,7 +86,7 @@ export async function getHomeSections() {
   // hero — evita que el mismo artículo aparezca dos veces en la home.
   const featuredStandout = featuredPool.filter((a) => !usedSlugs.has(a.slug)).slice(0, 6)
 
-  return { heroArticle, latestThree, radarArticles, featuredStandout, analysis, upcomingRaces, mostRead }
+  return { heroArticle, latestThree, radarArticles, featuredStandout, analysis, upcomingRaces, nextRace, mostRead }
 }
 
 export async function getUpcomingRaces() {
@@ -98,6 +99,27 @@ export async function getUpcomingRaces() {
         select: { slug: true, name: true, startDate: true, country: true, category: true },
       }),
     [],
+  )
+}
+
+/** La próxima carrera en orden cronológico — para la franja compacta del home. */
+export async function getNextRace() {
+  return safeQuery(
+    () =>
+      prisma.race.findFirst({
+        where: { OR: [{ status: 'upcoming' }, { status: 'ongoing' }, { startDate: { gte: new Date() } }] },
+        orderBy: { startDate: 'asc' },
+        select: {
+          slug: true,
+          name: true,
+          startDate: true,
+          endDate: true,
+          country: true,
+          category: true,
+          status: true,
+        },
+      }),
+    null,
   )
 }
 

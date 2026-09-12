@@ -3,6 +3,7 @@ import { Hero } from '@/components/editorial/Hero'
 import { ArticleCard } from '@/components/editorial/ArticleCard'
 import { PelotonRadar } from '@/components/editorial/PelotonRadar'
 import { UpcomingRaces } from '@/components/editorial/UpcomingRaces'
+import { NextRaceStrip } from '@/components/editorial/NextRaceStrip'
 import { MostRead } from '@/components/editorial/MostRead'
 import { NewsletterSection } from '@/components/editorial/NewsletterSection'
 import { AdBanner } from '@/components/ads/AdBanner'
@@ -49,7 +50,7 @@ function Section({
 }
 
 export default async function HomePage() {
-  const { heroArticle, latestThree, radarArticles, featuredStandout, analysis, upcomingRaces, mostRead } =
+  const { heroArticle, latestThree, radarArticles, featuredStandout, analysis, upcomingRaces, nextRace, mostRead } =
     await getHomeSections()
 
   // §83: nunca "No articles found" en producción — cada sección vacía se oculta.
@@ -60,6 +61,10 @@ export default async function HomePage() {
           <Hero article={heroArticle} />
         </div>
       )}
+
+      <div className="pb-6">
+        <NextRaceStrip race={nextRace} />
+      </div>
 
       {latestThree.length > 0 && (
         <Section title="Últimas noticias" href="/category/ultima-hora">
