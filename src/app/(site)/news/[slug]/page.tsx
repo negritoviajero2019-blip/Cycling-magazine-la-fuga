@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
+import { ArticleImage } from '@/components/editorial/ArticleImage'
 import { Container } from '@/components/ui/Container'
 import { Breadcrumbs } from '@/components/editorial/Breadcrumbs'
 import { Badge } from '@/components/ui/Badge'
@@ -100,7 +100,7 @@ export default async function ArticlePage({ params }: Props) {
           <div className="my-6 overflow-hidden rounded">
             {article.heroImage ? (
               <>
-                <Image
+                <ArticleImage
                   src={article.heroImage.url}
                   alt={article.heroImage.altText || article.title}
                   width={1200}

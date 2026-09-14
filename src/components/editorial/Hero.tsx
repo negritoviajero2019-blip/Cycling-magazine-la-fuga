@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import { ArticleImage } from './ArticleImage'
 import { EditorialFallbackCard } from './EditorialFallbackCard'
 import { formatDate } from '@/lib/content/format-date'
 import type { ArticleSummary } from '@/types/content'
@@ -9,7 +9,7 @@ export function Hero({ article }: { article: ArticleSummary }) {
     <article className="group relative min-h-[420px] overflow-hidden rounded-lg md:min-h-[560px]">
       <Link href={`/news/${article.slug}`} className="block">
         {article.heroImage ? (
-          <Image
+          <ArticleImage
             src={article.heroImage.url}
             alt={article.heroImage.altText || article.title}
             width={1600}

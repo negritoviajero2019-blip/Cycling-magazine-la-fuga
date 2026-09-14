@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import { ArticleImage } from './ArticleImage'
 import { Badge } from '@/components/ui/Badge'
 import { CategoryChip } from './CategoryChip'
 import { EditorialFallbackCard } from './EditorialFallbackCard'
@@ -17,7 +17,7 @@ export function ArticleCard({
     <article className="group overflow-hidden rounded-md border border-border bg-surface transition-all duration-300 ease-editorial hover:-translate-y-1.5 hover:border-primary/20 hover:shadow-lift">
       <Link href={`/news/${article.slug}`} className="block overflow-hidden">
         {article.heroImage ? (
-          <Image
+          <ArticleImage
             src={article.heroImage.url}
             alt={article.heroImage.altText || article.title}
             width={800}

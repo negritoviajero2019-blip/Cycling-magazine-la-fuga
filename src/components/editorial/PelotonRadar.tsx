@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import { ArticleImage } from './ArticleImage'
 import { EditorialFallbackCard } from './EditorialFallbackCard'
 import { Badge } from '@/components/ui/Badge'
 import { formatRelativeTime } from '@/lib/content/format-date'
@@ -47,7 +47,7 @@ export function PelotonRadar({ articles }: { articles: ArticleSummary[] }) {
               className="group relative block min-h-[500px] overflow-hidden rounded-lg bg-[#111] min-[850px]:min-h-[580px]"
             >
               {main.heroImage ? (
-                <Image
+                <ArticleImage
                   src={main.heroImage.url}
                   alt={main.heroImage.altText || main.title}
                   width={1200}

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { requireAdminSession } from '@/lib/auth/require-admin'
-import { runNewsDiscovery, runWeeklyContentPlanner } from '@/lib/content/automation'
+import { runNewsDiscovery, runWeeklyContentPlanner, detectUpcomingRacePreviews } from '@/lib/content/automation'
 
 const bodySchema = z.object({
   action: z.enum(['run-news-scan', 'pause', 'resume']),
@@ -20,7 +20,8 @@ export async function POST(request: Request) {
     case 'run-news-scan': {
       const result = await runNewsDiscovery()
       await runWeeklyContentPlanner()
-      return NextResponse.json(result)
+      const previews = await detectUpcomingRacePreviews()
+      return NextResponse.json({ ...result, previews })
     }
     case 'pause':
       await prisma.siteSetting.upsert({

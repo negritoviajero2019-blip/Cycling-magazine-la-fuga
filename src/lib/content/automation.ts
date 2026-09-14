@@ -129,6 +129,63 @@ export async function runWeeklyContentPlanner() {
   return { publishedThisWeek, pendingCandidates, quotaMet: publishedThisWeek >= 4 }
 }
 
+/**
+ * Detecta carreras reales del calendario UCI que empiezan dentro de
+ * `daysAhead` días y crea un NewsCandidate de aviso ("previa") si no
+ * existe uno ya — no usa IA ni inventa nada, solo lee el calendario
+ * ya cargado. Sirve como recordatorio en el panel de admin de qué
+ * previas escribir a mano mientras no haya generación automática.
+ * Aparece en la tabla "Candidatos a noticia" de /admin/automation.
+ */
+export async function detectUpcomingRacePreviews(daysAhead = 7) {
+  const execution = await startExecution('upcoming-race-previews')
+
+  try {
+    const now = new Date()
+    const horizon = new Date(now.getTime() + daysAhead * 24 * 60 * 60 * 1000)
+
+    const upcomingRaces = await prisma.race.findMany({
+      where: { startDate: { gte: now, lte: horizon } },
+      select: { id: true, slug: true, name: true, startDate: true, country: true, category: true },
+    })
+
+    const existing = await prisma.newsCandidate.findMany({
+      where: { status: { not: 'rejected' } },
+      select: { entities: true },
+    })
+    const alreadyFlagged = new Set(
+      existing.flatMap((c) => fromJsonField<string[]>(c.entities, [])),
+    )
+
+    let created = 0
+    for (const race of upcomingRaces) {
+      if (alreadyFlagged.has(race.slug)) continue
+
+      const daysUntil = Math.ceil((race.startDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000))
+      await prisma.newsCandidate.create({
+        data: {
+          headline: `Previa: ${race.name} — en ${daysUntil} día${daysUntil === 1 ? '' : 's'}`,
+          summary: `${race.name} (${race.category}${race.country ? `, ${race.country}` : ''}) se corre el ${race.startDate.toLocaleDateString('es-ES')}. Escribir previa con favoritos y contexto antes de que empiece.`,
+          sourceUrls: toJsonField([]),
+          sourceNames: toJsonField([]),
+          eventDate: race.startDate,
+          category: race.category,
+          entities: toJsonField([race.slug]),
+          status: 'new',
+          editorialAction: 'requires_review',
+        },
+      })
+      created++
+    }
+
+    await finishExecution(execution.id, 'success', { itemsFound: upcomingRaces.length, articlesCreated: created })
+    return { racesChecked: upcomingRaces.length, previewsCreated: created }
+  } catch (error) {
+    await finishExecution(execution.id, 'error', { errorLog: String(error) })
+    return { racesChecked: 0, previewsCreated: 0 }
+  }
+}
+
 /** Publica NewsCandidate/Article programados cuya fecha ya llegó. */
 export async function runScheduledPublisher() {
   const execution = await startExecution('scheduled-publisher')

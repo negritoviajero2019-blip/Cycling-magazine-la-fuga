@@ -10,6 +10,22 @@
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
 import { buildStageProfileSvg } from './stage-profile-svg'
+import { buildHeaderBannerMedia } from './header-banner-svg'
+
+/**
+ * Crea la imagen de cabecera (gráfico editorial propio, nunca foto de
+ * agencia) para un artículo nuevo. Si el artículo ya existe y ya tiene
+ * una, no crea una fila Media duplicada — solo se genera una vez.
+ */
+async function ensureHeroImage(
+  articleSlug: string,
+  input: { eyebrow: string; title: string; riders?: { name: string; team?: string }[] },
+): Promise<number | undefined> {
+  const existing = await prisma.article.findUnique({ where: { slug: articleSlug }, select: { heroImageId: true } })
+  if (existing?.heroImageId) return undefined
+  const media = await prisma.media.create({ data: buildHeaderBannerMedia(input) })
+  return media.id
+}
 
 const TODAY = new Date()
 
@@ -27,9 +43,16 @@ interface RaceInput {
   start: string
   end: string
   country: string
-  category: 'grand-tour' | 'classic' | 'worldtour' | 'women-worldtour'
+  category: 'grand-tour' | 'classic' | 'worldtour' | 'women-worldtour' | 'other'
   numStages?: number
 }
+
+/** Campeonatos UCI que no forman parte del calendario WorldTour de
+ * equipos (selecciones nacionales) — verificado vía Wikipedia
+ * (2026_UCI_Road_World_Championships), consultado 2026-09-14. */
+const CHAMPIONSHIP_RACES: RaceInput[] = [
+  { slug: 'uci-road-world-championships-2026', name: 'Mundial de Ruta UCI', start: '2026-09-20', end: '2026-09-27', country: 'Canadá', category: 'other' },
+]
 
 const MENS_RACES: RaceInput[] = [
   { slug: 'tour-down-under-2026', name: 'Tour Down Under', start: '2026-01-20', end: '2026-01-25', country: 'Australia', category: 'worldtour', numStages: 6 },
@@ -196,7 +219,7 @@ const ROSTERS: RosterEntry[] = [
 
 export async function importUciRacesAndTeams() {
   let raceCount = 0
-  for (const race of [...MENS_RACES, ...WOMENS_RACES]) {
+  for (const race of [...MENS_RACES, ...WOMENS_RACES, ...CHAMPIONSHIP_RACES]) {
     const { slug, name, start, end, country, category, numStages } = race
     await prisma.race.upsert({
       where: { slug },
@@ -296,6 +319,14 @@ export async function publishVueltaStage19Article() {
     select: { id: true },
   })
   const race = await prisma.race.findUniqueOrThrow({ where: { slug: 'vuelta-a-espana-2026' }, select: { id: true } })
+  const heroImageId = await ensureHeroImage('dunbar-gana-etapa-19-vuelta-espana-mas-lidera', {
+    eyebrow: 'Grand Tours',
+    title: 'Dunbar gana en Peñas Blancas, Mas líder',
+    riders: [
+      { name: 'Enric Mas', team: 'movistar-team' },
+      { name: 'Primož Roglič', team: 'red-bull-bora-hansgrohe' },
+    ],
+  })
 
   const baseFields = {
     title: 'Dunbar gana en Peñas Blancas y Enric Mas defiende el liderato a dos etapas del final',
@@ -305,6 +336,7 @@ export async function publishVueltaStage19Article() {
     content: vueltaStage19Content,
     categoryId: category.id,
     authorId: author.id,
+    heroImageId,
     status: 'published',
     breakingNews: true,
     featured: true,
@@ -391,6 +423,16 @@ export async function publishVueltaFinalArticle() {
   const teams = await prisma.team.findMany({ where: { slug: { in: teamSlugs } }, select: { id: true, slug: true } })
   const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
 
+  const heroImageId = await ensureHeroImage('enric-mas-campeon-vuelta-espana-2026', {
+    eyebrow: 'Grand Tours',
+    title: 'Enric Mas, campeón de la Vuelta 2026',
+    riders: [
+      { name: 'Enric Mas', team: 'movistar-team' },
+      { name: 'Primož Roglič', team: 'red-bull-bora-hansgrohe' },
+      { name: 'Felix Gall', team: 'decathlon-cma-cgm' },
+    ],
+  })
+
   const baseFields = {
     title: 'Enric Mas se corona campeón de la Vuelta a España 2026 en Granada',
     subtitle: 'El español selló el título tras la etapa reina, ganada por Mikel Landa; Johannessen cerró la ronda con el triunfo en el sprint final de Granada',
@@ -399,6 +441,7 @@ export async function publishVueltaFinalArticle() {
     content: vueltaFinalContent,
     categoryId: category.id,
     authorId: author.id,
+    heroImageId,
     status: 'published',
     breakingNews: true,
     featured: true,
@@ -535,6 +578,15 @@ export async function publishCanadianClassicsArticle() {
   const riderBySlug = new Map(riders.map((r) => [r.slug, r]))
   const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
 
+  const heroImageId = await ensureHeroImage('evenepoel-quebec-del-toro-montreal-2026', {
+    eyebrow: 'Última hora',
+    title: 'Del Toro hace historia en Montreal',
+    riders: [
+      { name: 'Isaac del Toro', team: 'uae-team-emirates-xrg' },
+      { name: 'Remco Evenepoel', team: 'red-bull-bora-hansgrohe' },
+    ],
+  })
+
   const baseFields = {
     title: 'Evenepoel gana en Quebec e Isaac del Toro hace historia en Montreal antes del Mundial',
     subtitle: 'El mexicano se convirtió en el vencedor más joven del GP de Montreal, superando el récord de Sagan, a una semana del Mundial de ruta en la misma ciudad',
@@ -543,6 +595,7 @@ export async function publishCanadianClassicsArticle() {
     content: canadianClassicsContent,
     categoryId: category.id,
     authorId: author.id,
+    heroImageId,
     status: 'published',
     breakingNews: true,
     featured: true,
