@@ -37,6 +37,12 @@ export default async function AutomationPage() {
         description="Publica el artículo de Quebec y Montreal 2026 (Evenepoel y Del Toro) y sus resultados. Seguro de correr más de una vez."
         resultKind="publish"
       />
+      <PublishActionButton
+        endpoint="/api/admin/publish-worlds-preview"
+        label="Publicar previa del Mundial"
+        description="Publica la previa del Mundial de ruta 2026 en Montreal (sin Pogačar, favoritos Evenepoel/Del Toro/Van der Poel). Seguro de correr más de una vez."
+        resultKind="publish"
+      />
 
       <AutomationPanel isPaused={isPaused} aiConfigured={aiConfigured} />
 

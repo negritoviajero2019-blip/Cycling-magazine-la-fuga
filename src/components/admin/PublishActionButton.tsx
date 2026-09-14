@@ -10,7 +10,8 @@ function formatResult(kind: 'import-uci' | 'publish', data: Record<string, unkno
     const article = data.article as { slug: string }
     return `${races.raceCount} carreras, ${races.teamCount} equipos, ${riders.riderCount} ciclistas, artículo "${article.slug}" publicado.`
   }
-  return `Artículo "${data.slug}" publicado, ${data.resultCount} resultados cargados.`
+  const resultCountText = typeof data.resultCount === 'number' ? `, ${data.resultCount} resultados cargados` : ''
+  return `Artículo "${data.slug}" publicado${resultCountText}.`
 }
 
 /** Botón genérico de un solo uso para acciones de publicación manual

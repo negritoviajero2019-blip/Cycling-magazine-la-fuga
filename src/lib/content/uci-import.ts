@@ -666,3 +666,97 @@ export async function publishCanadianClassicsArticle() {
 
   return { slug: article.slug, resultCount }
 }
+
+/**
+ * Previa real del Mundial de Ruta UCI 2026 (Montreal, 20-27 sept) —
+ * hechos verificados el 2026-09-14 vía UCI oficial, Eurosport y
+ * Ciclismo Internacional (ver sourceUrls). Generada por el aviso
+ * automático de detectUpcomingRacePreviews() en automation.ts.
+ */
+const worldsPreviewContent = `
+<p>El Mundial de ruta 2026 arranca el domingo 20 de septiembre en Montreal con una noticia que reordena todo el panorama: Tadej Pogačar, doble campeón del mundo vigente, no estará en la salida. El esloveno sufrió una caída liderando la Vuelta a España en la etapa 8, con fractura de clavícula, fractura estable de la cervical C7 y conmoción, y tras operarse en Barcelona su equipo confirmó que no volverá a competir en lo que resta de temporada — se pierde también el Europeo y Il Lombardia.</p>
+
+<p>La prueba en línea élite masculina, el domingo 27 de septiembre, recorrerá 273,7&nbsp;km con 3.803&nbsp;m de desnivel positivo. La carrera sale de Brossard, cruza el puente Samuel de Champlain hacia Montreal y entra en el circuito final de Mont Royal: 13,4&nbsp;km por vuelta, 269&nbsp;m de desnivel cada una, doce vueltas en total. Dentro del circuito, los puertos de Camillien-Houde y Polytechnique —este último con tramos de más del 11% de pendiente— serán decisivos antes de la línea de meta en Avenue du Parc.</p>
+
+<p>Sin Pogačar, la nómina de favoritos la encabeza Remco Evenepoel (Red Bull-BORA-hansgrohe), que llega lanzado tras su victoria en el GP de Quebec. Le acompañan Mathieu van der Poel y Wout van Aert (ambos con el bagaje de clásicas duras a sus espaldas) y el danés Mattias Skjelmose. Pero el nombre que más ruido ha hecho en la previa es el de Isaac del Toro (UAE Team Emirates-XRG): el mexicano ganó hace apenas unos días el GP de Montreal en este mismo escenario, precisamente en el mismo circuito de Mont Royal que decidirá el Mundial.</p>
+
+<p>Con el trono vacante y un circuito que conocen de memoria tras las clásicas canadienses, Montreal promete una carrera abierta como pocas.</p>
+`.trim()
+
+export async function publishWorldsPreviewArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'analisis' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const race = await prisma.race.findUniqueOrThrow({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } })
+
+  const riderSlugs = ['remco-evenepoel', 'mathieu-van-der-poel', 'wout-van-aert', 'mattias-skjelmose', 'isaac-del-toro', 'tadej-pogacar']
+  const teamSlugs = ['red-bull-bora-hansgrohe', 'alpecin-premier-tech', 'visma-lease-a-bike', 'lidl-trek', 'uae-team-emirates-xrg']
+  const [riders, teams] = await Promise.all([
+    prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true, slug: true } }),
+    prisma.team.findMany({ where: { slug: { in: teamSlugs } }, select: { id: true, slug: true } }),
+  ])
+  const riderBySlug = new Map(riders.map((r) => [r.slug, r]))
+  const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
+
+  const heroImageId = await ensureHeroImage('previa-mundial-ruta-2026-montreal', {
+    eyebrow: 'Análisis',
+    title: 'Sin Pogačar: la previa del Mundial',
+    riders: [
+      { name: 'Remco Evenepoel', team: 'red-bull-bora-hansgrohe' },
+      { name: 'Isaac del Toro', team: 'uae-team-emirates-xrg' },
+      { name: 'Mathieu van der Poel', team: 'alpecin-premier-tech' },
+    ],
+  })
+
+  const baseFields = {
+    title: 'Sin Pogačar en la salida: la previa del Mundial de ruta 2026 en Montreal',
+    subtitle: 'El esloveno se pierde la cita tras su grave caída en la Vuelta; Evenepoel y Del Toro, favoritos en el circuito de Mont Royal',
+    excerpt:
+      'Tadej Pogačar no defenderá su título en el Mundial de Montreal (20-27 sept) tras su caída en la Vuelta. Evenepoel, Van der Poel y un lanzado Isaac del Toro encabezan la nómina de favoritos en el circuito de Mont Royal.',
+    content: worldsPreviewContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://www.uci.org/pressrelease/200-days-to-go-a-look-at-the-courses-of-the-2026-uci-road-world/7MNCbBHZySudjNAoDW4R8x',
+      'https://www.eurosport.es/ciclismo/vuelta-a-espana/2026/tadej-pogacar-caida-fracturas-pierde-temporada-adios-mundial-europeo-lombardia-informacion-oficial-hoy_sto23334418/story.shtml',
+      'https://ciclismointernacional.com/tadej-pogacar-se-pierde-el-mundial-y-no-volvera-a-competir-en-2026',
+    ]),
+    sourceNames: toJsonField(['UCI (oficial)', 'Eurosport España', 'Ciclismo Internacional']),
+    seoTitle: 'Mundial de ruta 2026: previa sin Pogačar',
+    seoDescription:
+      'Pogačar se pierde el Mundial de Montreal tras su caída en la Vuelta. Repasamos el recorrido de Mont Royal y los favoritos: Evenepoel, Van der Poel, Van Aert e Isaac del Toro.',
+    readingTime: 3,
+  }
+
+  const riderIds = riderSlugs.map((s) => riderBySlug.get(s)?.id).filter((id): id is number => id !== undefined)
+  const teamIds = teamSlugs.map((s) => teamBySlug.get(s)?.id).filter((id): id is number => id !== undefined)
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'previa-mundial-ruta-2026-montreal' },
+    update: {
+      ...baseFields,
+      riders: { set: riderIds.map((id) => ({ id })) },
+      teams: { set: teamIds.map((id) => ({ id })) },
+      races: { set: [{ id: race.id }] },
+    },
+    create: {
+      slug: 'previa-mundial-ruta-2026-montreal',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: { connect: riderIds.map((id) => ({ id })) },
+      teams: { connect: teamIds.map((id) => ({ id })) },
+      races: { connect: [{ id: race.id }] },
+    },
+  })
+
+  // Cierra el candidato automático que generó esta previa (si existe).
+  await prisma.newsCandidate.updateMany({
+    where: { entities: { contains: 'uci-road-world-championships-2026' }, status: { not: 'published' } },
+    data: { status: 'published', createdArticleId: article.id },
+  })
+
+  return { slug: article.slug }
+}
