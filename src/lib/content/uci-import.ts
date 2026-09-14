@@ -19,7 +19,7 @@ import { buildHeaderBannerMedia } from './header-banner-svg'
  */
 async function ensureHeroImage(
   articleSlug: string,
-  input: { eyebrow: string; title: string; riders?: { name: string; team?: string }[] },
+  input: { title: string; riders?: { name: string; team?: string }[] },
 ): Promise<number | undefined> {
   const existing = await prisma.article.findUnique({ where: { slug: articleSlug }, select: { heroImageId: true } })
   if (existing?.heroImageId) return undefined
@@ -320,7 +320,6 @@ export async function publishVueltaStage19Article() {
   })
   const race = await prisma.race.findUniqueOrThrow({ where: { slug: 'vuelta-a-espana-2026' }, select: { id: true } })
   const heroImageId = await ensureHeroImage('dunbar-gana-etapa-19-vuelta-espana-mas-lidera', {
-    eyebrow: 'Grand Tours',
     title: 'Dunbar gana en Peñas Blancas, Mas líder',
     riders: [
       { name: 'Enric Mas', team: 'movistar-team' },
@@ -424,7 +423,6 @@ export async function publishVueltaFinalArticle() {
   const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
 
   const heroImageId = await ensureHeroImage('enric-mas-campeon-vuelta-espana-2026', {
-    eyebrow: 'Grand Tours',
     title: 'Enric Mas, campeón de la Vuelta 2026',
     riders: [
       { name: 'Enric Mas', team: 'movistar-team' },
@@ -579,7 +577,6 @@ export async function publishCanadianClassicsArticle() {
   const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
 
   const heroImageId = await ensureHeroImage('evenepoel-quebec-del-toro-montreal-2026', {
-    eyebrow: 'Última hora',
     title: 'Del Toro hace historia en Montreal',
     riders: [
       { name: 'Isaac del Toro', team: 'uae-team-emirates-xrg' },
@@ -698,7 +695,6 @@ export async function publishWorldsPreviewArticle() {
   const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
 
   const heroImageId = await ensureHeroImage('previa-mundial-ruta-2026-montreal', {
-    eyebrow: 'Análisis',
     title: 'Sin Pogačar: la previa del Mundial',
     riders: [
       { name: 'Remco Evenepoel', team: 'red-bull-bora-hansgrohe' },

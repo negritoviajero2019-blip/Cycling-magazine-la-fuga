@@ -3,9 +3,10 @@
  * propio (nombre del evento, ciclistas destacados, colores de equipo) —
  * nunca una foto real. Evita por completo el problema de derechos de
  * autor de las fotos de prensa/agencia, que no podemos usar sin
- * licencia. Se codifica como data URI (SVG) para no depender de
- * escribir archivos en disco, que no sobreviven a un nuevo despliegue
- * en el hosting actual (ver docs/DEPLOYMENT.md).
+ * licencia. Media.url guarda solo una URL corta a /api/banner-svg
+ * (que genera el SVG al vuelo a partir de la query string) — nunca el
+ * SVG completo: ese campo es VARCHAR(191) en MySQL y un data URI largo
+ * se trunca en producción (bug real encontrado y corregido).
  */
 const WIDTH = 1600
 const HEIGHT = 900
@@ -34,7 +35,6 @@ interface RiderChip {
 }
 
 interface HeaderBannerInput {
-  eyebrow: string // categoría o "PREVIA" / "ÚLTIMA HORA"
   title: string // usado solo como aria-label, no se dibuja (el título real lo pone la página encima de la imagen)
   riders?: RiderChip[]
 }
@@ -85,17 +85,19 @@ export function buildHeaderBannerSvg({ title, riders = [] }: HeaderBannerInput):
 </svg>`.trim()
 }
 
-export function svgToDataUri(svg: string): string {
-  const base64 = Buffer.from(svg, 'utf-8').toString('base64')
-  return `data:image/svg+xml;base64,${base64}`
+function buildBannerUrl(riders: RiderChip[]): string {
+  const ridersParam = riders
+    .slice(0, 3)
+    .map((r) => `${encodeURIComponent(r.name)}${r.team ? `|${encodeURIComponent(r.team)}` : ''}`)
+    .join(',')
+  return `/api/banner-svg?riders=${ridersParam}`
 }
 
 /** Devuelve los datos listos para crear/actualizar un registro Media a
  * partir de un banner generado — nunca una foto de agencia/prensa. */
 export function buildHeaderBannerMedia(input: HeaderBannerInput) {
-  const svg = buildHeaderBannerSvg(input)
   return {
-    url: svgToDataUri(svg),
+    url: buildBannerUrl(input.riders ?? []),
     source: 'editorial-card' as const,
     author: 'La Fuga',
     license: 'own',
