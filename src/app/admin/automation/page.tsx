@@ -1,6 +1,7 @@
 import { AdminShell } from '@/components/admin/AdminShell'
 import { AutomationPanel } from '@/components/admin/AutomationPanel'
 import { ImportUciButton } from '@/components/admin/ImportUciButton'
+import { PublishVueltaFinalButton } from '@/components/admin/PublishVueltaFinalButton'
 import { prisma } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
@@ -20,6 +21,7 @@ export default async function AutomationPage() {
       <h1 className="mb-6 font-heading text-2xl font-bold">Automatización</h1>
 
       <ImportUciButton />
+      <PublishVueltaFinalButton />
 
       <AutomationPanel isPaused={isPaused} aiConfigured={aiConfigured} />
 

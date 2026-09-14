@@ -340,3 +340,158 @@ export async function publishVueltaStage19Article() {
 
   return { slug: article.slug }
 }
+
+/**
+ * Cierre real de la Vuelta a España 2026 — hechos verificados el
+ * 2026-09-14 (un día después del final de carrera) vía la web oficial
+ * de La Vuelta y prensa especializada, ver sourceUrls. Publica el
+ * artículo del desenlace y carga los resultados estructurados (Result)
+ * de la general final, las dos últimas etapas y las clasificaciones
+ * secundarias.
+ */
+const vueltaFinalGC: { rider: string; team: string; time: string }[] = [
+  { rider: 'enric-mas', team: 'movistar-team', time: "73h 52' 55\"" },
+  { rider: 'primoz-roglic', team: 'red-bull-bora-hansgrohe', time: '+2:15' },
+  { rider: 'felix-gall', team: 'decathlon-cma-cgm', time: '+2:44' },
+  { rider: 'richard-carapaz', team: 'ef-education-easypost', time: '+6:54' },
+  { rider: 'sepp-kuss', team: 'visma-lease-a-bike', time: '+8:45' },
+  { rider: 'oscar-onley', team: 'netcompany-ineos', time: '+9:28' },
+  { rider: 'jakob-omrzel', team: 'team-bahrain-victorious', time: '+10:38' },
+  { rider: 'clement-berthet', team: 'groupama-fdj-united', time: '+11:41' },
+  { rider: 'cristian-rodriguez', team: 'xds-astana-team', time: '+11:59' },
+  { rider: 'harold-tejada', team: 'xds-astana-team', time: '+12:51' },
+]
+
+const vueltaFinalContent = `
+<p>Enric Mas (Movistar Team) se proclamó campeón de la Vuelta a España 2026 tras completar la vigésimo primera y última etapa en Granada, sellando así el primer triunfo español en la ronda desde hace más de una década. Mas defendió el maillot rojo desde la contrarreloj de mitad de carrera y resistió los ataques de sus rivales directos en los Pirineos y Sierra Nevada hasta certificar matemáticamente el título en la etapa 20.</p>
+
+<p>La clasificación general final quedó con Mas por delante de Primož Roglič (Red Bull-BORA-hansgrohe), a 2 minutos y 15 segundos, y Felix Gall (Decathlon CMA CGM), tercero a 2:44. Richard Carapaz (EF Education-EasyPost) y Sepp Kuss (Visma-Lease a Bike) completaron el top 5.</p>
+
+<p>La penúltima etapa, una jornada reina de 186,8&nbsp;km entre La Calahorra y el Collado del Alguacil, tuvo un protagonista inesperado: Mikel Landa (Soudal-Quick-Step) se impuso en solitario a sus 36 años, su primera victoria de etapa en la Vuelta en cinco años, superando por 47 segundos al noruego Tobias Halland Johannessen (Uno-X Mobility). Fue precisamente en esa etapa donde Enric Mas certificó el título al controlar a sus rivales en el último puerto.</p>
+
+<p>La etapa final, disputada en un circuito urbano de 112&nbsp;km por el centro de Granada con cuatro pasadas por una rampa adoquinada, terminó en un sprint reducido que ganó el propio Johannessen, por delante de Alessandro Romele y Ramses Debruyne — un cierre de fiesta antes de la ceremonia de coronación de Mas.</p>
+
+<p>En las clasificaciones secundarias, Wout van Aert (Visma-Lease a Bike) se llevó el maillot verde de la regularidad, Santiago Buitrago (Team Bahrain Victorious) el de la montaña, y Oscar Onley (Netcompany Ineos) el de mejor joven.</p>
+`.trim()
+
+export async function publishVueltaFinalArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'grand-tours' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const race = await prisma.race.findUniqueOrThrow({ where: { slug: 'vuelta-a-espana-2026' }, select: { id: true } })
+
+  const gcRiderSlugs = vueltaFinalGC.map((r) => r.rider)
+  const extraRiderSlugs = ['mikel-landa', 'tobias-halland-johannessen', 'wout-van-aert', 'santiago-buitrago', 'alessandro-romele', 'ramses-debruyne']
+  const riders = await prisma.rider.findMany({
+    where: { slug: { in: [...gcRiderSlugs, ...extraRiderSlugs] } },
+    select: { id: true, slug: true },
+  })
+  const riderBySlug = new Map(riders.map((r) => [r.slug, r]))
+
+  const teamSlugs = [...new Set(vueltaFinalGC.map((r) => r.team))]
+  const teams = await prisma.team.findMany({ where: { slug: { in: teamSlugs } }, select: { id: true, slug: true } })
+  const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
+
+  const baseFields = {
+    title: 'Enric Mas se corona campeón de la Vuelta a España 2026 en Granada',
+    subtitle: 'El español selló el título tras la etapa reina, ganada por Mikel Landa; Johannessen cerró la ronda con el triunfo en el sprint final de Granada',
+    excerpt:
+      'Enric Mas (Movistar) gana la Vuelta a España 2026 con 2:15 sobre Primož Roglič. Mikel Landa venció en la etapa reina y Tobias Johannessen cerró la ronda con la victoria en Granada.',
+    content: vueltaFinalContent,
+    categoryId: category.id,
+    authorId: author.id,
+    status: 'published',
+    breakingNews: true,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://www.lavuelta.es/en/rankings/stage-21',
+      'https://ciclismointernacional.com/clasificaciones-finales-de-la-vuelta-a-espana-2026/',
+      'https://en.brujulabike.com/tobias-johannessen-wins-a-spectacular-final-stage-of-vuelta-by-the-alhambra-and-enric-mas-is-crowned-in-granada/',
+      'https://www.ciclismocolombiano.com/vuelta-a-espana/mikel-landa-gana-etapa-20-vuelta-espana-2026/',
+    ]),
+    sourceNames: toJsonField(['La Vuelta (oficial)', 'Ciclismo Internacional', 'Brújula Bike', 'Ciclismo Colombiano']),
+    seoTitle: 'Enric Mas gana la Vuelta a España 2026',
+    seoDescription:
+      'Enric Mas se corona campeón de la Vuelta a España 2026 en Granada, por delante de Roglič y Gall. Repaso a las dos últimas etapas y las clasificaciones secundarias.',
+    readingTime: 3,
+  }
+
+  const articleRiderIds = [...gcRiderSlugs, ...extraRiderSlugs]
+    .map((slug) => riderBySlug.get(slug)?.id)
+    .filter((id): id is number => id !== undefined)
+  const articleTeamIds = teamSlugs.map((slug) => teamBySlug.get(slug)?.id).filter((id): id is number => id !== undefined)
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'enric-mas-campeon-vuelta-espana-2026' },
+    update: {
+      ...baseFields,
+      riders: { set: articleRiderIds.map((id) => ({ id })) },
+      teams: { set: articleTeamIds.map((id) => ({ id })) },
+      races: { set: [{ id: race.id }] },
+    },
+    create: {
+      slug: 'enric-mas-campeon-vuelta-espana-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: { connect: articleRiderIds.map((id) => ({ id })) },
+      teams: { connect: articleTeamIds.map((id) => ({ id })) },
+      races: { connect: [{ id: race.id }] },
+    },
+  })
+
+  // Resultados estructurados — general final (gc), ganadores de etapa
+  // (stage) y clasificaciones secundarias (points/kom/youth).
+  let resultCount = 0
+  const finalDate = new Date('2026-09-13')
+
+  for (const [i, row] of vueltaFinalGC.entries()) {
+    const rider = riderBySlug.get(row.rider)
+    const team = teamBySlug.get(row.team)
+    if (!rider) continue
+    await prisma.result.create({
+      data: {
+        raceId: race.id,
+        riderId: rider.id,
+        teamId: team?.id,
+        position: i + 1,
+        time: row.time,
+        date: finalDate,
+        resultType: 'gc',
+      },
+    })
+    resultCount++
+  }
+
+  const stageResults: { rider: string; position: number; date: string; time?: string }[] = [
+    { rider: 'mikel-landa', position: 1, date: '2026-09-12', time: "4h 58' 01\"" },
+    { rider: 'tobias-halland-johannessen', position: 2, date: '2026-09-12', time: '+0:47' },
+    { rider: 'tobias-halland-johannessen', position: 1, date: '2026-09-13' },
+    { rider: 'alessandro-romele', position: 2, date: '2026-09-13' },
+    { rider: 'ramses-debruyne', position: 3, date: '2026-09-13' },
+  ]
+  for (const row of stageResults) {
+    const rider = riderBySlug.get(row.rider)
+    if (!rider) continue
+    await prisma.result.create({
+      data: { raceId: race.id, riderId: rider.id, position: row.position, time: row.time, date: new Date(row.date), resultType: 'stage' },
+    })
+    resultCount++
+  }
+
+  const jerseyResults: { rider: string; resultType: string }[] = [
+    { rider: 'wout-van-aert', resultType: 'points' },
+    { rider: 'santiago-buitrago', resultType: 'kom' },
+    { rider: 'oscar-onley', resultType: 'youth' },
+  ]
+  for (const row of jerseyResults) {
+    const rider = riderBySlug.get(row.rider)
+    if (!rider) continue
+    await prisma.result.create({
+      data: { raceId: race.id, riderId: rider.id, position: 1, date: finalDate, resultType: row.resultType },
+    })
+    resultCount++
+  }
+
+  await prisma.race.update({ where: { id: race.id }, data: { status: 'finished' } })
+
+  return { slug: article.slug, resultCount }
+}
