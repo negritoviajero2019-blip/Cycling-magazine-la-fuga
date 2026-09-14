@@ -14,7 +14,8 @@ producción (no solo escrito localmente).
 - [x] Vuelta a España — cierre final (Enric Mas campeón)
 - [x] **Grand Prix Cycliste de Québec** (11 sept) — gana Evenepoel
 - [x] **Grand Prix Cycliste de Montréal** (13 sept) — Isaac del Toro hace historia
-- [ ] **UCI Road World Championships 2026** — confirmado: 20-27 sept, Montreal (99ª edición, primera vez desde 1974). Pendiente hasta que se corra.
+- [x] **UCI Road World Championships 2026** — previa publicada (Pogačar fuera, favoritos Evenepoel/Del Toro). 20-27 sept, Montreal.
+- [ ] **UCI Road World Championships 2026** — resultado real, pendiente hasta que se corra (27 sept)
 - [ ] Il Lombardia (10 oct) — pendiente hasta que se corra
 - [ ] Tour of Guangxi (13–18 oct) — pendiente hasta que se corra, cierra la temporada WorldTour masculina
 - [ ] Tour of Chongming Island (13–15 oct) — cierra la temporada Women's WorldTour
@@ -28,6 +29,8 @@ producción (no solo escrito localmente).
 
 - [x] Botón de admin para cargar datos UCI sin depender de SSH
 - [x] Dominio real `lafugamagazine.com` funcionando en producción (tras recuperar el Web App roto)
+- [x] Imágenes de cabecera propias (gráfico editorial, sin fotos de agencia) para cada artículo
+- [x] Aviso automático de eventos próximos (`detectUpcomingRacePreviews`, corre con "Run News Scan") — detecta carreras del calendario a 7 días y crea un candidato en el panel
 - [ ] Decidir si seguimos publicando "a mano" (pedirle a Claude cada noticia) o retomamos la automatización completa (ANTHROPIC_API_KEY + cron) — ver conversación previa, se pospuso a propósito
 
 ## Cómo lo usamos
