@@ -27,7 +27,10 @@ async function ensureHeroImage(
     where: { slug: articleSlug },
     select: { heroImageId: true, heroImage: { select: { url: true } } },
   })
-  if (existing?.heroImageId && existing.heroImage?.url.startsWith('/api/banner-svg')) return undefined
+  // Solo regenera si no hay imagen o si es el formato viejo/roto (data
+  // URI truncado, ver a5f65e4). Una imagen real curada a mano (p.ej.
+  // subida a public/images/headers/) nunca se sobrescribe sola.
+  if (existing?.heroImageId && !existing.heroImage?.url.startsWith('data:')) return undefined
   const media = await prisma.media.create({ data: buildHeaderBannerMedia(input) })
   return media.id
 }
