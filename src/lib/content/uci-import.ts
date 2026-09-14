@@ -35,6 +35,36 @@ async function ensureHeroImage(
   return media.id
 }
 
+/**
+ * Igual que ensureHeroImage, pero para una imagen real curada a mano
+ * (generada con IA por fuera, sin ciclistas reales identificables ni
+ * logos, ver docs/EDITORIAL-CHECKLIST.md) en vez del banner de chips
+ * automático. El archivo debe estar ya committeado en public/images/.
+ */
+async function ensureCustomHeroImage(
+  articleSlug: string,
+  media: { url: string; altText: string; credit: string; width: number; height: number },
+): Promise<number | undefined> {
+  const existing = await prisma.article.findUnique({
+    where: { slug: articleSlug },
+    select: { heroImageId: true, heroImage: { select: { url: true } } },
+  })
+  if (existing?.heroImageId && existing.heroImage?.url === media.url) return undefined
+  const created = await prisma.media.create({
+    data: {
+      url: media.url,
+      source: 'own',
+      author: 'La Fuga (generada con IA, sin ciclistas reales identificables)',
+      license: 'own',
+      credit: media.credit,
+      altText: media.altText,
+      width: media.width,
+      height: media.height,
+    },
+  })
+  return created.id
+}
+
 const TODAY = new Date()
 
 function statusFor(start: string, end: string): 'upcoming' | 'ongoing' | 'finished' {
@@ -702,13 +732,12 @@ export async function publishWorldsPreviewArticle() {
   const riderBySlug = new Map(riders.map((r) => [r.slug, r]))
   const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
 
-  const heroImageId = await ensureHeroImage('previa-mundial-ruta-2026-montreal', {
-    title: 'Sin Pogačar: la previa del Mundial',
-    riders: [
-      { name: 'Remco Evenepoel', team: 'red-bull-bora-hansgrohe' },
-      { name: 'Isaac del Toro', team: 'uae-team-emirates-xrg' },
-      { name: 'Mathieu van der Poel', team: 'alpecin-premier-tech' },
-    ],
+  const heroImageId = await ensureCustomHeroImage('previa-mundial-ruta-2026-montreal', {
+    url: '/images/headers/worlds-preview-2026.jpg',
+    altText: 'Ciclistas genéricos con maillot arcoíris frente al perfil de Montreal al atardecer',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
   })
 
   const baseFields = {
