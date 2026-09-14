@@ -495,3 +495,121 @@ export async function publishVueltaFinalArticle() {
 
   return { slug: article.slug, resultCount }
 }
+
+/**
+ * Grand Prix Cycliste de Québec y de Montréal 2026 — hechos verificados
+ * el 2026-09-14 vía prensa especializada (ciclismointernacional.com,
+ * velo.outsideonline.com, cyclinguptodate.com), ver sourceUrls. Ambas
+ * carreras ya estaban en el calendario UCI cargado. El Mundial de
+ * ruta 2026 se corre en Montreal del 20 al 27 de septiembre — dato
+ * verificado vía Wikipedia, no incluido aquí como artículo todavía
+ * (pendiente en el checklist hasta que ocurra).
+ */
+const canadianClassicsContent = `
+<p>La última semana antes del Mundial de ruta —que se disputa del 20 al 27 de septiembre en la propia Montreal— dejó dos vencedores de peso en las clásicas canadienses, la última prueba grande antes de la cita en el circuito del Mont Royal.</p>
+
+<p>En Quebec, Remco Evenepoel (Red Bull-BORA-hansgrohe) lanzó el ataque decisivo a 27&nbsp;km de meta, en la Côte de la Montagne, y llegó a resolver el resto de la carrera en un sprint a dos contra Giulio Ciccone (Lidl-Trek), a quien superó con autoridad. Anthon Charmig (Uno-X Mobility) completó el podio.</p>
+
+<p>Dos días después, en Montreal, Isaac del Toro (UAE Team Emirates-XRG) protagonizó una de las victorias más comentadas de la temporada: tras ir a rueda del francés Paul Seixas (Decathlon CMA CGM) buena parte del circuito de 214,4&nbsp;km, el mexicano lanzó un ataque demoledor a 150 metros de meta para superarlo en la subida final. Brandon McNulty (UAE Team Emirates-XRG) fue tercero, por delante de Quinn Simmons (Lidl-Trek).</p>
+
+<p>Con 22 años y 290 días, Del Toro se convirtió en el vencedor más joven en la historia del GP de Montreal —prueba disputada desde 2010—, superando el récord que tenía Peter Sagan desde 2013, y en el primer mexicano en ganarla. Fue su victoria profesional número 33, la duodécima de la temporada 2026.</p>
+
+<p>Ambos resultados sirven como termómetro de forma de cara al Mundial: Evenepoel y Del Toro llegan entre los nombres a seguir en un circuito, el del Mont Royal, que conocen de memoria tras estas dos citas.</p>
+`.trim()
+
+export async function publishCanadianClassicsArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const [quebec, montreal] = await Promise.all([
+    prisma.race.findUniqueOrThrow({ where: { slug: 'gp-cycliste-quebec-2026' }, select: { id: true } }),
+    prisma.race.findUniqueOrThrow({ where: { slug: 'gp-cycliste-montreal-2026' }, select: { id: true } }),
+  ])
+
+  const riderSlugs = ['remco-evenepoel', 'giulio-ciccone', 'anthon-charmig', 'isaac-del-toro', 'paul-seixas', 'brandon-mcnulty', 'quinn-simmons']
+  const teamSlugs = ['red-bull-bora-hansgrohe', 'lidl-trek', 'uno-x-mobility', 'uae-team-emirates-xrg', 'decathlon-cma-cgm']
+  const [riders, teams] = await Promise.all([
+    prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true, slug: true } }),
+    prisma.team.findMany({ where: { slug: { in: teamSlugs } }, select: { id: true, slug: true } }),
+  ])
+  const riderBySlug = new Map(riders.map((r) => [r.slug, r]))
+  const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
+
+  const baseFields = {
+    title: 'Evenepoel gana en Quebec e Isaac del Toro hace historia en Montreal antes del Mundial',
+    subtitle: 'El mexicano se convirtió en el vencedor más joven del GP de Montreal, superando el récord de Sagan, a una semana del Mundial de ruta en la misma ciudad',
+    excerpt:
+      'Remco Evenepoel se impuso en el GP de Quebec y Isaac del Toro ganó el GP de Montreal con un ataque a falta de 150 metros, el mejor resultado de su carrera antes del Mundial de ruta en Montreal (20-27 de septiembre).',
+    content: canadianClassicsContent,
+    categoryId: category.id,
+    authorId: author.id,
+    status: 'published',
+    breakingNews: true,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://ciclismointernacional.com/gran-premio-de-quebec-2026-cronica-resultados/',
+      'https://velo.outsideonline.com/road/road-racing/grand-prix-cycliste-de-montreal-2026-isaac-del-toro-wins/',
+      'https://cyclinguptodate.com/cycling/results-gp-de-montreal-2026-isaac-del-toro-beats-paul-seixas-as-duo-dominate-with-final-lap-surge-as-focus-turns-to-world-championships',
+    ]),
+    sourceNames: toJsonField(['Ciclismo Internacional', 'Velo (Outside)', 'Cycling Up To Date']),
+    seoTitle: 'Del Toro gana el GP de Montreal, Evenepoel el de Quebec',
+    seoDescription:
+      'Isaac del Toro hace historia en el GP de Montreal y Remco Evenepoel gana en Quebec, a una semana del Mundial de ruta 2026 en la misma ciudad canadiense.',
+    readingTime: 2,
+  }
+
+  const riderIds = riderSlugs.map((s) => riderBySlug.get(s)?.id).filter((id): id is number => id !== undefined)
+  const teamIds = teamSlugs.map((s) => teamBySlug.get(s)?.id).filter((id): id is number => id !== undefined)
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'evenepoel-quebec-del-toro-montreal-2026' },
+    update: {
+      ...baseFields,
+      riders: { set: riderIds.map((id) => ({ id })) },
+      teams: { set: teamIds.map((id) => ({ id })) },
+      races: { set: [{ id: quebec.id }, { id: montreal.id }] },
+    },
+    create: {
+      slug: 'evenepoel-quebec-del-toro-montreal-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: { connect: riderIds.map((id) => ({ id })) },
+      teams: { connect: teamIds.map((id) => ({ id })) },
+      races: { connect: [{ id: quebec.id }, { id: montreal.id }] },
+    },
+  })
+
+  let resultCount = 0
+  const quebecPodium: { rider: string; position: number }[] = [
+    { rider: 'remco-evenepoel', position: 1 },
+    { rider: 'giulio-ciccone', position: 2 },
+    { rider: 'anthon-charmig', position: 3 },
+  ]
+  for (const row of quebecPodium) {
+    const rider = riderBySlug.get(row.rider)
+    if (!rider) continue
+    await prisma.result.create({
+      data: { raceId: quebec.id, riderId: rider.id, position: row.position, date: new Date('2026-09-11'), resultType: 'stage' },
+    })
+    resultCount++
+  }
+
+  const montrealPodium: { rider: string; position: number; time?: string }[] = [
+    { rider: 'isaac-del-toro', position: 1, time: "5h 13' 16\"" },
+    { rider: 'paul-seixas', position: 2 },
+    { rider: 'brandon-mcnulty', position: 3 },
+    { rider: 'quinn-simmons', position: 4 },
+  ]
+  for (const row of montrealPodium) {
+    const rider = riderBySlug.get(row.rider)
+    if (!rider) continue
+    await prisma.result.create({
+      data: { raceId: montreal.id, riderId: rider.id, position: row.position, time: row.time, date: new Date('2026-09-13'), resultType: 'stage' },
+    })
+    resultCount++
+  }
+
+  await prisma.race.updateMany({ where: { id: { in: [quebec.id, montreal.id] } }, data: { status: 'finished' } })
+
+  return { slug: article.slug, resultCount }
+}

@@ -1,7 +1,6 @@
 import { AdminShell } from '@/components/admin/AdminShell'
 import { AutomationPanel } from '@/components/admin/AutomationPanel'
-import { ImportUciButton } from '@/components/admin/ImportUciButton'
-import { PublishVueltaFinalButton } from '@/components/admin/PublishVueltaFinalButton'
+import { PublishActionButton } from '@/components/admin/PublishActionButton'
 import { prisma } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
@@ -20,8 +19,24 @@ export default async function AutomationPage() {
     <AdminShell>
       <h1 className="mb-6 font-heading text-2xl font-bold">Automatización</h1>
 
-      <ImportUciButton />
-      <PublishVueltaFinalButton />
+      <PublishActionButton
+        endpoint="/api/admin/import-uci"
+        label="Cargar datos UCI reales"
+        description="Carga el calendario, equipos y ciclistas reales de la UCI 2026, y publica el artículo de la etapa 19 de la Vuelta. Seguro de correr más de una vez."
+        resultKind="import-uci"
+      />
+      <PublishActionButton
+        endpoint="/api/admin/publish-vuelta-final"
+        label="Publicar cierre de la Vuelta"
+        description="Publica el artículo del desenlace de la Vuelta 2026 (Enric Mas campeón) y carga la general final, últimas etapas y clasificaciones secundarias. Seguro de correr más de una vez."
+        resultKind="publish"
+      />
+      <PublishActionButton
+        endpoint="/api/admin/publish-canadian-classics"
+        label="Publicar clásicas canadienses"
+        description="Publica el artículo de Quebec y Montreal 2026 (Evenepoel y Del Toro) y sus resultados. Seguro de correr más de una vez."
+        resultKind="publish"
+      />
 
       <AutomationPanel isPaused={isPaused} aiConfigured={aiConfigured} />
 
