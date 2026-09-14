@@ -15,7 +15,7 @@ const summarySelect = {
   breakingNews: true,
   viewCount: true,
   category: { select: { slug: true, name: true } },
-  heroImage: { select: { url: true, altText: true, credit: true } },
+  heroImage: { select: { url: true, altText: true, credit: true, source: true } },
 } as const
 
 /**

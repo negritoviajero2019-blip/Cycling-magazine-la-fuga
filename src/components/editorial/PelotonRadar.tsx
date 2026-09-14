@@ -57,20 +57,24 @@ export function PelotonRadar({ articles }: { articles: ArticleSummary[] }) {
               ) : (
                 <EditorialFallbackCard label={main.category.name} variant="minimal" className="absolute inset-0 h-full w-full" />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-black/[0.08]" />
-              <div className="relative z-[2] flex min-h-[500px] flex-col justify-end p-[clamp(28px,5vw,55px)] text-white min-[850px]:min-h-[580px]">
-                {main.breakingNews ? (
-                  <Badge variant="breaking">Breaking</Badge>
-                ) : (
-                  <span className="w-fit rounded-full bg-lime px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-primary">
-                    {main.category.name}
-                  </span>
-                )}
-                <h3 className="mb-3 mt-4 max-w-[700px] font-heading text-[clamp(2rem,4vw,4rem)] font-extrabold leading-[0.97] tracking-[-0.05em]">
-                  {main.title}
-                </h3>
-                <p className="max-w-[600px] text-white/70">{main.excerpt}</p>
-              </div>
+              {main.heroImage?.source === 'cover-composited' ? null : (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-black/[0.08]" />
+                  <div className="relative z-[2] flex min-h-[500px] flex-col justify-end p-[clamp(28px,5vw,55px)] text-white min-[850px]:min-h-[580px]">
+                    {main.breakingNews ? (
+                      <Badge variant="breaking">Breaking</Badge>
+                    ) : (
+                      <span className="w-fit rounded-full bg-lime px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-primary">
+                        {main.category.name}
+                      </span>
+                    )}
+                    <h3 className="mb-3 mt-4 max-w-[700px] font-heading text-[clamp(2rem,4vw,4rem)] font-extrabold leading-[0.97] tracking-[-0.05em]">
+                      {main.title}
+                    </h3>
+                    <p className="max-w-[600px] text-white/70">{main.excerpt}</p>
+                  </div>
+                </>
+              )}
             </Link>
           )}
 

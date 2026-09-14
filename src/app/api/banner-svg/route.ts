@@ -9,6 +9,7 @@ import { buildHeaderBannerSvg } from '@/lib/content/header-banner-svg'
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const ridersParam = searchParams.get('riders') || ''
+  const label = searchParams.get('label') || undefined
   const riders = ridersParam
     .split(',')
     .filter(Boolean)
@@ -17,7 +18,7 @@ export async function GET(request: Request) {
       return { name: decodeURIComponent(name), team: team ? decodeURIComponent(team) : undefined }
     })
 
-  const svg = buildHeaderBannerSvg({ title: '', riders })
+  const svg = buildHeaderBannerSvg({ title: '', label, riders })
 
   return new Response(svg, {
     headers: {

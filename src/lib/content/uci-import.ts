@@ -21,7 +21,7 @@ import { buildHeaderBannerMedia } from './header-banner-svg'
  */
 async function ensureHeroImage(
   articleSlug: string,
-  input: { title: string; riders?: { name: string; team?: string }[] },
+  input: { title: string; label?: string; riders?: { name: string; team?: string }[] },
 ): Promise<number | undefined> {
   const existing = await prisma.article.findUnique({
     where: { slug: articleSlug },
@@ -40,10 +40,22 @@ async function ensureHeroImage(
  * (generada con IA por fuera, sin ciclistas reales identificables ni
  * logos, ver docs/EDITORIAL-CHECKLIST.md) en vez del banner de chips
  * automático. El archivo debe estar ya committeado en public/images/.
+ *
+ * `source: 'cover-composited'` marca que el titular y la bajada ya
+ * vienen "horneados" en el archivo (ver /api/og-cover) — Hero.tsx y
+ * PelotonRadar.tsx usan ese valor para no volver a sobreponer su
+ * propio texto encima y duplicarlo.
  */
 async function ensureCustomHeroImage(
   articleSlug: string,
-  media: { url: string; altText: string; credit: string; width: number; height: number },
+  media: {
+    url: string
+    altText: string
+    credit: string
+    width: number
+    height: number
+    source?: 'own' | 'cover-composited'
+  },
 ): Promise<number | undefined> {
   const existing = await prisma.article.findUnique({
     where: { slug: articleSlug },
@@ -53,7 +65,7 @@ async function ensureCustomHeroImage(
   const created = await prisma.media.create({
     data: {
       url: media.url,
-      source: 'own',
+      source: media.source ?? 'own',
       author: 'La Fuga (generada con IA, sin ciclistas reales identificables)',
       license: 'own',
       credit: media.credit,
@@ -359,6 +371,7 @@ export async function publishVueltaStage19Article() {
   const race = await prisma.race.findUniqueOrThrow({ where: { slug: 'vuelta-a-espana-2026' }, select: { id: true } })
   const heroImageId = await ensureHeroImage('dunbar-gana-etapa-19-vuelta-espana-mas-lidera', {
     title: 'Dunbar gana en Peñas Blancas, Mas líder',
+    label: 'General',
     riders: [
       { name: 'Enric Mas', team: 'movistar-team' },
       { name: 'Primož Roglič', team: 'red-bull-bora-hansgrohe' },
@@ -462,6 +475,7 @@ export async function publishVueltaFinalArticle() {
 
   const heroImageId = await ensureHeroImage('enric-mas-campeon-vuelta-espana-2026', {
     title: 'Enric Mas, campeón de la Vuelta 2026',
+    label: 'General final',
     riders: [
       { name: 'Enric Mas', team: 'movistar-team' },
       { name: 'Primož Roglič', team: 'red-bull-bora-hansgrohe' },
@@ -616,6 +630,7 @@ export async function publishCanadianClassicsArticle() {
 
   const heroImageId = await ensureHeroImage('evenepoel-quebec-del-toro-montreal-2026', {
     title: 'Del Toro hace historia en Montreal',
+    label: 'Ganadores',
     riders: [
       { name: 'Isaac del Toro', team: 'uae-team-emirates-xrg' },
       { name: 'Remco Evenepoel', team: 'red-bull-bora-hansgrohe' },
@@ -733,11 +748,12 @@ export async function publishWorldsPreviewArticle() {
   const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
 
   const heroImageId = await ensureCustomHeroImage('previa-mundial-ruta-2026-montreal', {
-    url: '/images/headers/worlds-preview-2026.jpg',
-    altText: 'Ciclistas genéricos con maillot arcoíris frente al perfil de Montreal al atardecer',
+    url: '/images/headers/worlds-preview-2026-cover.jpg',
+    altText: 'Sin Pogačar en la salida: la previa del Mundial de ruta 2026 en Montreal',
     credit: 'Ilustración: La Fuga',
     width: 1600,
     height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {

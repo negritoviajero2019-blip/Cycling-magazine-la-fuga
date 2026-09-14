@@ -7,5 +7,5 @@ export interface ArticleSummary {
   breakingNews: boolean
   viewCount: number
   category: { slug: string; name: string }
-  heroImage: { url: string; altText: string | null; credit: string | null } | null
+  heroImage: { url: string; altText: string | null; credit: string | null; source: string } | null
 }
