@@ -14,15 +14,20 @@ import { buildHeaderBannerMedia } from './header-banner-svg'
 
 /**
  * Crea la imagen de cabecera (gráfico editorial propio, nunca foto de
- * agencia) para un artículo nuevo. Si el artículo ya existe y ya tiene
- * una, no crea una fila Media duplicada — solo se genera una vez.
+ * agencia) para un artículo. Si ya tiene una y sigue en el formato
+ * actual (/api/banner-svg), no crea una fila Media duplicada. Si
+ * tiene una en un formato viejo/roto (p.ej. el data URI que se
+ * truncaba en MySQL, ver commit a5f65e4), la regenera sola.
  */
 async function ensureHeroImage(
   articleSlug: string,
   input: { title: string; riders?: { name: string; team?: string }[] },
 ): Promise<number | undefined> {
-  const existing = await prisma.article.findUnique({ where: { slug: articleSlug }, select: { heroImageId: true } })
-  if (existing?.heroImageId) return undefined
+  const existing = await prisma.article.findUnique({
+    where: { slug: articleSlug },
+    select: { heroImageId: true, heroImage: { select: { url: true } } },
+  })
+  if (existing?.heroImageId && existing.heroImage?.url.startsWith('/api/banner-svg')) return undefined
   const media = await prisma.media.create({ data: buildHeaderBannerMedia(input) })
   return media.id
 }
