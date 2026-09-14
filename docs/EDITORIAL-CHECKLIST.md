@@ -12,16 +12,17 @@ producción (no solo escrito localmente).
 - [x] 764 ciclistas reales (rosters completos) cargados
 - [x] Vuelta a España — etapa 19 (Dunbar gana, Mas líder)
 - [x] Vuelta a España — cierre final (Enric Mas campeón)
-- [ ] **Grand Prix Cycliste de Québec** (11 sept) — resultado y artículo
-- [ ] **Grand Prix Cycliste de Montréal** (13 sept) — resultado y artículo
-- [ ] **UCI Road World Championships 2026** — investigar fecha/sede real antes de escribir nada
+- [x] **Grand Prix Cycliste de Québec** (11 sept) — gana Evenepoel
+- [x] **Grand Prix Cycliste de Montréal** (13 sept) — Isaac del Toro hace historia
+- [ ] **UCI Road World Championships 2026** — confirmado: 20-27 sept, Montreal (99ª edición, primera vez desde 1974). Pendiente hasta que se corra.
 - [ ] Il Lombardia (10 oct) — pendiente hasta que se corra
 - [ ] Tour of Guangxi (13–18 oct) — pendiente hasta que se corra, cierra la temporada WorldTour masculina
 - [ ] Tour of Chongming Island (13–15 oct) — cierra la temporada Women's WorldTour
 
 ## Ciclistas / historias en seguimiento
 
-- [ ] Isaac del Toro (UAE Team Emirates-XRG) — cubrir su actualidad reciente (Quebec/Montreal/Worlds)
+- [x] Isaac del Toro — GP Montreal cubierto (récord de juventud, primer mexicano en ganarlo)
+- [ ] Isaac del Toro — seguimiento en el Mundial (20-27 sept, Montreal)
 
 ## Infraestructura / mecánica de publicación
 
