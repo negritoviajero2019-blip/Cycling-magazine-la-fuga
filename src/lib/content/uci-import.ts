@@ -473,14 +473,13 @@ export async function publishVueltaFinalArticle() {
   const teams = await prisma.team.findMany({ where: { slug: { in: teamSlugs } }, select: { id: true, slug: true } })
   const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
 
-  const heroImageId = await ensureHeroImage('enric-mas-campeon-vuelta-espana-2026', {
-    title: 'Enric Mas, campeón de la Vuelta 2026',
-    label: 'General final',
-    riders: [
-      { name: 'Enric Mas', team: 'movistar-team' },
-      { name: 'Primož Roglič', team: 'red-bull-bora-hansgrohe' },
-      { name: 'Felix Gall', team: 'decathlon-cma-cgm' },
-    ],
+  const heroImageId = await ensureCustomHeroImage('enric-mas-campeon-vuelta-espana-2026', {
+    url: '/images/headers/vuelta-final-cover.jpg',
+    altText: 'Enric Mas se corona campeón de la Vuelta a España 2026 en Granada',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
