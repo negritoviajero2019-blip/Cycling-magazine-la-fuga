@@ -16,7 +16,7 @@ export function UpcomingRaces({ races }: { races: UpcomingRace[] }) {
   return (
     <section className="py-10">
       <div className="mb-7 flex items-end justify-between gap-6">
-        <h2 className="font-heading text-3xl font-extrabold leading-none tracking-tight md:text-5xl">
+        <h2 className="font-display text-3xl leading-none md:text-5xl">
           Próximas carreras
         </h2>
         <Link href="/races" className="whitespace-nowrap text-sm font-bold text-accent transition-opacity hover:opacity-60">

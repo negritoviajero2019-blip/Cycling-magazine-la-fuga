@@ -78,7 +78,7 @@ export default async function ArticlePage({ params }: Props) {
             <CategoryChip slug={article.category.slug} name={article.category.name} />
           </div>
 
-          <h1 className="font-heading text-3xl font-bold leading-[1.02] tracking-tight md:text-5xl">
+          <h1 className="font-display text-3xl leading-[1.02] md:text-5xl">
             {article.title}
           </h1>
           {article.subtitle && <p className="mt-3 text-lg text-muted">{article.subtitle}</p>}

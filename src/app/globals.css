@@ -40,6 +40,7 @@
   --ease-editorial: cubic-bezier(0.2, 0.7, 0.2, 1);
   --font-heading: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* --font-display la define next/font/local (ver layout.tsx, `anton`) directamente en <html>. */
 }
 
 .dark {

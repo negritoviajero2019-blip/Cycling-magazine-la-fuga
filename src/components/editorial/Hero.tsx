@@ -46,7 +46,7 @@ export function Hero({ article }: { article: ArticleSummary }) {
               <span className="w-fit rounded-full bg-lime px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-primary">
                 {article.category.name}
               </span>
-              <h1 className="font-heading text-[2.5rem] font-extrabold leading-[0.95] tracking-tight text-white md:text-6xl lg:text-7xl">
+              <h1 className="font-display text-[2.5rem] leading-[0.95] tracking-tight text-white md:text-6xl lg:text-7xl">
                 {article.title}
               </h1>
               <p className="hidden max-w-2xl text-base text-white/80 md:block">{article.excerpt}</p>

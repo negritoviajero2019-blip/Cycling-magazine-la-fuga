@@ -12,7 +12,7 @@ export function NewsletterSection() {
       <span className="mb-4 inline-block rounded-full bg-lime px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-primary">
         Newsletter
       </span>
-      <h2 className="max-w-2xl font-heading text-4xl font-extrabold leading-[0.95] tracking-tight sm:text-6xl">
+      <h2 className="max-w-2xl font-display text-4xl leading-[0.95] sm:text-6xl">
         El ciclismo no se detiene. Tú tampoco tienes que perderte nada.
       </h2>
       <p className="mt-4 max-w-lg text-white/65">

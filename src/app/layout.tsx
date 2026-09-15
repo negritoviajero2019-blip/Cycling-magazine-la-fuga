@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 import { branding } from '@/lib/config/branding'
 import { Analytics } from '@/components/layout/Analytics'
@@ -19,6 +20,22 @@ const inter = Inter({
   display: 'swap',
 })
 
+/**
+ * Anton (SIL OFL, ya usada en las imágenes de portada horneadas vía
+ * /api/og-cover) como fuente de titulares "de marca" — solo en los
+ * puntos de mayor jerarquía del sitio editorial (Hero, tarjetas de
+ * artículo, títulos de sección grandes), NO en todo lo que usa
+ * font-heading: es una fuente muy condensada y de un solo peso, se ve
+ * mal en texto pequeño. Panel de admin y páginas legales/utilitarias
+ * se quedan en Inter a propósito — ver docs/VISUAL-AUDIT-2026-09-14.md.
+ */
+const anton = localFont({
+  src: '../../public/fonts/Anton-Regular.ttf',
+  variable: '--font-display',
+  display: 'swap',
+  weight: '400',
+})
+
 // Título principal exacto pedido por la marca; el resto de páginas usa
 // el template `%s | La Fuga` (ver también title:{absolute} en la home).
 const SITE_DEFAULT_TITLE = 'LA FUGA | Cycling Magazine'
@@ -33,7 +50,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={branding.locale} className={inter.variable}>
+    <html lang={branding.locale} className={`${inter.variable} ${anton.variable}`}>
       <body className="font-body antialiased">
         <noscript>
           <style>{`.reveal { opacity: 1 !important; transform: none !important; }`}</style>

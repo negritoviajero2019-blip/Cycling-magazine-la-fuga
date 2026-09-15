@@ -12,7 +12,7 @@ export function MostRead({ articles }: { articles: ArticleSummary[] }) {
 
   return (
     <section className="py-10">
-      <h2 className="mb-7 font-heading text-3xl font-extrabold leading-none tracking-tight md:text-5xl">
+      <h2 className="mb-7 font-display text-3xl leading-none md:text-5xl">
         Más leído
       </h2>
 
@@ -23,14 +23,14 @@ export function MostRead({ articles }: { articles: ArticleSummary[] }) {
               href={`/news/${article.slug}`}
               className="group flex items-center gap-5 p-5 transition-colors hover:bg-surface-soft"
             >
-              <span className="font-heading text-3xl font-extrabold text-border tabular-nums group-hover:text-lime">
+              <span className="font-display text-3xl text-muted tabular-nums group-hover:text-lime">
                 {String(index + 1).padStart(2, '0')}
               </span>
               <div className="min-w-0">
                 <span className="text-[11px] font-extrabold uppercase tracking-wide text-accent">
                   {article.category.name}
                 </span>
-                <h3 className="truncate font-heading text-base font-bold leading-snug tracking-tight group-hover:text-accent">
+                <h3 className="truncate font-display text-base leading-snug group-hover:text-accent">
                   {article.title}
                 </h3>
               </div>

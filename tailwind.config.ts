@@ -28,6 +28,7 @@ const config: Config = {
       fontFamily: {
         heading: ['var(--font-heading)', 'ui-sans-serif', 'sans-serif'],
         body: ['var(--font-body)', 'ui-sans-serif', 'sans-serif'],
+        display: ['var(--font-display)', 'ui-sans-serif', 'sans-serif'],
       },
       borderRadius: {
         DEFAULT: 'var(--radius)',

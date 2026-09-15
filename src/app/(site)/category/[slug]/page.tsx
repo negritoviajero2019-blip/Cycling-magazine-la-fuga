@@ -37,7 +37,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
   return (
     <Container className="py-6">
       <Breadcrumbs items={[{ name: 'Inicio', href: '/' }, { name: category.name, href: `/category/${category.slug}` }]} />
-      <h1 className="mb-6 font-heading text-3xl font-bold">{category.name}</h1>
+      <h1 className="mb-6 font-display text-4xl">{category.name}</h1>
 
       {races.length > 0 && <UpcomingRaces races={races} />}
 

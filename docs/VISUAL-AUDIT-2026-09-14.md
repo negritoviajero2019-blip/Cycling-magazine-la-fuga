@@ -105,3 +105,19 @@ objetivos, no decisiones de estilo:
 De todo lo de arriba, si solo se hiciera **una cosa**, sería B (Anton
 para titulares) — es el cambio de mayor impacto visual y ya está pagado
 en términos de licencia/infraestructura. El resto son ajustes finos.
+
+## Actualización 2026-09-15 — recomendación B aplicada
+
+Se agregó Anton como `font-display` (nuevo token, separado de
+`font-heading` que se queda en Inter) y se aplicó específicamente en:
+Hero (H1), título del artículo completo, ArticleCard (todas las
+tarjetas), títulos de sección grandes (Radar del Pelotón, Más leído,
+Próximas carreras, Últimas noticias/Historias destacadas/Análisis en
+home, Newsletter), y el H1 de categoría. **A propósito NO se tocó**:
+panel de admin, páginas legales/utilitarias (privacidad, términos,
+cookies, 404/500, contacto) y "Artículos relacionados" — Anton es una
+fuente de un solo peso muy condensada, se ve mal en texto pequeño y no
+aporta nada en contexto de CMS o texto legal. De paso se corrigió el
+numeral "01" de "Más leído" (era el fallo de contraste 1.31:1 de la
+sección A — ahora usa `--color-muted`, ~4.5:1+). Verificado con
+screenshots en desktop, mobile y build de producción limpio.

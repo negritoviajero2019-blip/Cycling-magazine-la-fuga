@@ -39,7 +39,7 @@ export function ArticleCard({
 
         <Link href={`/news/${article.slug}`}>
           <h3
-            className={`font-heading font-bold leading-[1.05] tracking-tight ${
+            className={`font-display leading-[1.05] ${
               size === 'large' ? 'text-2xl md:text-3xl' : size === 'compact' ? 'text-lg' : 'text-xl'
             }`}
           >

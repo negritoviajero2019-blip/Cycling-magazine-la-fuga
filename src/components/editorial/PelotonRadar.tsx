@@ -22,7 +22,7 @@ export function PelotonRadar({ articles }: { articles: ArticleSummary[] }) {
           <span className="mb-3 inline-block rounded-full bg-lime px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-primary">
             Actualidad
           </span>
-          <h2 className="font-heading text-3xl font-extrabold leading-none tracking-tight md:text-5xl">
+          <h2 className="font-display text-3xl leading-none md:text-5xl">
             Radar del Pelotón
           </h2>
           <p className="mt-3 max-w-lg text-sm text-muted">
@@ -68,7 +68,7 @@ export function PelotonRadar({ articles }: { articles: ArticleSummary[] }) {
                         {main.category.name}
                       </span>
                     )}
-                    <h3 className="mb-3 mt-4 max-w-[700px] font-heading text-[clamp(2rem,4vw,4rem)] font-extrabold leading-[0.97] tracking-[-0.05em]">
+                    <h3 className="mb-3 mt-4 max-w-[700px] font-display text-[clamp(2rem,4vw,4rem)] leading-[0.97]">
                       {main.title}
                     </h3>
                     <p className="max-w-[600px] text-white/70">{main.excerpt}</p>
@@ -92,7 +92,7 @@ export function PelotonRadar({ articles }: { articles: ArticleSummary[] }) {
                   <span className="text-[0.68rem] font-extrabold uppercase tracking-[0.08em] text-accent">
                     {article.category.name}
                   </span>
-                  <h4 className="mt-1.5 font-heading text-[clamp(1.05rem,1.5vw,1.35rem)] font-bold leading-[1.15] tracking-[-0.025em]">
+                  <h4 className="mt-1.5 font-display text-[clamp(1.05rem,1.5vw,1.35rem)] leading-[1.15]">
                     {article.title}
                   </h4>
                 </div>
