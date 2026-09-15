@@ -1054,9 +1054,13 @@ export async function publishMtbWorldsRecapArticle() {
   const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
   const race = await prisma.race.findUnique({ where: { slug: 'uci-mtb-world-championships-2026' }, select: { id: true } })
 
-  const heroImageId = await ensureHeroImage('mundial-mtb-2026-val-di-sole-resultados', {
-    title: 'Mundial de MTB 2026',
-    label: 'MTB y Gravel',
+  const heroImageId = await ensureCustomHeroImage('mundial-mtb-2026-val-di-sole-resultados', {
+    url: '/images/headers/mtb-worlds-cover.jpg',
+    altText: 'Pidcock, Frei, Goldstone y Höll: así se repartieron los arcoíris del Mundial de MTB 2026',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
