@@ -434,9 +434,13 @@ export async function publishGravelWorldsPreviewArticle() {
   const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
   const race = await prisma.race.findUnique({ where: { slug: 'uci-gravel-world-championships-2026' }, select: { id: true } })
 
-  const heroImageId = await ensureHeroImage('previa-mundial-gravel-2026-nannup', {
-    title: 'Mundial de Gravel en Australia',
-    label: 'MTB y Gravel',
+  const heroImageId = await ensureCustomHeroImage('previa-mundial-gravel-2026-nannup', {
+    url: '/images/headers/gravel-worlds-cover.jpg',
+    altText: 'El Mundial de Gravel se va a Australia: subidas al 20% y ni un metro de descanso',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
