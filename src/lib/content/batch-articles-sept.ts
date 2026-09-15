@@ -369,9 +369,13 @@ export async function publishMtbWorldCupPreviewArticle() {
   ])
   const raceIds = [soldierHollow?.id, whistler?.id].filter((id): id is number => id !== undefined)
 
-  const heroImageId = await ensureHeroImage('previa-copa-mundo-mtb-soldier-hollow-whistler-2026', {
-    title: 'Cierre de temporada MTB',
-    label: 'MTB y Gravel',
+  const heroImageId = await ensureCustomHeroImage('previa-copa-mundo-mtb-soldier-hollow-whistler-2026', {
+    url: '/images/headers/mtb-worldcup-preview-cover.jpg',
+    altText: 'De Utah a Whistler: así cierra la Copa del Mundo de MTB su temporada 2026',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
