@@ -305,9 +305,13 @@ export async function publishWomensRankingChangeArticle() {
   const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ciclismo-femenino' } })
   const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
 
-  const heroImageId = await ensureHeroImage('uci-elimina-ranking-womens-worldtour-2026', {
-    title: 'Adiós al ranking del WorldTour',
-    label: 'Ciclismo femenino',
+  const heroImageId = await ensureCustomHeroImage('uci-elimina-ranking-womens-worldtour-2026', {
+    url: '/images/headers/womens-ranking-cover.jpg',
+    altText: 'Por qué ya no hay un maillot de líder del Women’s WorldTour',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
