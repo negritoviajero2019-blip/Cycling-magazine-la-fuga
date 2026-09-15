@@ -182,10 +182,13 @@ export async function publishQuintanaFroomeArticle() {
   const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
   const quintana = await prisma.rider.findUnique({ where: { slug: 'nairo-quintana' }, select: { id: true } })
 
-  const heroImageId = await ensureHeroImage('efemeride-vuelta-2016-quintana-froome-formigal', {
-    title: 'Vuelta 2016: Quintana vs. Froome',
-    label: 'Grand Tours · Efeméride',
-    riders: quintana ? [{ name: 'Nairo Quintana' }] : [],
+  const heroImageId = await ensureCustomHeroImage('efemeride-vuelta-2016-quintana-froome-formigal', {
+    url: '/images/headers/quintana-froome-cover.jpg',
+    altText: 'La etapa que le dio la Vuelta a Nairo Quintana: cuando Contador y él desarmaron a Froome en Formigal',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
