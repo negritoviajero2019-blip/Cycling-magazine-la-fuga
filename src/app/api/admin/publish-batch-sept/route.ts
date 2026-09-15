@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { requireAdminSession } from '@/lib/auth/require-admin'
-import { publishWorldsScheduleArticle } from '@/lib/content/batch-articles-sept'
+import { publishWorldsScheduleArticle, publishVdpLuxembourgArticle } from '@/lib/content/batch-articles-sept'
 
 /** Tanda de 10 artículos reales de septiembre 2026 (ver batch-articles-sept.ts). Seguro de correr más de una vez. */
 export async function POST() {
@@ -8,7 +8,7 @@ export async function POST() {
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
   try {
-    const results = await Promise.all([publishWorldsScheduleArticle()])
+    const results = await Promise.all([publishWorldsScheduleArticle(), publishVdpLuxembourgArticle()])
     return NextResponse.json({ ok: true, articles: results })
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Error desconocido' }, { status: 500 })

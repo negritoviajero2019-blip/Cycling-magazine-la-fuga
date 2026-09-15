@@ -87,3 +87,73 @@ export async function publishWorldsScheduleArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// 2. Última Hora — Van der Poel se salta Quebec/Montreal por Luxemburgo
+// ————————————————————————————————————————————————————————————
+
+const vdpLuxembourgContent = `
+<p>Mientras la mayoría de sus rivales al maillot arcoíris —Remco Evenepoel, Isaac del Toro, Wout van Aert, Mattias Skjelmose— usaron el Grand Prix Cycliste de Québec y el de Montréal como último examen sobre un circuito muy similar al del Mundial, Mathieu van der Poel (Alpecin-Premier Tech) tomó la decisión contraria: se salta por completo las citas canadienses y en su lugar liderará a su equipo en el Tour de Luxemburgo, del 16 al 20 de septiembre.</p>
+
+<p>La carrera, de cinco etapas, termina justo una semana antes de la prueba en línea masculina en Montreal (27 de septiembre), dejándole el margen de recuperación exacto que suele buscar antes de una gran cita.</p>
+
+<p>No es una apuesta improvisada: es la misma fórmula que ya usó en 2024, cuando ganó la primera etapa del Tour de Luxemburgo, terminó segundo en la general por detrás de Antonio Tiberi, y semanas después subió al podio del Mundial de ruta. Repetir el guion sugiere que, para Van der Poel, la preparación en Luxemburgo pesa más que rodar sobre el trazado real de la carrera que quiere ganar.</p>
+
+<p>El objetivo declarado es claro: un segundo maillot arcoíris, después del que ya ganó en 2023. Con Evenepoel y Del Toro llegando a Montreal con las piernas ya puestas a prueba en el mismo circuito de Mont Royal, el contraste de estrategias añade una capa extra de incertidumbre a una carrera que, sin Pogačar en la salida, ya se presentaba especialmente abierta.</p>
+`.trim()
+
+export async function publishVdpLuxembourgArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const [vdp, team] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'mathieu-van-der-poel' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'alpecin-premier-tech' }, select: { id: true } }),
+  ])
+
+  const heroImageId = await ensureHeroImage('van-der-poel-tour-luxemburgo-mundial-2026', {
+    title: 'Van der Poel evita Canadá',
+    label: 'Última hora',
+    riders: vdp ? [{ name: 'Mathieu van der Poel', team: 'alpecin-premier-tech' }] : [],
+  })
+
+  const baseFields = {
+    title: 'Van der Poel evita Canadá y apuesta de nuevo por Luxemburgo antes del Mundial',
+    subtitle: 'El neerlandés repite la fórmula de 2024 (podio en el Mundial tras el Tour de Luxemburgo) mientras sus rivales rodaron en Quebec y Montreal',
+    excerpt:
+      'Mathieu van der Poel se salta el GP de Quebec y el de Montreal y en su lugar liderará el Tour de Luxemburgo (16-20 de septiembre) como preparación para el Mundial de ruta, repitiendo la fórmula que ya le funcionó en 2024.',
+    content: vdpLuxembourgContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.cyclingnews.com/pro-cycling/teams-riders/mathieu-van-der-poel-skips-canadian-one-day-races-returns-to-tour-de-luxembourg-to-build-for-uci-road-world-championships-in-montreal/',
+      'https://www.domestiquecycling.com/en/news/van-der-poel-adds-tour-de-luxembourg-to-intriguing-worlds-preparation/',
+    ]),
+    sourceNames: toJsonField(['Cyclingnews', 'Domestique Cycling']),
+    seoTitle: 'Van der Poel se prepara para el Mundial en Luxemburgo',
+    seoDescription:
+      'Mathieu van der Poel se salta las carreras canadienses previas al Mundial y opta por el Tour de Luxemburgo, repitiendo la fórmula que le dio el podio en 2024.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'van-der-poel-tour-luxemburgo-mundial-2026' },
+    update: {
+      ...baseFields,
+      riders: vdp ? { set: [{ id: vdp.id }] } : undefined,
+      teams: team ? { set: [{ id: team.id }] } : undefined,
+    },
+    create: {
+      slug: 'van-der-poel-tour-luxemburgo-mundial-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: vdp ? { connect: [{ id: vdp.id }] } : undefined,
+      teams: team ? { connect: [{ id: team.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
