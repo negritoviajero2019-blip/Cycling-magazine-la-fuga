@@ -221,3 +221,58 @@ export async function publishQuintanaFroomeArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// 4. Clásicas — previa de Il Lombardia 2026
+// ————————————————————————————————————————————————————————————
+
+const lombardiaPreviewContent = `
+<p>El 10 de octubre, Lombardía cierra el calendario de los cinco Monumentos con la 120ª edición de Il Lombardia, la "carrera de las hojas caídas" — y por primera vez en cinco años, sin el nombre que la ha dominado por completo.</p>
+
+<p>Tadej Pogačar comparte con Fausto Coppi el récord de victorias en esta carrera, con cinco triunfos cada uno. El año pasado el esloveno atacó a 36&nbsp;km de meta y llegó en solitario para firmar su quinta victoria consecutiva, igualando la marca histórica de Coppi. Pero tras confirmar el fin de su temporada por la fractura sufrida en la Vuelta a España, Pogačar no estará en la salida — y con él desaparece también la posibilidad de que este año alguien supere ese récord.</p>
+
+<p>El recorrido exacto de esta edición todavía no se ha hecho público, aunque Il Lombardia mantiene año tras año su carácter: un final exigente por las estribaciones prealpinas de Lombardía, con los muros que han decidido la carrera en las últimas ediciones — Colle Brianza, la Culmine di San Fermo y, sobre todo, el tramo final hacia Como.</p>
+
+<p>Con el trono vacante, la última cita grande del calendario masculino antes del cierre de temporada queda abierta como pocas veces en el último lustro. La ausencia de Pogačar reabre exactamente el mismo debate que ya se planteó de cara al Mundial de Montreal: sin el esloveno, la lista de candidatos se amplía considerablemente, aunque todavía es pronto para una lista de favoritos — el propio recorrido, cuando se publique, marcará quién entra y quién no en las quinielas.</p>
+`.trim()
+
+export async function publishLombardiaPreviewArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'clasicas' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const heroImageId = await ensureHeroImage('il-lombardia-2026-previa-sin-pogacar', {
+    title: 'Il Lombardia sin Pogačar',
+    label: 'Clásicas',
+  })
+
+  const baseFields = {
+    title: 'Sin Pogačar, quién hereda el trono de Il Lombardia',
+    subtitle: 'El esloveno comparte el récord de victorias con Coppi (cinco) pero no estará el 10 de octubre — el último Monumento del año queda con el trono vacante',
+    excerpt:
+      'Il Lombardia 2026 (10 de octubre) se corre sin Tadej Pogačar, que comparte con Fausto Coppi el récord de cinco victorias en la carrera. Su ausencia reabre el último Monumento de la temporada.',
+    content: lombardiaPreviewContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.ilombardia.it/en/',
+      'https://cyclingfantasy.cc/en/race/il-lombardia/2026/route-and-favourites',
+    ]),
+    sourceNames: toJsonField(['Il Lombardia (oficial)', 'Cycling Fantasy']),
+    seoTitle: 'Il Lombardia 2026: previa sin Pogačar',
+    seoDescription:
+      'Previa de Il Lombardia 2026 (10 de octubre): Tadej Pogačar, que comparte el récord de victorias con Fausto Coppi, no estará en la salida tras el fin de su temporada.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'il-lombardia-2026-previa-sin-pogacar' },
+    update: baseFields,
+    create: { slug: 'il-lombardia-2026-previa-sin-pogacar', ...baseFields, publishedAt: new Date() },
+  })
+
+  return { slug: article.slug }
+}
