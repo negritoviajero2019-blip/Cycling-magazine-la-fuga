@@ -331,3 +331,68 @@ export async function publishWomensRankingChangeArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// 6. MTB y Gravel — previa Copa del Mundo Soldier Hollow + Whistler
+// ————————————————————————————————————————————————————————————
+
+const mtbWorldCupPreviewContent = `
+<p>Con el Mundial de MTB de Val di Sole ya en los libros, la Copa del Mundo retoma su calendario cruzando el Atlántico para las dos últimas citas de la temporada, ambas en Norteamérica y con un cambio de registro completo entre una y otra.</p>
+
+<p>La primera parada es Soldier Hollow, en Midway, Utah (19-20 de septiembre), sede olímpica de esquí nórdico en los Juegos de Invierno de 2002 y candidata a repetir protagonismo en 2034. El fin de semana reúne cross-country y short track sobre un trazado de valles y colinas suaves, pensado tanto para el público general como para el pelotón élite — un cierre relativamente accesible para la temporada de XCO.</p>
+
+<p>Una semana después, el registro cambia por completo: Whistler, en la Columbia Británica de Canadá (25-27 de septiembre), acoge la última cita de descenso del año, sobre uno de los trazados más exigentes y reconocidos del circuito internacional de MTB.</p>
+
+<p>Ninguna de las dos rondas reparte ya el maillot arcoíris — eso ya se decidió en Val di Sole a finales de agosto — pero sí cierran la clasificación general de la Copa del Mundo 2026, el otro gran objetivo de la temporada para quienes no llegaron a subirse al podio del Mundial. Para el aficionado que sigue MTB y gravel desde La Fuga, es la última oportunidad del año de ver a los mejores del planeta antes de que el calendario de superficie mixta se cierre en octubre con el Mundial de Gravel en Australia.</p>
+`.trim()
+
+export async function publishMtbWorldCupPreviewArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'mtb-gravel' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const [soldierHollow, whistler] = await Promise.all([
+    prisma.race.findUnique({ where: { slug: 'uci-mtb-world-cup-soldier-hollow-2026' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-mtb-world-cup-whistler-2026' }, select: { id: true } }),
+  ])
+  const raceIds = [soldierHollow?.id, whistler?.id].filter((id): id is number => id !== undefined)
+
+  const heroImageId = await ensureHeroImage('previa-copa-mundo-mtb-soldier-hollow-whistler-2026', {
+    title: 'Cierre de temporada MTB',
+    label: 'MTB y Gravel',
+  })
+
+  const baseFields = {
+    title: 'De Utah a Whistler: así cierra la Copa del Mundo de MTB su temporada 2026',
+    subtitle: 'Soldier Hollow reparte cross-country y short track el 19-20 de septiembre; Whistler cierra con la última cita de descenso del año una semana después',
+    excerpt:
+      'La Copa del Mundo de MTB cierra 2026 con dos citas en Norteamérica: cross-country y short track en Soldier Hollow (19-20 sept) y descenso en Whistler (25-27 sept), ya sin el maillot arcoíris en juego.',
+    content: mtbWorldCupPreviewContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.ucimtbworldseries.com/events/soldier-hollow-2026',
+      'https://en.wikipedia.org/wiki/2026_UCI_Mountain_Bike_World_Cup',
+    ]),
+    sourceNames: toJsonField(['UCI Mountain Bike World Series', 'Wikipedia']),
+    seoTitle: 'Copa del Mundo MTB 2026: Soldier Hollow y Whistler',
+    seoDescription:
+      'Previa de las dos últimas citas de la Copa del Mundo de MTB 2026: Soldier Hollow (cross-country) y Whistler (descenso).',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'previa-copa-mundo-mtb-soldier-hollow-whistler-2026' },
+    update: { ...baseFields, races: raceIds.length ? { set: raceIds.map((id) => ({ id })) } : undefined },
+    create: {
+      slug: 'previa-copa-mundo-mtb-soldier-hollow-whistler-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      races: raceIds.length ? { connect: raceIds.map((id) => ({ id })) } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
