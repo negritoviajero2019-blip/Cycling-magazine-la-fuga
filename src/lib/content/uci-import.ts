@@ -19,7 +19,7 @@ import { buildHeaderBannerMedia } from './header-banner-svg'
  * tiene una en un formato viejo/roto (p.ej. el data URI que se
  * truncaba en MySQL, ver commit a5f65e4), la regenera sola.
  */
-async function ensureHeroImage(
+export async function ensureHeroImage(
   articleSlug: string,
   input: { title: string; label?: string; riders?: { name: string; team?: string }[] },
 ): Promise<number | undefined> {
@@ -46,7 +46,7 @@ async function ensureHeroImage(
  * PelotonRadar.tsx usan ese valor para no volver a sobreponer su
  * propio texto encima y duplicarlo.
  */
-async function ensureCustomHeroImage(
+export async function ensureCustomHeroImage(
   articleSlug: string,
   media: {
     url: string

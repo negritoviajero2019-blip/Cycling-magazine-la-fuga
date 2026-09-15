@@ -50,6 +50,12 @@ export default async function AutomationPage() {
         resultKind="publish"
       />
       <PublishActionButton
+        endpoint="/api/admin/publish-batch-sept"
+        label="Publicar tanda de 10 artículos (septiembre)"
+        description="Publica los artículos nuevos de la tanda de 10 (uno o dos por sección) conforme se van agregando. Seguro de correr más de una vez."
+        resultKind="generic"
+      />
+      <PublishActionButton
         endpoint="/api/admin/publish-section-launch-articles"
         label="Publicar primer artículo de cada sección nueva"
         description="Publica un artículo real en cada sección que todavía no tenía uno: caída de Ayuso en Quebec (Última hora), previa del Mundial femenino (Ciclismo femenino), temporada de Richard Carapaz (Latinos), nuevas reglas técnicas UCI (Tecnología) y resultados del Mundial de MTB en Val di Sole (MTB y Gravel). Seguro de correr más de una vez."
