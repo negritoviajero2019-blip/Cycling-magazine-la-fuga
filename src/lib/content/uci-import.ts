@@ -369,13 +369,13 @@ export async function publishVueltaStage19Article() {
     select: { id: true },
   })
   const race = await prisma.race.findUniqueOrThrow({ where: { slug: 'vuelta-a-espana-2026' }, select: { id: true } })
-  const heroImageId = await ensureHeroImage('dunbar-gana-etapa-19-vuelta-espana-mas-lidera', {
-    title: 'Dunbar gana en Peñas Blancas, Mas líder',
-    label: 'General',
-    riders: [
-      { name: 'Enric Mas', team: 'movistar-team' },
-      { name: 'Primož Roglič', team: 'red-bull-bora-hansgrohe' },
-    ],
+  const heroImageId = await ensureCustomHeroImage('dunbar-gana-etapa-19-vuelta-espana-mas-lidera', {
+    url: '/images/headers/vuelta-stage19-cover.jpg',
+    altText: 'Dunbar gana en Peñas Blancas y Enric Mas defiende el liderato a dos etapas del final',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
@@ -628,13 +628,13 @@ export async function publishCanadianClassicsArticle() {
   const riderBySlug = new Map(riders.map((r) => [r.slug, r]))
   const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
 
-  const heroImageId = await ensureHeroImage('evenepoel-quebec-del-toro-montreal-2026', {
-    title: 'Del Toro hace historia en Montreal',
-    label: 'Ganadores',
-    riders: [
-      { name: 'Isaac del Toro', team: 'uae-team-emirates-xrg' },
-      { name: 'Remco Evenepoel', team: 'red-bull-bora-hansgrohe' },
-    ],
+  const heroImageId = await ensureCustomHeroImage('evenepoel-quebec-del-toro-montreal-2026', {
+    url: '/images/headers/canadian-classics-cover.jpg',
+    altText: 'Evenepoel gana en Quebec e Isaac del Toro hace historia en Montreal antes del Mundial',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {

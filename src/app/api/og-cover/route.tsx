@@ -11,17 +11,26 @@ const WHITE = '#FFFFFF'
 
 let antonFont: ArrayBuffer | null = null
 let interFont: ArrayBuffer | null = null
+let interFontExt: ArrayBuffer | null = null
 
+async function readAsArrayBuffer(path: string): Promise<ArrayBuffer> {
+  const buf = await readFile(join(process.cwd(), path))
+  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer
+}
+
+/**
+ * Dos archivos separados para "Inter" (en realidad Roboto, ver
+ * public/fonts/): el base (latin) no incluye los diacríticos de
+ * nombres como "Roglič" o "Pogačar" (č/š/ž), así que se agrega un
+ * segundo buffer con el subset latin-ext bajo el mismo nombre de
+ * familia — Satori prueba cada fuente en orden hasta encontrar el
+ * glifo, como un fallback de font-family normal.
+ */
 async function loadFonts() {
-  if (!antonFont) {
-    const buf = await readFile(join(process.cwd(), 'public/fonts/Anton-Regular.ttf'))
-    antonFont = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer
-  }
-  if (!interFont) {
-    const buf = await readFile(join(process.cwd(), 'public/fonts/Inter-Regular.ttf'))
-    interFont = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer
-  }
-  return { antonFont, interFont }
+  if (!antonFont) antonFont = await readAsArrayBuffer('public/fonts/Anton-Regular.ttf')
+  if (!interFont) interFont = await readAsArrayBuffer('public/fonts/Inter-Regular.ttf')
+  if (!interFontExt) interFontExt = await readAsArrayBuffer('public/fonts/Inter-Regular-LatinExt.ttf')
+  return { antonFont, interFont, interFontExt }
 }
 
 interface TitleLine {
@@ -55,7 +64,7 @@ export async function GET(request: Request) {
   const subtitle = searchParams.get('subtitle') || ''
   const lines = parseLines(linesParam)
 
-  const { antonFont: anton, interFont: inter } = await loadFonts()
+  const { antonFont: anton, interFont: inter, interFontExt: interExt } = await loadFonts()
 
   const bgUrl = bg.startsWith('http') ? bg : `${origin}${bg}`
 
@@ -111,7 +120,7 @@ export async function GET(request: Request) {
           {subtitle && (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', width: 90, height: 5, background: LIME, marginTop: 22, marginBottom: 18 }} />
-              <div style={{ display: 'flex', fontFamily: 'Inter', fontSize: 27, color: 'rgba(255,255,255,0.88)', lineHeight: 1.35 }}>
+              <div style={{ display: 'flex', fontFamily: 'Inter, InterExt', fontSize: 27, color: 'rgba(255,255,255,0.88)', lineHeight: 1.35 }}>
                 {subtitle}
               </div>
             </div>
@@ -125,6 +134,7 @@ export async function GET(request: Request) {
       fonts: [
         { name: 'Anton', data: anton, weight: 400, style: 'normal' },
         { name: 'Inter', data: inter, weight: 400, style: 'normal' },
+        { name: 'InterExt', data: interExt, weight: 400, style: 'normal' },
       ],
     },
   )
