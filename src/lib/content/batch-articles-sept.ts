@@ -645,10 +645,13 @@ export async function publishWorldsFavoritesAnalysisArticle() {
   const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true, slug: true, name: true } })
   const race = await prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } })
 
-  const heroImageId = await ensureHeroImage('favoritos-mundial-ruta-masculino-2026', {
-    title: 'Favoritos al Mundial',
-    label: 'Análisis',
-    riders: riders.slice(0, 4).map((r) => ({ name: r.name })),
+  const heroImageId = await ensureCustomHeroImage('favoritos-mundial-ruta-masculino-2026', {
+    url: '/images/headers/worlds-favorites-cover.jpg',
+    altText: 'Evenepoel, Del Toro y el enigma Van der Poel: quién puede ganar el Mundial sin Pogačar',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
