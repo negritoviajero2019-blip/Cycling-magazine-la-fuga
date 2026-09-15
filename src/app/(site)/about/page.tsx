@@ -27,9 +27,32 @@ export default function AboutPage() {
           </a>
           .
         </p>
-        <p className="italic text-muted">
-          [PLACEHOLDER] Este texto se completará con la historia, el equipo y los datos legales
-          definitivos de la publicación antes de salir a producción.
+        <p>
+          {branding.name} nace en 2026 como un proyecto editorial independiente, sin vínculo con
+          ninguna federación, equipo profesional u organizador de carreras. Está operado por una
+          persona física con base en México, con un proceso editorial que combina investigación
+          humana con asistencia de inteligencia artificial bajo supervisión y verificación en cada
+          publicación — el detalle completo está en nuestra{' '}
+          <a href="/editorial-policy" className="text-accent hover:underline">
+            política editorial
+          </a>
+          .
+        </p>
+        <p>
+          Para conocer cómo tratamos tus datos personales o las condiciones de uso del sitio,
+          consulta nuestro{' '}
+          <a href="/privacy-policy" className="text-accent hover:underline">
+            aviso de privacidad
+          </a>{' '}
+          y nuestros{' '}
+          <a href="/terms" className="text-accent hover:underline">
+            términos y condiciones
+          </a>
+          . Si quieres contactarnos, la vía está en{' '}
+          <a href="/contact" className="text-accent hover:underline">
+            contacto
+          </a>
+          .
         </p>
       </div>
     </Container>

@@ -22,7 +22,20 @@ export const branding = {
     facebook: '',
     instagram: '',
   },
-  contactEmail: 'redaccion@example.com',
+  /**
+   * Sin correo real configurado, dejamos vacío en vez de una dirección
+   * inventada — publicar un email que nadie revisa es peor que no
+   * publicar ninguno. Cuando exista uno real, se activa por variable de
+   * entorno (Hostinger → variables de entorno del sitio) sin tocar código.
+   */
+  contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL || '',
+  /** Identidad legal del titular del sitio, usada en Aviso de Privacidad, Términos y Sobre nosotros. */
+  legal: {
+    holderType: 'persona física' as const,
+    jurisdiction: 'México',
+    lastUpdatedTerms: '15 de septiembre de 2026',
+    lastUpdatedPrivacy: '15 de septiembre de 2026',
+  },
 } as const
 
 export const nav = [

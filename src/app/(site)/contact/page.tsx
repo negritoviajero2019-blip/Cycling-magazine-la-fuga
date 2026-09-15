@@ -9,16 +9,28 @@ export default function ContactPage() {
     <Container className="max-w-2xl py-10">
       <h1 className="mb-6 font-heading text-3xl font-bold">Contacto</h1>
       <div className="space-y-4 text-sm leading-relaxed">
+        {branding.contactEmail ? (
+          <p>
+            Para consultas de prensa, correcciones, propuestas editoriales o ejercer tus derechos
+            sobre tus datos personales, escríbenos a{' '}
+            <a href={`mailto:${branding.contactEmail}`} className="text-accent hover:underline">
+              {branding.contactEmail}
+            </a>
+            .
+          </p>
+        ) : (
+          <p className="text-muted">Estamos habilitando un correo de contacto dedicado. Vuelve a consultar esta página próximamente.</p>
+        )}
         <p>
-          Para consultas de prensa, correcciones o propuestas editoriales, escríbenos a{' '}
-          <a href={`mailto:${branding.contactEmail}`} className="text-accent hover:underline">
-            {branding.contactEmail}
+          {branding.name} es un proyecto editorial operado por una persona física (ver{' '}
+          <a href="/about" className="text-accent hover:underline">
+            Sobre nosotros
+          </a>
+          ). Para más detalle sobre cómo tratamos tus datos personales, consulta nuestro{' '}
+          <a href="/privacy-policy" className="text-accent hover:underline">
+            Aviso de Privacidad
           </a>
           .
-        </p>
-        <p className="italic text-muted">
-          [PLACEHOLDER] Formulario de contacto y datos de la empresa editora pendientes de
-          confirmación antes de producción.
         </p>
       </div>
     </Container>
