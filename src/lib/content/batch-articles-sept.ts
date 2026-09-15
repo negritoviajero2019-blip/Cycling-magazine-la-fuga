@@ -276,3 +276,58 @@ export async function publishLombardiaPreviewArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// 5. Ciclismo Femenino — la UCI eliminó el ranking propio del Women's WorldTour
+// ————————————————————————————————————————————————————————————
+
+const womensRankingChangeContent = `
+<p>Si este año te ha costado encontrar una clasificación general del Women's WorldTour, no es que te la hayas perdido: ya no existe. Desde 2025, la UCI eliminó de su reglamento de ruta la clasificación propia de la competición — el Women's WorldTour dejó de ser, formalmente, una carrera de clasificación por puntos con un maillot de líder al final de la temporada.</p>
+
+<p>En su lugar, todo el peso recae ahora en el ranking mundial UCI de ruta femenino, un sistema que ya existía en paralelo pero que ahora es la referencia oficial única. La diferencia no es solo de nombre: el ranking mundial también reparte puntos por carreras que quedan fuera del calendario WorldTour, así que una corredora puede sumar posiciones compitiendo en pruebas que antes no contaban para nada a nivel de "clasificación general de la temporada".</p>
+
+<p>Para 2026 la UCI afinó todavía más el sistema: las carreras por etapas de una semana y los monumentos reparten más puntos que las pruebas de un día o las etapas sueltas de menor categoría. El calendario 2026 tiene 27 pruebas, con La Vuelta Femenina, el Giro d'Italia Women y el Tour de Francia Femmes como las tres grandes carreras por etapas que más pesan en ese reparto.</p>
+
+<p>¿Qué significa esto en la práctica para quien sigue el ciclismo femenino? Que la vieja pregunta de "¿quién lidera el WorldTour ahora mismo?" ya no tiene una respuesta directa — hay que mirar el ranking mundial, que es más amplio, más lento de leer de un vistazo, pero también más representativo de una temporada completa disputada en más de un continente.</p>
+`.trim()
+
+export async function publishWomensRankingChangeArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ciclismo-femenino' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const heroImageId = await ensureHeroImage('uci-elimina-ranking-womens-worldtour-2026', {
+    title: 'Adiós al ranking del WorldTour',
+    label: 'Ciclismo femenino',
+  })
+
+  const baseFields = {
+    title: 'Por qué ya no hay un maillot de líder del Women’s WorldTour',
+    subtitle: 'Desde 2025 la UCI eliminó la clasificación propia de la competición: todo se mide ahora en el ranking mundial UCI, que también puntúa carreras fuera del calendario WorldTour',
+    excerpt:
+      'La UCI eliminó desde 2025 la clasificación propia del Women’s WorldTour. Explicamos cómo funciona ahora el ranking mundial UCI que la sustituyó, y por qué reparte más puntos a las grandes rondas en 2026.',
+    content: womensRankingChangeContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://en.wikipedia.org/wiki/UCI_Women%27s_World_Tour',
+      'https://www.uci.org/article/uci-womens-worldtour-a-decisive-year-around-the-globe/4Z53e7FRHjL7sQQTUPDOTD',
+    ]),
+    sourceNames: toJsonField(['Wikipedia', 'UCI (oficial)']),
+    seoTitle: 'Por qué no hay ranking del Women’s WorldTour',
+    seoDescription:
+      'La UCI eliminó desde 2025 la clasificación propia del Women’s WorldTour. Explicamos el ranking mundial UCI que la sustituyó de cara a 2026.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'uci-elimina-ranking-womens-worldtour-2026' },
+    update: baseFields,
+    create: { slug: 'uci-elimina-ranking-womens-worldtour-2026', ...baseFields, publishedAt: new Date() },
+  })
+
+  return { slug: article.slug }
+}
