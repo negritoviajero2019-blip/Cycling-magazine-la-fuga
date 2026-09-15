@@ -396,3 +396,64 @@ export async function publishMtbWorldCupPreviewArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// 7. MTB y Gravel — previa Mundial de Gravel 2026 en Nannup, Australia
+// ————————————————————————————————————————————————————————————
+
+const gravelWorldsPreviewContent = `
+<p>Por primera vez en su historia, el Mundial de Gravel de la UCI sale de sus escenarios habituales y aterriza en el hemisferio sur: Nannup, en Australia Occidental, acoge la quinta edición los días 10 y 11 de octubre, en lo que también es la primera vez que la propia sede sirvió como carrera clasificatoria a principios de temporada.</p>
+
+<p>El recorrido, que sale y termina en el propio pueblo de Nannup, está basado en la carrera SEVEN — una prueba de gravel disputada desde 2018 y presente en todas las ediciones del Gravel World Series. Los hombres afrontarán 140,7&nbsp;km y las mujeres 123,1&nbsp;km, con más del 80% del trazado sobre gravel y solo tramos cortos de asfalto, incluido un arranque ondulado de 9&nbsp;km que el pelotón volverá a pisar a falta de 36&nbsp;km para meta.</p>
+
+<p>Lo que de verdad define esta edición es el perfil: nada de puertos largos, sino una sucesión constante de rampas de 1 a 3,5&nbsp;km con pendientes que llegan al 20%, una detrás de otra, sin apenas tramos llanos para recuperar. Para las categorías de edad más veteranas habrá una distancia reducida de 90&nbsp;km, que aun así conserva unos 2.000&nbsp;m de desnivel positivo.</p>
+
+<p>La cita llega al final de una temporada en la que el propio Gravel World Series ofreció un récord de más de 45 carreras clasificatorias en todo el planeta — la prueba más clara de que el gravel, disciplina todavía joven dentro del paraguas de la UCI, sigue creciendo a un ritmo que ninguna otra modalidad del ciclismo está replicando ahora mismo.</p>
+`.trim()
+
+export async function publishGravelWorldsPreviewArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'mtb-gravel' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const race = await prisma.race.findUnique({ where: { slug: 'uci-gravel-world-championships-2026' }, select: { id: true } })
+
+  const heroImageId = await ensureHeroImage('previa-mundial-gravel-2026-nannup', {
+    title: 'Mundial de Gravel en Australia',
+    label: 'MTB y Gravel',
+  })
+
+  const baseFields = {
+    title: 'El Mundial de Gravel se va a Australia: subidas al 20% y ni un metro de descanso',
+    subtitle: 'Nannup, Australia Occidental, acoge por primera vez el Mundial de Gravel (10-11 de octubre) con 140,7 km para los hombres y 123,1 km para las mujeres',
+    excerpt:
+      'El Mundial de Gravel 2026 se corre por primera vez fuera de sus sedes habituales: Nannup, Australia (10-11 de octubre), con un recorrido de rampas constantes de hasta el 20% basado en la carrera SEVEN.',
+    content: gravelWorldsPreviewContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://en.wikipedia.org/wiki/2026_UCI_Gravel_World_Championships',
+      'https://www.cyclingnews.com/pro-cycling/racing/uci-gravel-world-championships-2026-route/',
+    ]),
+    sourceNames: toJsonField(['Wikipedia', 'Cyclingnews']),
+    seoTitle: 'Mundial de Gravel 2026 en Nannup: recorrido',
+    seoDescription:
+      'Previa del Mundial de Gravel 2026 en Nannup, Australia (10-11 de octubre): recorrido, distancias y perfil de un trazado con rampas de hasta el 20%.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'previa-mundial-gravel-2026-nannup' },
+    update: { ...baseFields, races: race ? { set: [{ id: race.id }] } : undefined },
+    create: {
+      slug: 'previa-mundial-gravel-2026-nannup',
+      ...baseFields,
+      publishedAt: new Date(),
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
