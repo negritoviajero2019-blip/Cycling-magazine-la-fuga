@@ -457,3 +457,84 @@ export async function publishGravelWorldsPreviewArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// 8. Latinos — Buitrago rey de la montaña, Tejada top-10 y su fichaje por Ineos
+// ————————————————————————————————————————————————————————————
+
+const buitragoTejadaContent = `
+<p>Entre los muchos colombianos que tomaron la salida en la Vuelta a España 2026, dos terminaron la ronda con motivos reales para celebrar — cada uno a su manera. Santiago Buitrago (Team Bahrain Victorious) se coronó campeón de la montaña, y Harold Tejada (XDS Astana Team) cerró su etapa en el equipo kazajo con el mejor resultado posible: un top 10 en la general.</p>
+
+<p>Buitrago llegó a la última semana peleando la clasificación de la montaña de tú a tú, y en la etapa 19 —la reina del sur, ganada en solitario por Eddie Dunbar— llegó segundo, a rueda del propio Dunbar, sumando los puntos que terminarían de sentenciar el maillot de la montaña a su favor. Es el segundo gran resultado de su carrera en una grande, después de sus victorias de etapa previas, y confirma a Buitrago como una referencia fija cuando la carretera se empina.</p>
+
+<p>Tejada, por su parte, completó una Vuelta sólida y regular que lo dejó en la décima posición final de la general — el mejor colombiano de la clasificación general y una manera inmejorable de despedirse del Astana, equipo en el que corre desde hace varias temporadas. El anuncio ya es oficial: a partir de 2027, Tejada correrá para el Netcompany Ineos, un salto a un equipo con más recursos en las grandes vueltas y, presumiblemente, más responsabilidad de liderazgo o de escudero de lujo en la montaña.</p>
+
+<p>Dos historias distintas, pero con un denominador común: ambas confirman que la generación colombiana que sucede a Nairo Quintana y Rigoberto Urán sigue teniendo presencia real en la pelea de las grandes vueltas, no solo como gregarios de montaña sino como protagonistas de clasificaciones secundarias y generales.</p>
+`.trim()
+
+export async function publishBuitragoTejadaArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const [buitrago, tejada, bahrain, astana, ineos, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'santiago-buitrago' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'harold-tejada' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'team-bahrain-victorious' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'xds-astana-team' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'netcompany-ineos' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'vuelta-a-espana-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [buitrago?.id, tejada?.id].filter((id): id is number => id !== undefined)
+  const teamIds = [bahrain?.id, astana?.id, ineos?.id].filter((id): id is number => id !== undefined)
+
+  const heroImageId = await ensureHeroImage('buitrago-tejada-vuelta-espana-2026-colombianos', {
+    title: 'Colombianos en la Vuelta',
+    label: 'Latinos',
+    riders: [
+      ...(buitrago ? [{ name: 'Santiago Buitrago', team: 'team-bahrain-victorious' }] : []),
+      ...(tejada ? [{ name: 'Harold Tejada', team: 'xds-astana-team' }] : []),
+    ],
+  })
+
+  const baseFields = {
+    title: 'Buitrago se corona rey de la montaña y Tejada cierra su etapa en Astana con un top 10',
+    subtitle: 'Los dos colombianos protagonizaron la Vuelta a España 2026: Buitrago ganó la clasificación de la montaña y Tejada terminó décimo antes de fichar por el Ineos en 2027',
+    excerpt:
+      'Santiago Buitrago se coronó rey de la montaña en la Vuelta a España 2026 y Harold Tejada cerró su etapa en el Astana con un top 10 en la general, antes de su fichaje confirmado por el Netcompany Ineos para 2027.',
+    content: buitragoTejadaContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.eltiempo.com/deportes/ciclismo/clasificaciones-de-la-vuelta-a-espana-2026-harold-tejada-sigue-en-el-top-10-y-santiago-buitrago-cerca-de-ganar-la-montana-3585370',
+      'https://www.infobae.com/colombia/deportes/2026/09/13/santiago-buitrago-campeon-de-la-montana-en-la-vuelta-a-espana-hora-y-donde-ver-la-coronacion-del-colombiano-en-la-etapa-21/',
+    ]),
+    sourceNames: toJsonField(['El Tiempo', 'Infobae Colombia']),
+    seoTitle: 'Buitrago y Tejada: los colombianos en la Vuelta 2026',
+    seoDescription:
+      'Santiago Buitrago se coronó rey de la montaña en la Vuelta a España 2026 y Harold Tejada terminó décimo antes de su fichaje por el Ineos en 2027.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'buitrago-tejada-vuelta-espana-2026-colombianos' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      teams: teamIds.length ? { set: teamIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+    },
+    create: {
+      slug: 'buitrago-tejada-vuelta-espana-2026-colombianos',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      teams: teamIds.length ? { connect: teamIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
