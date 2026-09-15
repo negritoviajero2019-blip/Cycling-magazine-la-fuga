@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureHeroImage } from './uci-import'
+import { ensureHeroImage, ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // 1. Última Hora — horarios oficiales del Mundial + selecciones
@@ -37,13 +37,13 @@ export async function publishWorldsScheduleArticle() {
   ])
   const riderIds = [mas?.id, ayuso?.id, garcia?.id, blasi?.id].filter((id): id is number => id !== undefined)
 
-  const heroImageId = await ensureHeroImage('mundial-ruta-2026-horarios-selecciones', {
-    title: 'Horarios del Mundial',
-    label: 'Última hora',
-    riders: [
-      ...(mas ? [{ name: 'Enric Mas', team: 'movistar-team' }] : []),
-      ...(ayuso ? [{ name: 'Juan Ayuso', team: 'uae-team-emirates-xrg' }] : []),
-    ],
+  const heroImageId = await ensureCustomHeroImage('mundial-ruta-2026-horarios-selecciones', {
+    url: '/images/headers/worlds-schedule-cover.jpg',
+    altText: 'Horarios oficiales del Mundial de Montreal: así se reparten los siete días de arcoíris',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
@@ -152,6 +152,70 @@ export async function publishVdpLuxembourgArticle() {
       publishedAt: new Date(),
       riders: vdp ? { connect: [{ id: vdp.id }] } : undefined,
       teams: team ? { connect: [{ id: team.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// 3. Grand Tours — efeméride: Vuelta 2016, etapa 15, Quintana vs. Froome
+// ————————————————————————————————————————————————————————————
+
+const quintanaFroomeContent = `
+<p>Con las tres grandes vueltas del año ya en el archivo, toca mirar hacia atrás: pocas etapas resumen tan bien lo que puede hacer un ataque bien planeado como la etapa 15 de la Vuelta a España 2016, con final en Formigal.</p>
+
+<p>Chris Froome (Team Sky) llegaba a esa jornada con apenas 54 segundos de renta sobre Nairo Quintana (Movistar) en la general. Sobre el papel, una etapa de 118,5&nbsp;km no parecía terreno para grandes sorpresas. Pero Alberto Contador (Tinkoff) tenía otros planes: atacó prácticamente desde el kilómetro 0, en una maniobra tan audaz que pilló a todo el pelotón — y especialmente al Team Sky — completamente descolocado.</p>
+
+<p>Quintana no dudó ni un segundo: se sumó de inmediato a la fuga de Contador. El resultado fue que Froome se quedó aislado, sin apoyo de equipo, obligado a perseguir con sus propias piernas mientras dos de sus rivales directos rodaban juntos por delante. La etapa la acabó ganando Gianluca Brambilla (Etixx-QuickStep), que llegó con ventaja al sprint del grupo de cabeza, pero lo verdaderamente decisivo pasó en la clasificación general.</p>
+
+<p>Quintana cruzó la meta segundo, a rueda de Brambilla, sumando seis segundos de bonificación. Entre el propio ataque y esa bonificación, el colombiano le endosó 2 minutos y 37 segundos a Froome en un solo día de carrera. Su ventaja pasó de 54 segundos a 3 minutos y 37 segundos — una diferencia que, con apenas unas etapas de montaña por delante, resultaría prácticamente definitiva.</p>
+
+<p>Quintana selló esa Vuelta como campeón. Casi una década después, la etapa de Formigal sigue siendo un caso de estudio de cómo una fuga bien sincronizada, más que la pura potencia en la subida final, puede decidir una gran vuelta antes de que empiece la etapa reina.</p>
+`.trim()
+
+export async function publishQuintanaFroomeArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'grand-tours' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const quintana = await prisma.rider.findUnique({ where: { slug: 'nairo-quintana' }, select: { id: true } })
+
+  const heroImageId = await ensureHeroImage('efemeride-vuelta-2016-quintana-froome-formigal', {
+    title: 'Vuelta 2016: Quintana vs. Froome',
+    label: 'Grand Tours · Efeméride',
+    riders: quintana ? [{ name: 'Nairo Quintana' }] : [],
+  })
+
+  const baseFields = {
+    title: 'La etapa que le dio la Vuelta a Nairo Quintana: cuando Contador y él desarmaron a Froome en Formigal',
+    subtitle: 'Vuelta a España 2016, etapa 15: un ataque desde el kilómetro 0 aisló al líder británico y le costó 2:37 en un solo día',
+    excerpt:
+      'Repasamos la etapa 15 de la Vuelta 2016: el ataque de Contador desde el km 0, Quintana sumándose de inmediato, y los 2:37 que le costó a un Froome aislado — la jugada que decidió esa Vuelta.',
+    content: quintanaFroomeContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.cyclingnews.com/races/vuelta-a-espana-2016/stage-15/results/',
+      'https://www.si.com/cycling/2016/08/29/ap-cyc-spanish-vuelta',
+    ]),
+    sourceNames: toJsonField(['Cyclingnews', 'Sports Illustrated']),
+    seoTitle: 'Efeméride: Quintana vs. Froome, Vuelta 2016 etapa 15',
+    seoDescription:
+      'La etapa 15 de la Vuelta a España 2016 en Formigal: el ataque que le costó 2:37 a Chris Froome y le dio la Vuelta a Nairo Quintana.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'efemeride-vuelta-2016-quintana-froome-formigal' },
+    update: { ...baseFields, riders: quintana ? { set: [{ id: quintana.id }] } : undefined },
+    create: {
+      slug: 'efemeride-vuelta-2016-quintana-froome-formigal',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: quintana ? { connect: [{ id: quintana.id }] } : undefined,
     },
   })
 
