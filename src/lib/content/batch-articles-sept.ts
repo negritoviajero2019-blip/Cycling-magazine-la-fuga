@@ -508,13 +508,13 @@ export async function publishBuitragoTejadaArticle() {
   const riderIds = [buitrago?.id, tejada?.id].filter((id): id is number => id !== undefined)
   const teamIds = [bahrain?.id, astana?.id, ineos?.id].filter((id): id is number => id !== undefined)
 
-  const heroImageId = await ensureHeroImage('buitrago-tejada-vuelta-espana-2026-colombianos', {
-    title: 'Colombianos en la Vuelta',
-    label: 'Latinos',
-    riders: [
-      ...(buitrago ? [{ name: 'Santiago Buitrago', team: 'team-bahrain-victorious' }] : []),
-      ...(tejada ? [{ name: 'Harold Tejada', team: 'xds-astana-team' }] : []),
-    ],
+  const heroImageId = await ensureCustomHeroImage('buitrago-tejada-vuelta-espana-2026-colombianos', {
+    url: '/images/headers/buitrago-tejada-cover.jpg',
+    altText: 'Buitrago se corona rey de la montaña y Tejada cierra su etapa en Astana con un top 10',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
