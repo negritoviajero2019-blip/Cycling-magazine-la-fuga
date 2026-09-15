@@ -32,7 +32,7 @@ producción (no solo escrito localmente).
 - [x] Imágenes de cabecera propias (gráfico editorial, sin fotos de agencia) para cada artículo
 - [x] Aviso automático de eventos próximos (`detectUpcomingRacePreviews`, corre con "Run News Scan") — detecta carreras del calendario a 7 días y crea un candidato en el panel
 - [x] Imagen de portada con titular y bajada "horneados" (composición vía `/api/og-cover`, tipografía Anton/Roboto, paleta lima+blanco) — nuevo estándar para artículos destacados; el sitio detecta `heroImage.source === 'cover-composited'` y no vuelve a sobreponer su propio texto (ver `Hero.tsx`/`PelotonRadar.tsx`). Estrenada en la previa del Mundial.
-- [ ] Extender el mismo tratamiento (imagen + texto horneado) a los 3 artículos ya publicados que aún usan el banner automático de chips (etapa 19, cierre de la Vuelta, clásicas canadienses) — no se ha pedido explícitamente, evaluar si vale la pena
+- [x] Extendido a los 4 artículos publicados: etapa 19, cierre de la Vuelta, clásicas canadienses y previa del Mundial — todos con imagen real + texto horneado. El banner automático de chips queda como respaldo (`ensureHeroImage`) para artículos futuros que no requieran una imagen a medida.
 - [ ] Decidir si seguimos publicando "a mano" (pedirle a Claude cada noticia) o retomamos la automatización completa (ANTHROPIC_API_KEY + cron) — ver conversación previa, se pospuso a propósito
 
 ## Cómo lo usamos
