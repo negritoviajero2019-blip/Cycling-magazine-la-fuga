@@ -102,6 +102,21 @@ export async function getUpcomingRaces() {
   )
 }
 
+/** Próximas carreras filtradas por Race.category — usado en la página
+ * de categoría de MTB y Gravel para mostrar su propio calendario. */
+export async function getUpcomingRacesByCategory(categories: string[]) {
+  return safeQuery(
+    () =>
+      prisma.race.findMany({
+        where: { category: { in: categories }, OR: [{ status: 'upcoming' }, { status: 'ongoing' }, { startDate: { gte: new Date() } }] },
+        orderBy: { startDate: 'asc' },
+        take: 10,
+        select: { slug: true, name: true, startDate: true, endDate: true, country: true, category: true },
+      }),
+    [],
+  )
+}
+
 /** La próxima carrera en orden cronológico — para la franja compacta del home. */
 export async function getNextRace() {
   return safeQuery(

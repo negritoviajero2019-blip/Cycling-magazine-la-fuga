@@ -77,6 +77,33 @@ async function ensureCustomHeroImage(
   return created.id
 }
 
+/**
+ * Ajusta las secciones (Category) del sitio: agrega "MTB y Gravel" y
+ * renombra "Fichajes" a "Latinos" preservando el id de la categoría
+ * (para no perder el/los artículos ya vinculados) — acordado
+ * 2026-09-14. Idempotente: se puede correr más de una vez.
+ */
+export async function ensureSiteCategories() {
+  await prisma.category.upsert({
+    where: { slug: 'mtb-gravel' },
+    update: { name: 'MTB y Gravel' },
+    create: { slug: 'mtb-gravel', name: 'MTB y Gravel' },
+  })
+
+  const fichajes = await prisma.category.findUnique({ where: { slug: 'fichajes' } })
+  if (fichajes) {
+    await prisma.category.update({ where: { id: fichajes.id }, data: { slug: 'latinos', name: 'Latinos' } })
+  } else {
+    await prisma.category.upsert({
+      where: { slug: 'latinos' },
+      update: { name: 'Latinos' },
+      create: { slug: 'latinos', name: 'Latinos' },
+    })
+  }
+
+  return { ok: true }
+}
+
 const TODAY = new Date()
 
 function statusFor(start: string, end: string): 'upcoming' | 'ongoing' | 'finished' {
@@ -93,7 +120,7 @@ interface RaceInput {
   start: string
   end: string
   country: string
-  category: 'grand-tour' | 'classic' | 'worldtour' | 'women-worldtour' | 'other'
+  category: 'grand-tour' | 'classic' | 'worldtour' | 'women-worldtour' | 'other' | 'mtb' | 'gravel'
   numStages?: number
 }
 
@@ -141,6 +168,21 @@ const MENS_RACES: RaceInput[] = [
   { slug: 'gp-cycliste-montreal-2026', name: 'Grand Prix Cycliste de Montréal', start: '2026-09-13', end: '2026-09-13', country: 'Canadá', category: 'classic' },
   { slug: 'il-lombardia-2026', name: 'Il Lombardia', start: '2026-10-10', end: '2026-10-10', country: 'Italia', category: 'classic' },
   { slug: 'tour-of-guangxi-2026', name: 'Tour of Guangxi', start: '2026-10-13', end: '2026-10-18', country: 'China', category: 'worldtour', numStages: 6 },
+]
+
+/** Calendario real de MTB y Gravel a nivel profesional — solo las
+ * citas que quedan por disputarse desde el 14-09-2026, verificado vía
+ * UCI/Red Bull/Cyclingnews/Wikipedia (no es el calendario completo de
+ * las 14 rondas de MTB World Cup ni de los 47 eventos de Gravel World
+ * Series — el Mundial de MTB en Val di Sole, Italia, ya se corrió del
+ * 26 al 30 de agosto de 2026, antes de esta importación). Se puede
+ * ampliar más adelante si se quiere cubrir también resultados pasados.
+ */
+const MTB_GRAVEL_RACES: RaceInput[] = [
+  { slug: 'uci-mtb-world-cup-soldier-hollow-2026', name: 'Copa del Mundo MTB — Soldier Hollow (XCO / Short Track)', start: '2026-09-19', end: '2026-09-20', country: 'Estados Unidos', category: 'mtb' },
+  { slug: 'uci-mtb-world-cup-whistler-2026', name: 'Copa del Mundo MTB — Whistler (Downhill)', start: '2026-09-25', end: '2026-09-27', country: 'Canadá', category: 'mtb' },
+  { slug: 'pyrenees-catalanes-gravel-tour-2026', name: 'Pyrénées Catalanes Gravel Tour', start: '2026-09-26', end: '2026-09-26', country: 'Francia', category: 'gravel' },
+  { slug: 'uci-gravel-world-championships-2026', name: 'Mundial de Gravel UCI', start: '2026-10-10', end: '2026-10-11', country: 'Australia', category: 'gravel' },
 ]
 
 const WOMENS_RACES: RaceInput[] = [
@@ -269,7 +311,7 @@ const ROSTERS: RosterEntry[] = [
 
 export async function importUciRacesAndTeams() {
   let raceCount = 0
-  for (const race of [...MENS_RACES, ...WOMENS_RACES, ...CHAMPIONSHIP_RACES]) {
+  for (const race of [...MENS_RACES, ...WOMENS_RACES, ...CHAMPIONSHIP_RACES, ...MTB_GRAVEL_RACES]) {
     const { slug, name, start, end, country, category, numStages } = race
     await prisma.race.upsert({
       where: { slug },

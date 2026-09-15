@@ -7,7 +7,7 @@ import type { ArticleSummary } from '@/types/content'
 
 /**
  * "Radar del Pelotón": snapshot de actualidad — una historia principal
- * + un feed corto de lo último (fichajes, carreras, equipos, análisis…
+ * + un feed corto de lo último (MTB/gravel, carreras, equipos, análisis…
  * cualquier categoría reciente, no restringido a una lista fija).
  */
 export function PelotonRadar({ articles }: { articles: ArticleSummary[] }) {
@@ -26,7 +26,7 @@ export function PelotonRadar({ articles }: { articles: ArticleSummary[] }) {
             Radar del Pelotón
           </h2>
           <p className="mt-3 max-w-lg text-sm text-muted">
-            Las historias que están moviendo al ciclismo profesional: fichajes, lesiones,
+            Las historias que están moviendo al ciclismo profesional: MTB, gravel, lesiones,
             carreras, resultados y movimientos dentro del pelotón.
           </p>
         </div>

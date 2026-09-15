@@ -3,13 +3,14 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-function formatResult(kind: 'import-uci' | 'publish', data: Record<string, unknown>): string {
+function formatResult(kind: 'import-uci' | 'publish' | 'generic', data: Record<string, unknown>): string {
   if (kind === 'import-uci') {
     const races = data.races as { raceCount: number; teamCount: number }
     const riders = data.riders as { riderCount: number }
     const article = data.article as { slug: string }
     return `${races.raceCount} carreras, ${races.teamCount} equipos, ${riders.riderCount} ciclistas, artículo "${article.slug}" publicado.`
   }
+  if (kind === 'generic') return 'Listo.'
   const resultCountText = typeof data.resultCount === 'number' ? `, ${data.resultCount} resultados cargados` : ''
   return `Artículo "${data.slug}" publicado${resultCountText}.`
 }
@@ -26,7 +27,7 @@ export function PublishActionButton({
   endpoint: string
   label: string
   description: string
-  resultKind: 'import-uci' | 'publish'
+  resultKind: 'import-uci' | 'publish' | 'generic'
 }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)

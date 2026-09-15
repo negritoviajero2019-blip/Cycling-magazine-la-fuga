@@ -16,7 +16,7 @@ export function NewsletterSection() {
         El ciclismo no se detiene. Tú tampoco tienes que perderte nada.
       </h2>
       <p className="mt-4 max-w-lg text-white/65">
-        Las noticias más importantes, análisis, fichajes y grandes historias del ciclismo
+        Las noticias más importantes, análisis, MTB y gravel, y grandes historias del ciclismo
         profesional directamente en tu correo.
       </p>
       <div className="mt-8 max-w-lg">

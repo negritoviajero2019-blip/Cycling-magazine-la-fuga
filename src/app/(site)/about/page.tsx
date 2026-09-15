@@ -15,8 +15,8 @@ export default function AboutPage() {
       <div className="space-y-4 text-sm leading-relaxed text-ink">
         <p>
           {branding.name} es una revista digital dedicada al ciclismo profesional: noticias,
-          resultados, análisis, fichajes y la actualidad del WorldTour, los Grand Tours, las
-          clásicas y el ciclismo femenino.
+          resultados, análisis y la actualidad del WorldTour, los Grand Tours, las clásicas, el
+          ciclismo femenino, el MTB y el gravel.
         </p>
         <p>
           Nuestro compromiso es la credibilidad: investigamos, verificamos con fuentes

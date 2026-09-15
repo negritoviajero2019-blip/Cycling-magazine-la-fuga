@@ -53,7 +53,7 @@ export async function runNewsDiscovery() {
       task: 'news-discovery',
       systemPrompt: NEWS_DISCOVERY_SYSTEM_PROMPT,
       userInput:
-        'Busca los acontecimientos más importantes de las últimas horas en el ciclismo profesional (WorldTour, Grand Tours, clásicas, ciclismo femenino, fichajes).',
+        'Busca los acontecimientos más importantes de las últimas horas en el ciclismo profesional (WorldTour, Grand Tours, clásicas, ciclismo femenino, MTB, gravel).',
       schema: NewsDiscoveryResultSchema,
       allowWebSearch: true,
     })

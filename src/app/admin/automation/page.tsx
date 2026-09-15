@@ -20,6 +20,12 @@ export default async function AutomationPage() {
       <h1 className="mb-6 font-heading text-2xl font-bold">Automatización</h1>
 
       <PublishActionButton
+        endpoint="/api/admin/setup-sections"
+        label="Agregar MTB y Gravel / renombrar Fichajes a Latinos"
+        description="Crea la sección MTB y Gravel y renombra Fichajes a Latinos, preservando los artículos ya vinculados. Seguro de correr más de una vez."
+        resultKind="generic"
+      />
+      <PublishActionButton
         endpoint="/api/admin/import-uci"
         label="Cargar datos UCI reales"
         description="Carga el calendario, equipos y ciclistas reales de la UCI 2026, y publica el artículo de la etapa 19 de la Vuelta. Seguro de correr más de una vez."

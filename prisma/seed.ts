@@ -34,8 +34,9 @@ async function main() {
         ['ultima-hora', 'Última Hora'],
         ['grand-tours', 'Grand Tours'],
         ['clasicas', 'Clásicas'],
-        ['fichajes', 'Fichajes'],
+        ['latinos', 'Latinos'],
         ['ciclismo-femenino', 'Ciclismo Femenino'],
+        ['mtb-gravel', 'MTB y Gravel'],
         ['tecnologia', 'Tecnología'],
         ['analisis', 'Análisis'],
       ] satisfies [string, string][]
@@ -47,7 +48,7 @@ async function main() {
       }),
     ),
   )
-  const [catUltimaHora, catGrandTours, , catFichajes] = categories
+  const [catUltimaHora, catGrandTours, , catLatinos] = categories
 
   const team = await prisma.team.upsert({
     where: { slug: 'equipo-demo-ciclismo' },
@@ -142,9 +143,9 @@ async function main() {
     create: {
       slug: 'ejemplo-fichaje-no-publicar',
       title: '[EJEMPLO] Equipo Demo anuncia la renovación de Ciclista Demo',
-      excerpt: 'Artículo de muestra de la sección de fichajes.',
-      content: `<p>Contenido de prueba para la sección de fichajes.</p>`,
-      categoryId: catFichajes!.id,
+      excerpt: 'Artículo de muestra de la sección de latinos.',
+      content: `<p>Contenido de prueba para la sección de latinos.</p>`,
+      categoryId: catLatinos!.id,
       authorId: author.id,
       status: 'published',
       publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 5),
