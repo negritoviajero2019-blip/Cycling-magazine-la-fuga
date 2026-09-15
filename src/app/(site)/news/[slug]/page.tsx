@@ -83,20 +83,23 @@ export default async function ArticlePage({ params }: Props) {
           </h1>
           {article.subtitle && <p className="mt-3 text-lg text-muted">{article.subtitle}</p>}
 
-          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 border-y border-border py-3 text-sm text-muted">
-            <span>
-              Por <span className="font-semibold text-ink">{article.author.name}</span>
-            </span>
-            <span aria-hidden>·</span>
-            {article.publishedAt && <time dateTime={article.publishedAt.toISOString()}>{formatDate(article.publishedAt)}</time>}
-            <span aria-hidden>·</span>
-            <span>{article.readingTime} min de lectura</span>
-            {article.status === 'updated' && (
-              <>
-                <span aria-hidden>·</span>
-                <span className="italic">Actualizado: {formatDateTime(article.updatedAt)}</span>
-              </>
-            )}
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-y border-border py-3 text-sm text-muted">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span>
+                Por <span className="font-semibold text-ink">{article.author.name}</span>
+              </span>
+              <span aria-hidden>·</span>
+              {article.publishedAt && <time dateTime={article.publishedAt.toISOString()}>{formatDate(article.publishedAt)}</time>}
+              <span aria-hidden>·</span>
+              <span>{article.readingTime} min de lectura</span>
+              {article.status === 'updated' && (
+                <>
+                  <span aria-hidden>·</span>
+                  <span className="italic">Actualizado: {formatDateTime(article.updatedAt)}</span>
+                </>
+              )}
+            </div>
+            <ShareButtons url={url} title={article.title} compact />
           </div>
 
           <div className="my-6 overflow-hidden rounded">
