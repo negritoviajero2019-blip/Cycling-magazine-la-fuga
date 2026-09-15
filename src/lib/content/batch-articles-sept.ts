@@ -593,3 +593,78 @@ export async function publishTarmacSl9Article() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// 10. Análisis — favoritos reales al Mundial masculino
+// ————————————————————————————————————————————————————————————
+
+const worldsFavoritesAnalysisContent = `
+<p>Con Tadej Pogačar confirmado fuera, el Mundial de ruta masculino 2026 se presenta como uno de los más abiertos de la última década. Repasamos, con la forma reciente de cada uno como guía, quién llega con más argumentos para llevarse el arcoíris en Montreal el 27 de septiembre.</p>
+
+<p><strong>Remco Evenepoel</strong> encabeza la mayoría de las quinielas. Llega lanzado tras ganar el Grand Prix Cycliste de Québec, la última gran prueba antes del Mundial, y su perfil —capaz de atacar de lejos y de defenderse en la crono— encaja bien con un circuito de Mont Royal que combina puertos cortos y explosivos con tramos técnicos.</p>
+
+<p><strong>Isaac del Toro</strong> es la otra gran referencia de forma: ganó el Grand Prix Cycliste de Montréal apenas unos días antes del Mundial, en el mismo circuito de Mont Royal que decidirá el título, superando a Paul Seixas en un ataque a falta de 150 metros. Pocas veces un candidato llega a un Mundial con un ensayo general tan literal y tan reciente.</p>
+
+<p><strong>Mathieu van der Poel</strong> rompe el patrón: en vez de probar el circuito real, optó por el Tour de Luxemburgo como preparación, repitiendo la fórmula que ya le dio un podio en 2024. Busca su segundo maillot arcoíris, después del de 2023, y su capacidad para decidir carreras explosivas en el último kilómetro lo mantiene entre los máximos favoritos pese a no haber pisado Mont Royal en competición esta temporada.</p>
+
+<p><strong>Wout van Aert y Mattias Skjelmose</strong> completan el grupo de cabeza de las quinielas — el belga con el bagaje de una temporada completa de clásicas duras a sus espaldas, y el danés como el nombre que más ha crecido esta última campaña dentro de ese perfil de corredor explosivo y versátil que exige el circuito de Montreal.</p>
+
+<p>Con dos formas de llegar —el ensayo directo en Mont Royal de Evenepoel y Del Toro, frente a la apuesta indirecta de Van der Poel— el Mundial 2026 promete una de las lecturas tácticas más interesantes de los últimos años, precisamente por la ausencia del nombre que llevaba dos ediciones resolviéndolo todo por la vía rápida.</p>
+`.trim()
+
+export async function publishWorldsFavoritesAnalysisArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'analisis' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const riderSlugs = ['remco-evenepoel', 'isaac-del-toro', 'mathieu-van-der-poel', 'wout-van-aert', 'mattias-skjelmose']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true, slug: true, name: true } })
+  const race = await prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } })
+
+  const heroImageId = await ensureHeroImage('favoritos-mundial-ruta-masculino-2026', {
+    title: 'Favoritos al Mundial',
+    label: 'Análisis',
+    riders: riders.slice(0, 4).map((r) => ({ name: r.name })),
+  })
+
+  const baseFields = {
+    title: 'Evenepoel, Del Toro y el enigma Van der Poel: quién puede ganar el Mundial sin Pogačar',
+    subtitle: 'Analizamos la forma reciente de los cinco grandes favoritos al Mundial de ruta masculino, a una semana de la salida en Montreal',
+    excerpt:
+      'Con Pogačar confirmado fuera, repasamos a los cinco grandes favoritos al Mundial de ruta 2026: Evenepoel, Del Toro, Van der Poel, Van Aert y Skjelmose, con su forma reciente como guía.',
+    content: worldsFavoritesAnalysisContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://www.eurosport.es/ciclismo/campeonatos-mundiales/2026/montreal-mundial-2026-ciclismo-ruta-recorrido-favoritos-fecha-horario-donde-ver-tv-streaming-online-gratis-hoy_sto23336356/story.shtml',
+      'https://ciclismoaldia.es/ciclismo/los-diez-grandes-favoritos-a-los-mundiales-del-toro-evenepoel-seixas-van-aert-van-der-poel-y-mas-se-presentan-en-ausencia-de-pogacar',
+    ]),
+    sourceNames: toJsonField(['Eurosport España', 'Ciclismo al Día']),
+    seoTitle: 'Favoritos al Mundial de ruta 2026: análisis',
+    seoDescription:
+      'Análisis de los favoritos al Mundial de ruta masculino 2026 sin Pogačar: Evenepoel, Del Toro, Van der Poel, Van Aert y Skjelmose.',
+    readingTime: 4,
+  }
+
+  const riderIds = riders.map((r) => r.id)
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'favoritos-mundial-ruta-masculino-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+    },
+    create: {
+      slug: 'favoritos-mundial-ruta-masculino-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
