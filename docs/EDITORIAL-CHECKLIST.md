@@ -40,7 +40,7 @@ producción (no solo escrito localmente).
 - **Última hora**: diario, 1-3 posts/día según cuánto esté pasando ese día en el pelotón. No forzar volumen si no hay noticia real.
 - **Grand Tours**: cobertura en vivo mientras haya una grande en curso; fuera de temporada, 1 artículo/semana de "efeméride" (una etapa memorable de Giro/Tour/Vuelta) — siempre con fecha, datos y fuente real verificados antes de publicar, igual que el resto del sitio.
 - **Ciclismo femenino**: hueco real (5 carreras Women's WorldTour ya cargadas, solo 1 artículo). Antes de tener cadencia regular aquí falta importar equipos/rosters reales del Women's WorldTour (mismo proceso que se hizo para hombres).
-- **Secciones de nav (Fichajes → "Latinos", nuevas secciones)**: se discutió pero se pospone — quedan las secciones actuales sin cambios por ahora.
+- **Secciones de nav**: hecho — "Fichajes" pasó a "Latinos" y se agregó "MTB y Gravel" con su propio calendario real de próximos eventos (2026-09-14). Sin contenido propio todavía en ninguna de las dos, falta escribir el primer artículo de cada una.
 
 ## Cómo lo usamos
 
