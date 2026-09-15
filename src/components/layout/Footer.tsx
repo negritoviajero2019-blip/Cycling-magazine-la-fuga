@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { branding, footerLinks } from '@/lib/config/branding'
 import { NewsletterForm } from '@/components/editorial/NewsletterForm'
+import { CookiePreferencesButton } from '@/components/layout/CookiePreferencesButton'
 
 export function Footer() {
   return (
@@ -34,6 +35,9 @@ export function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              <CookiePreferencesButton />
+            </li>
           </ul>
         </nav>
       </div>

@@ -3,6 +3,10 @@
  * tamaño físico reservado para evitar CLS. Inertes hasta que se
  * configure NEXT_PUBLIC_ADSENSE_PUBLISHER_ID — entonces se sustituye
  * el placeholder por el snippet real de AdSense, sin tocar el layout.
+ * Cuando se active: el snippet de AdSense también debe comprobar
+ * `getStoredConsent() === 'accepted'` (ver src/lib/consent/cookie-consent.ts)
+ * antes de cargar, igual que Analytics.tsx — RGPD exige consentimiento
+ * previo para publicidad personalizada.
  */
 const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID
 

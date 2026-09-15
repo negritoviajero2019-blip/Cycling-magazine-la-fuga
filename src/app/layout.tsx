@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { branding } from '@/lib/config/branding'
 import { Analytics } from '@/components/layout/Analytics'
+import { CookieConsentBanner } from '@/components/layout/CookieConsentBanner'
 import { websiteJsonLd, organizationJsonLd } from '@/lib/seo/structured-data'
 
 /**
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         {children}
         <Analytics />
+        <CookieConsentBanner />
       </body>
     </html>
   )
