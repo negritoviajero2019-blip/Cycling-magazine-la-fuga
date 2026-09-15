@@ -35,6 +35,13 @@ producción (no solo escrito localmente).
 - [x] Extendido a los 4 artículos publicados: etapa 19, cierre de la Vuelta, clásicas canadienses y previa del Mundial — todos con imagen real + texto horneado. El banner automático de chips queda como respaldo (`ensureHeroImage`) para artículos futuros que no requieran una imagen a medida.
 - [ ] Decidir si seguimos publicando "a mano" (pedirle a Claude cada noticia) o retomamos la automatización completa (ANTHROPIC_API_KEY + cron) — ver conversación previa, se pospuso a propósito
 
+## Cadencia editorial por sección (acordado 2026-09-14)
+
+- **Última hora**: diario, 1-3 posts/día según cuánto esté pasando ese día en el pelotón. No forzar volumen si no hay noticia real.
+- **Grand Tours**: cobertura en vivo mientras haya una grande en curso; fuera de temporada, 1 artículo/semana de "efeméride" (una etapa memorable de Giro/Tour/Vuelta) — siempre con fecha, datos y fuente real verificados antes de publicar, igual que el resto del sitio.
+- **Ciclismo femenino**: hueco real (5 carreras Women's WorldTour ya cargadas, solo 1 artículo). Antes de tener cadencia regular aquí falta importar equipos/rosters reales del Women's WorldTour (mismo proceso que se hizo para hombres).
+- **Secciones de nav (Fichajes → "Latinos", nuevas secciones)**: se discutió pero se pospone — quedan las secciones actuales sin cambios por ahora.
+
 ## Cómo lo usamos
 
 Cuando quieras avanzar, dime "sigamos con el checklist" o el ítem
