@@ -44,7 +44,7 @@ export function PelotonRadar({ articles }: { articles: ArticleSummary[] }) {
           {main && (
             <Link
               href={`/news/${main.slug}`}
-              className="group relative block min-h-[500px] overflow-hidden rounded-lg bg-[#111] min-[850px]:min-h-[580px]"
+              className="group relative block aspect-video overflow-hidden rounded-lg bg-[#111]"
             >
               {main.heroImage ? (
                 <ArticleImage
@@ -60,7 +60,7 @@ export function PelotonRadar({ articles }: { articles: ArticleSummary[] }) {
               {main.heroImage?.source === 'cover-composited' ? null : (
                 <>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-black/[0.08]" />
-                  <div className="relative z-[2] flex min-h-[500px] flex-col justify-end p-[clamp(28px,5vw,55px)] text-white min-[850px]:min-h-[580px]">
+                  <div className="relative z-[2] flex h-full flex-col justify-end p-[clamp(28px,5vw,55px)] text-white">
                     {main.breakingNews ? (
                       <Badge variant="breaking">Breaking</Badge>
                     ) : (

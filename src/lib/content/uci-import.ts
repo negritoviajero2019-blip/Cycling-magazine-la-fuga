@@ -531,7 +531,11 @@ export async function publishVueltaFinalArticle() {
   })
 
   // Resultados estructurados — general final (gc), ganadores de etapa
-  // (stage) y clasificaciones secundarias (points/kom/youth).
+  // (stage) y clasificaciones secundarias (points/kom/youth). Se borran
+  // los de esta carrera antes de recrearlos: sin esto, cada vez que se
+  // vuelve a correr esta función (el botón de admin lo permite a
+  // propósito) se duplicaban las filas de Result.
+  await prisma.result.deleteMany({ where: { raceId: race.id } })
   let resultCount = 0
   const finalDate = new Date('2026-09-13')
 
@@ -610,7 +614,7 @@ const canadianClassicsContent = `
 `.trim()
 
 export async function publishCanadianClassicsArticle() {
-  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'clasicas' } })
   const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
 
   const [quebec, montreal] = await Promise.all([
@@ -681,6 +685,10 @@ export async function publishCanadianClassicsArticle() {
     },
   })
 
+  // Se borran los resultados existentes de ambas carreras antes de
+  // recrearlos — evita duplicar filas de Result cada vez que se corre
+  // esta función (el botón de admin lo permite a propósito).
+  await prisma.result.deleteMany({ where: { raceId: { in: [quebec.id, montreal.id] } } })
   let resultCount = 0
   const quebecPodium: { rider: string; position: number }[] = [
     { rider: 'remco-evenepoel', position: 1 },

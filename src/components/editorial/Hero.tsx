@@ -15,7 +15,7 @@ export function Hero({ article }: { article: ArticleSummary }) {
   const baked = hasBakedInText(article.heroImage?.source)
 
   return (
-    <article className="group relative min-h-[420px] overflow-hidden rounded-lg md:min-h-[560px]">
+    <article className="group relative aspect-video overflow-hidden rounded-lg">
       <Link href={`/news/${article.slug}`} className="block">
         {article.heroImage ? (
           <ArticleImage
@@ -42,7 +42,7 @@ export function Hero({ article }: { article: ArticleSummary }) {
         ) : (
           <>
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
-            <div className="relative flex min-h-[420px] flex-col justify-end gap-3 p-5 md:min-h-[560px] md:p-10">
+            <div className="relative flex h-full flex-col justify-end gap-3 p-5 md:p-10">
               <span className="w-fit rounded-full bg-lime px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-primary">
                 {article.category.name}
               </span>
