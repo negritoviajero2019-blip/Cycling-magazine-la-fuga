@@ -538,3 +538,58 @@ export async function publishBuitragoTejadaArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// 9. Tecnología — Specialized Tarmac SL9
+// ————————————————————————————————————————————————————————————
+
+const tarmacSl9Content = `
+<p>Specialized presentó este año la nueva generación de su modelo insignia, la Tarmac SL9, y la primera sorpresa es lo que NO cambió: el cuadro pesa 687 gramos, dos gramos más que el de la SL8 anterior. En una industria donde cada lanzamiento suele presumir de gramos de menos, Specialized decidió apostar por otra prioridad.</p>
+
+<p>Esa prioridad es la aerodinámica. La marca asegura que la SL9 es 4 vatios más eficiente a 45&nbsp;km/h que su predecesora, una mejora que no viene de tubos aero profundos sino de una reducción del 10% en el área frontal de la bicicleta, manteniendo la silueta clásica de la Tarmac. Uno de los elementos clave es el "Win Fin", una pieza de material añadida al tubo del sillín que cierra el hueco con la rueda trasera.</p>
+
+<p>Traducido a términos de carrera: Specialized calcula que esos 4 vatios equivalen a un ahorro de 28 segundos en una etapa de 100&nbsp;km al ritmo de una gran vuelta. Las versiones completas de la S-Works Tarmac SL9 bajan hasta los 6,5&nbsp;kg, y una configuración orientada a la montaña con componentes Alpinist llega a los 6,1&nbsp;kg.</p>
+
+<p>Detrás del diseño hay un cambio de filosofía que Specialized bautizó como "Time to Finish": en vez de optimizar peso, aerodinámica o rigidez por separado, la marca simula el efecto conjunto de las tres variables —además de la calidad de marcha— sobre etapas reales del WorldTour y los Monumentos, para decidir qué compromiso ofrece la bicicleta más rápida de verdad, no solo la más ligera o la más aerodinámica sobre el papel.</p>
+`.trim()
+
+export async function publishTarmacSl9Article() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'tecnologia' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const heroImageId = await ensureHeroImage('specialized-tarmac-sl9-lanzamiento-2026', {
+    title: 'Specialized Tarmac SL9',
+    label: 'Tecnología',
+  })
+
+  const baseFields = {
+    title: 'La Specialized Tarmac SL9 no es más ligera, pero ahorra 28 segundos en 100 km',
+    subtitle: 'El nuevo buque insignia de Specialized prioriza la aerodinámica sobre el peso: 4 vatios menos de resistencia a 45 km/h gracias a un 10% menos de área frontal',
+    excerpt:
+      'La Specialized Tarmac SL9 pesa dos gramos más que su antecesora, pero es 4 vatios más aerodinámica a 45 km/h — un ahorro calculado en 28 segundos sobre 100 km de etapa.',
+    content: tarmacSl9Content,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.bikeradar.com/news/specialized-tarmac-sl9-2026',
+      'https://www.cyclist.co.uk/news/specialized-tarmac-sl9',
+    ]),
+    sourceNames: toJsonField(['BikeRadar', 'Cyclist']),
+    seoTitle: 'Specialized Tarmac SL9: lo que cambió en 2026',
+    seoDescription:
+      'La nueva Specialized Tarmac SL9 pesa lo mismo que su antecesora pero es 4 vatios más aerodinámica a 45 km/h, un ahorro de 28 segundos en 100 km de etapa.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'specialized-tarmac-sl9-lanzamiento-2026' },
+    update: baseFields,
+    create: { slug: 'specialized-tarmac-sl9-lanzamiento-2026', ...baseFields, publishedAt: new Date() },
+  })
+
+  return { slug: article.slug }
+}

@@ -9,6 +9,7 @@ import {
   publishMtbWorldCupPreviewArticle,
   publishGravelWorldsPreviewArticle,
   publishBuitragoTejadaArticle,
+  publishTarmacSl9Article,
 } from '@/lib/content/batch-articles-sept'
 
 /** Tanda de 10 artículos reales de septiembre 2026 (ver batch-articles-sept.ts). Seguro de correr más de una vez. */
@@ -26,6 +27,7 @@ export async function POST() {
       publishMtbWorldCupPreviewArticle(),
       publishGravelWorldsPreviewArticle(),
       publishBuitragoTejadaArticle(),
+      publishTarmacSl9Article(),
     ])
     return NextResponse.json({ ok: true, articles: results })
   } catch (error) {
