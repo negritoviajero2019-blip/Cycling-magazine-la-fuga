@@ -110,10 +110,13 @@ export async function publishVdpLuxembourgArticle() {
     prisma.team.findUnique({ where: { slug: 'alpecin-premier-tech' }, select: { id: true } }),
   ])
 
-  const heroImageId = await ensureHeroImage('van-der-poel-tour-luxemburgo-mundial-2026', {
-    title: 'Van der Poel evita Canadá',
-    label: 'Última hora',
-    riders: vdp ? [{ name: 'Mathieu van der Poel', team: 'alpecin-premier-tech' }] : [],
+  const heroImageId = await ensureCustomHeroImage('van-der-poel-tour-luxemburgo-mundial-2026', {
+    url: '/images/headers/vdp-luxembourg-cover.jpg',
+    altText: 'Van der Poel evita Canadá y apuesta de nuevo por Luxemburgo antes del Mundial',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
