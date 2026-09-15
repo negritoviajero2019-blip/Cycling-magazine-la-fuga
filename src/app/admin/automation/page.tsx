@@ -49,6 +49,12 @@ export default async function AutomationPage() {
         description="Publica la previa del Mundial de ruta 2026 en Montreal (sin Pogačar, favoritos Evenepoel/Del Toro/Van der Poel). Seguro de correr más de una vez."
         resultKind="publish"
       />
+      <PublishActionButton
+        endpoint="/api/admin/publish-section-launch-articles"
+        label="Publicar primer artículo de cada sección nueva"
+        description="Publica un artículo real en cada sección que todavía no tenía uno: caída de Ayuso en Quebec (Última hora), previa del Mundial femenino (Ciclismo femenino), temporada de Richard Carapaz (Latinos), nuevas reglas técnicas UCI (Tecnología) y resultados del Mundial de MTB en Val di Sole (MTB y Gravel). Seguro de correr más de una vez."
+        resultKind="generic"
+      />
 
       <AutomationPanel isPaused={isPaused} aiConfigured={aiConfigured} />
 

@@ -72,7 +72,9 @@ export default async function ArticlePage({ params }: Props) {
           />
 
           <div className="mb-3 flex items-center gap-2">
-            {article.breakingNews && <Badge variant="breaking">Última hora</Badge>}
+            {article.breakingNews && article.category.slug !== 'ultima-hora' && (
+              <Badge variant="breaking">Última hora</Badge>
+            )}
             <CategoryChip slug={article.category.slug} name={article.category.name} />
           </div>
 

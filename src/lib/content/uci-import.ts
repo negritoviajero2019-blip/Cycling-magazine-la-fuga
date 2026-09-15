@@ -179,6 +179,7 @@ const MENS_RACES: RaceInput[] = [
  * ampliar más adelante si se quiere cubrir también resultados pasados.
  */
 const MTB_GRAVEL_RACES: RaceInput[] = [
+  { slug: 'uci-mtb-world-championships-2026', name: 'Mundial de MTB UCI — Val di Sole', start: '2026-08-26', end: '2026-08-30', country: 'Italia', category: 'mtb' },
   { slug: 'uci-mtb-world-cup-soldier-hollow-2026', name: 'Copa del Mundo MTB — Soldier Hollow (XCO / Short Track)', start: '2026-09-19', end: '2026-09-20', country: 'Estados Unidos', category: 'mtb' },
   { slug: 'uci-mtb-world-cup-whistler-2026', name: 'Copa del Mundo MTB — Whistler (Downhill)', start: '2026-09-25', end: '2026-09-27', country: 'Canadá', category: 'mtb' },
   { slug: 'pyrenees-catalanes-gravel-tour-2026', name: 'Pyrénées Catalanes Gravel Tour', start: '2026-09-26', end: '2026-09-26', country: 'Francia', category: 'gravel' },
@@ -764,6 +765,333 @@ export async function publishCanadianClassicsArticle() {
   await prisma.race.updateMany({ where: { id: { in: [quebec.id, montreal.id] } }, data: { status: 'finished' } })
 
   return { slug: article.slug, resultCount }
+}
+
+const ayusoCrashContent = `
+<p>Juan Ayuso (UAE Team Emirates-XRG) sufrió una aparatosa caída a unos 50 metros de la meta en el esprint final del Grand Prix Cycliste de Québec, carrera que ganó Remco Evenepoel. Según la reconstrucción de los hechos, un volantazo de Quinten Hermans provocó que Simone Gualdi tocara a Paul Seixas, quien a su vez golpeó la rueda delantera de Ayuso. El español cruzó la línea de meta caminando, con la bicicleta en la mano.</p>
+
+<p>El equipo emiratí optó por la cautela: la primera valoración médica no encontró motivo de alarma, pero decidieron esperar 48 horas para confirmar el alcance real del golpe, que dejó a Ayuso con una fuerte inflamación. Al día siguiente, el español lo intentó en el Grand Prix Cycliste de Montréal, pero terminó retirándose de la carrera.</p>
+
+<p>La retirada en Montreal encendió las alarmas de la federación española a menos de una semana del inicio del Mundial de ruta, también en Montreal (20-27 de septiembre), donde Ayuso figuraba entre los nombres de referencia de la selección. Por ahora no hay un parte médico que descarte oficialmente su participación.</p>
+`.trim()
+
+/**
+ * Caída de Juan Ayuso en el GP de Quebec — verificado vía ClaroSports,
+ * Ciclismo Internacional, Cyclingnews, Ciclismo al Día y Diario del
+ * Triatlón, consultado 2026-09-14.
+ */
+export async function publishAyusoCrashArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const [rider, team, quebec] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'juan-ayuso' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'uae-team-emirates-xrg' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'gp-cycliste-quebec-2026' }, select: { id: true } }),
+  ])
+
+  const heroImageId = await ensureHeroImage('juan-ayuso-caida-gp-quebec-2026', {
+    title: 'Ayuso se cae en Quebec',
+    label: 'Última hora',
+    riders: rider ? [{ name: 'Juan Ayuso', team: 'uae-team-emirates-xrg' }] : [],
+  })
+
+  const baseFields = {
+    title: 'Juan Ayuso se cae en el esprint del GP de Quebec, con el Mundial en el aire',
+    subtitle: 'El español llegó a meta caminando tras un toque de rueda a 50 metros de la línea; al día siguiente se retiró del GP de Montreal',
+    excerpt:
+      'Juan Ayuso sufrió una aparatosa caída en el esprint del GP de Quebec y se retiró al día siguiente en Montreal. La federación española vigila su recuperación a menos de una semana del Mundial de ruta.',
+    content: ayusoCrashContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.clarosports.com/ciclismo/juan-ayuso-sufre-aparatosa-caida-en-el-cierre-del-gran-premio-ciclista-de-quebec-2026/',
+      'https://www.cyclingnews.com/pro-cycling/teams-riders/more-bad-luck-for-juan-ayuso-with-crash-in-finale-of-grand-prix-de-quebec-but-no-penalties-handed-out/',
+      'https://ciclismoaldia.es/ciclismo/ultima-hora-sobre-el-estado-de-juan-ayuso-tras-su-caida-en-el-gp-de-quebec-peligra-el-mundial',
+    ]),
+    sourceNames: toJsonField(['ClaroSports', 'Cyclingnews', 'Ciclismo al Día']),
+    seoTitle: 'Juan Ayuso se cae en el GP de Quebec 2026',
+    seoDescription:
+      'Juan Ayuso sufrió una caída en el esprint del GP de Quebec y se retiró al día siguiente en Montreal, a menos de una semana del Mundial de ruta 2026.',
+    readingTime: 2,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'juan-ayuso-caida-gp-quebec-2026' },
+    update: {
+      ...baseFields,
+      riders: rider ? { set: [{ id: rider.id }] } : undefined,
+      teams: team ? { set: [{ id: team.id }] } : undefined,
+      races: quebec ? { set: [{ id: quebec.id }] } : undefined,
+    },
+    create: {
+      slug: 'juan-ayuso-caida-gp-quebec-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: rider ? { connect: [{ id: rider.id }] } : undefined,
+      teams: team ? { connect: [{ id: team.id }] } : undefined,
+      races: quebec ? { connect: [{ id: quebec.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+const womensWorldsPreviewContent = `
+<p>Un día antes de que Montreal decida el Mundial de ruta masculino, el sábado 26 de septiembre será el turno de la prueba en línea élite femenina: 180,1&nbsp;km con 2.570&nbsp;m de desnivel positivo, sobre un recorrido que comparte buena parte del guion con el de los hombres.</p>
+
+<p>La carrera sale de Brossard, en la región de Montérégie, cruza el puente Samuel de Champlain hacia Montreal y entra en el circuito final de Mont Royal, con sus tres tramos característicos: la Voie Camillien-Houde, el Chemin de la Polytechnique —con rampas de más del 11%— y la recta final por la Avenue du Parc.</p>
+
+<p>La cita llega al cierre de una temporada de Women's WorldTour que ya repartió los grandes títulos del año (Tour de Francia Femmes, Vuelta Femenina, Giro d'Italia Women), por lo que Montreal funciona como última gran oportunidad individual antes de que el calendario femenino cierre en octubre con el Tour of Chongming Island en China.</p>
+`.trim()
+
+/**
+ * Previa del Mundial de ruta femenino 2026 — verificado vía el
+ * comunicado oficial de Ville de Brossard/Newswire y Tourisme
+ * Montréal, consultado 2026-09-14. Mismo circuito ya descrito en la
+ * previa masculina (previa-mundial-ruta-2026-montreal), un día antes.
+ */
+export async function publishWomensWorldsPreviewArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ciclismo-femenino' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const race = await prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } })
+
+  const heroImageId = await ensureHeroImage('previa-mundial-ruta-femenino-2026-montreal', {
+    title: 'Mundial femenino en Montreal',
+    label: 'Ciclismo femenino',
+  })
+
+  const baseFields = {
+    title: 'La otra cita de Montreal: la previa del Mundial de ruta femenino 2026',
+    subtitle: 'Las mujeres correrán 180,1 km el 26 de septiembre por el mismo circuito de Mont Royal que decidirá también el título masculino',
+    excerpt:
+      'El Mundial de ruta femenino 2026 se corre el 26 de septiembre en Montreal, un día antes que el masculino, sobre el mismo circuito de Mont Royal: 180,1 km y 2.570 m de desnivel.',
+    content: womensWorldsPreviewContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.newswire.ca/news-releases/2026-uci-road-world-championships-in-montreal-the-elite-women-s-and-men-s-road-race-starts-to-be-held-at-quartier-dix30-on-september-26-and-27-2026-845943806.html',
+      'https://www.mtl.org/en/experience/uci-road-world-championships',
+    ]),
+    sourceNames: toJsonField(['Newswire (Ville de Brossard)', 'Tourisme Montréal']),
+    seoTitle: 'Mundial de ruta femenino 2026: previa y recorrido',
+    seoDescription:
+      'Previa del Mundial de ruta femenino 2026 en Montreal: recorrido de 180,1 km por el circuito de Mont Royal, un día antes de la prueba masculina.',
+    readingTime: 2,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'previa-mundial-ruta-femenino-2026-montreal' },
+    update: { ...baseFields, races: race ? { set: [{ id: race.id }] } : undefined },
+    create: {
+      slug: 'previa-mundial-ruta-femenino-2026-montreal',
+      ...baseFields,
+      publishedAt: new Date(),
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+const carapazSeasonContent = `
+<p>Entre los ciclistas latinoamericanos, ninguno cierra 2026 con un balance tan completo como Richard Carapaz (EF Education-EasyPost). El ecuatoriano llegó a un nuevo nivel en el Tour de Francia: ganó en solitario en Alpe d'Huez, se llevó la clasificación de la montaña y terminó octavo en la general, volviendo a ser una referencia latinoamericana en la carrera más importante del calendario.</p>
+
+<p>Semanas después, en la Vuelta a España, Carapaz confirmó su gran momento de forma con el cuarto lugar en la clasificación general final, a 6 minutos y 54 segundos de Enric Mas, por delante incluso de Sepp Kuss. Disputar dos Grand Tours de altísimo nivel en la misma temporada, con un top 10 y un top 5 respectivamente, es un balance que ningún otro corredor latinoamericano puede exhibir en 2026.</p>
+
+<p>En el EF Education-EasyPost, Carapaz corrió acompañado de su compatriota Jefferson Alexander Cepeda y del colombiano Rigoberto Urán, quien ha declarado públicamente que su papel en las carreras que comparten con Carapaz es el de apoyarlo. No todos los latinoamericanos referentes del pelotón tuvieron una temporada tan sólida: Egan Bernal, por ejemplo, sufrió un Tour de Francia irregular, llegando a perder más de 14 minutos en una sola etapa.</p>
+`.trim()
+
+/**
+ * Balance de temporada de Richard Carapaz — Tour de Francia verificado
+ * vía Semana y Ciclismo Colombiano; resultado en la Vuelta a España
+ * tomado de los datos ya verificados y publicados en
+ * enric-mas-campeon-vuelta-espana-2026 (misma fuente interna, no se
+ * reinventa). Consultado 2026-09-14.
+ */
+export async function publishCarapazSeasonArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const [carapaz, bernal, team] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'richard-carapaz' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'egan-bernal' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'ef-education-easypost' }, select: { id: true } }),
+  ])
+  const riderIds = [carapaz?.id, bernal?.id].filter((id): id is number => id !== undefined)
+
+  const heroImageId = await ensureHeroImage('richard-carapaz-temporada-2026-tour-vuelta', {
+    title: 'Carapaz, temporada 2026',
+    label: 'Latinos',
+    riders: carapaz ? [{ name: 'Richard Carapaz', team: 'ef-education-easypost' }] : [],
+  })
+
+  const baseFields = {
+    title: 'Richard Carapaz, el latinoamericano más completo de 2026: puños, montaña y regularidad',
+    subtitle: 'El ecuatoriano ganó una etapa y la clasificación de la montaña en el Tour de Francia, y cerró la Vuelta a España entre los cinco primeros',
+    excerpt:
+      'Richard Carapaz ganó en Alpe d\'Huez y la montaña del Tour de Francia, y terminó cuarto en la Vuelta a España: el mejor balance de temporada entre los latinoamericanos del pelotón en 2026.',
+    content: carapazSeasonContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.semana.com/deportes/ciclismo/articulo/sacudon-a-la-clasificacion-general-del-tour-de-francia-2026-carapaz-hizo-el-dano-y-egan-bernal-lo-pago/202633/',
+      'https://www.ciclismocolombiano.com/actualidad/rigoberto-uran-apoyara-a-carapaz-en-las-carreras-que-hagan-juntos/',
+    ]),
+    sourceNames: toJsonField(['Semana', 'Ciclismo Colombiano']),
+    seoTitle: 'Richard Carapaz: balance de su temporada 2026',
+    seoDescription:
+      'Richard Carapaz ganó en Alpe d\'Huez y la montaña del Tour de Francia 2026, y terminó cuarto en la Vuelta a España: el mejor latinoamericano de la temporada.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'richard-carapaz-temporada-2026-tour-vuelta' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      teams: team ? { set: [{ id: team.id }] } : undefined,
+    },
+    create: {
+      slug: 'richard-carapaz-temporada-2026-tour-vuelta',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      teams: team ? { connect: [{ id: team.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+const uciTechRulesContent = `
+<p>Por primera vez en mucho tiempo, la UCI cambia de dirección: en vez de perseguir más velocidad, el paquete de reglas técnicas que entra en vigor en 2026 le mete deliberadamente más resistencia aerodinámica a las bicicletas del pelotón, priorizando la seguridad sobre el cronómetro.</p>
+
+<p>El cambio más visible es el del manillar: la anchura mínima pasa a ser de 400&nbsp;mm (medida de extremo a extremo) con al menos 280&nbsp;mm entre las manetas, y un límite de apertura ("flare") de 65&nbsp;mm. La UCI responde así a la tendencia de los últimos años hacia manillares ultraestrechos, señalados como un factor de inestabilidad en los momentos de mayor tensión del pelotón.</p>
+
+<p>Las ruedas también quedan limitadas: en carreras en línea, la profundidad máxima de llanta baja a 65&nbsp;mm, dejando fuera a los perfiles más profundos y aerodinámicos. La marca Swiss Side ya ha enviado una carta abierta calificando la medida de "inefectiva y hasta contraproducente" para la estabilidad de la rueda, en un debate técnico que promete seguir abierto.</p>
+
+<p>El cuadro y la horquilla también tienen ahora topes de anchura (115&nbsp;mm en la horquilla, 145&nbsp;mm en el triángulo trasero), pensados para frenar el diseño de formas cada vez más agresivas en busca de aerodinámica. Y los cascos se dividen en dos categorías —"tradicional" y "contrarreloj"—: los tradicionales deberán tener al menos tres orificios de ventilación, sin cobertura de las orejas ni visera.</p>
+`.trim()
+
+/**
+ * Cambios reglamentarios técnicos UCI 2026 — verificado vía BikeRadar
+ * y BikeTips, consultado 2026-09-14.
+ */
+export async function publishUciTechRulesArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'tecnologia' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const heroImageId = await ensureHeroImage('nuevas-reglas-tecnicas-uci-2026', {
+    title: 'Nuevas reglas técnicas UCI',
+    label: 'Tecnología',
+  })
+
+  const baseFields = {
+    title: 'Manillares más anchos, ruedas menos aerodinámicas: así cambian las reglas técnicas de la UCI en 2026',
+    subtitle: 'La UCI prioriza la seguridad sobre la velocidad: anchura mínima de manillar, límite de altura de llantas y nuevas categorías de casco',
+    excerpt:
+      'La UCI mete freno a la aerodinámica en 2026: manillares más anchos, llantas de menos de 65 mm en carreras en línea, límites al ancho del cuadro y dos categorías de casco.',
+    content: uciTechRulesContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.bikeradar.com/news/the-uci-rule-changes-for-2026-you-need-to-know-about',
+      'https://biketips.com/uci-2026-rule-changes-handlebars-wheels-frames-explained/',
+    ]),
+    sourceNames: toJsonField(['BikeRadar', 'BikeTips']),
+    seoTitle: 'Nuevas reglas técnicas de la UCI para 2026',
+    seoDescription:
+      'Repasamos los cambios reglamentarios técnicos de la UCI para 2026: manillares, llantas, límites de cuadro y horquilla, y nuevas categorías de casco.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'nuevas-reglas-tecnicas-uci-2026' },
+    update: baseFields,
+    create: { slug: 'nuevas-reglas-tecnicas-uci-2026', ...baseFields, publishedAt: new Date() },
+  })
+
+  return { slug: article.slug }
+}
+
+const mtbWorldsRecapContent = `
+<p>Val di Sole (Italia) volvió a acoger el Mundial de Mountain Bike de la UCI del 26 al 30 de agosto de 2026 —la cuarta vez que la localidad italiana organiza la cita, tras 2008, 2016 y 2021— repartiendo los maillots arcoíris de cross-country olímpico (XCO) y descenso (DHI) en categoría élite.</p>
+
+<p>En cross-country, Tom Pidcock se proclamó campeón del mundo en la prueba masculina. En la femenina, la suiza Sina Frei dominó de principio a fin: atacó desde la primera vuelta y cruzó la meta en solitario con más de un minuto de ventaja sobre el resto del pelotón.</p>
+
+<p>El descenso, disputado el 29 de agosto sobre el trazado Black Snake, dejó dos títulos consecutivos: el canadiense Jackson Goldstone revalidó el suyo por segundo año seguido en categoría masculina, mientras que la austríaca Valentina Höll firmó su quinto título mundial consecutivo, superando el mejor tiempo de la suiza Lisa Baumann.</p>
+
+<p>Con el Mundial ya decidido, la temporada de MTB sigue su curso hacia Norteamérica: la Copa del Mundo llega a Soldier Hollow, Utah (19-20 de septiembre, cross-country y short track) y a Whistler, Columbia Británica (25-27 de septiembre, descenso), antes de que el calendario de superficie mixta se despida en octubre con el Mundial de Gravel en Nannup, Australia.</p>
+`.trim()
+
+/**
+ * Artículo de lanzamiento de la sección MTB y Gravel: recapitula el
+ * Mundial de MTB 2026 en Val di Sole (26-30 agosto, ya disputado) —
+ * verificado vía Wikipedia, Pinkbike, time.news y UCI.org, consultado
+ * 2026-09-14. No hay ciclistas de MTB en la base de datos de
+ * ciclistas de ruta, así que este artículo no vincula riders/teams.
+ */
+export async function publishMtbWorldsRecapArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'mtb-gravel' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const race = await prisma.race.findUnique({ where: { slug: 'uci-mtb-world-championships-2026' }, select: { id: true } })
+
+  const heroImageId = await ensureHeroImage('mundial-mtb-2026-val-di-sole-resultados', {
+    title: 'Mundial de MTB 2026',
+    label: 'MTB y Gravel',
+  })
+
+  const baseFields = {
+    title: 'Pidcock, Frei, Goldstone y Höll: así se repartieron los arcoíris del Mundial de MTB 2026',
+    subtitle: 'Val di Sole coronó a sus campeones de cross-country y descenso del 26 al 30 de agosto, semanas antes del arranque de la sección en La Fuga',
+    excerpt:
+      'Tom Pidcock y Sina Frei ganaron el cross-country, y Jackson Goldstone y Valentina Höll revalidaron sus títulos de descenso en el Mundial de MTB 2026 en Val di Sole, Italia.',
+    content: mtbWorldsRecapContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://en.wikipedia.org/wiki/2026_UCI_Mountain_Bike_World_Championships',
+      'https://time.news/sina-frei-dominates-val-di-sole-to-win-2026-xco-world-championship/',
+      'https://www.uci.org/article/uci-mountain-bike-world-championships-hoell-and-goldstone-retain-downhill-titles-in-devastating-fashion/4f9QsRTm02r2iOwmXGs1W9',
+    ]),
+    sourceNames: toJsonField(['Wikipedia', 'Time News', 'UCI (oficial)']),
+    seoTitle: 'Mundial de MTB 2026: resultados de Val di Sole',
+    seoDescription:
+      'Resultados del Mundial de MTB 2026 en Val di Sole: Tom Pidcock y Sina Frei campeones de cross-country, Jackson Goldstone y Valentina Höll de descenso.',
+    readingTime: 2,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'mundial-mtb-2026-val-di-sole-resultados' },
+    update: { ...baseFields, races: race ? { set: [{ id: race.id }] } : undefined },
+    create: {
+      slug: 'mundial-mtb-2026-val-di-sole-resultados',
+      ...baseFields,
+      publishedAt: new Date(),
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
 }
 
 /**

@@ -31,7 +31,9 @@ export function ArticleCard({
 
       <div className="flex flex-col gap-2 p-5">
         <div className="flex items-center gap-2">
-          {article.breakingNews && <Badge variant="breaking">Última hora</Badge>}
+          {article.breakingNews && article.category.slug !== 'ultima-hora' && (
+            <Badge variant="breaking">Última hora</Badge>
+          )}
           <CategoryChip slug={article.category.slug} name={article.category.name} />
         </div>
 
