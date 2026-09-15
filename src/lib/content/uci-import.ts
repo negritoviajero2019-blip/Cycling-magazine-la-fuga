@@ -926,10 +926,13 @@ export async function publishCarapazSeasonArticle() {
   ])
   const riderIds = [carapaz?.id, bernal?.id].filter((id): id is number => id !== undefined)
 
-  const heroImageId = await ensureHeroImage('richard-carapaz-temporada-2026-tour-vuelta', {
-    title: 'Carapaz, temporada 2026',
-    label: 'Latinos',
-    riders: carapaz ? [{ name: 'Richard Carapaz', team: 'ef-education-easypost' }] : [],
+  const heroImageId = await ensureCustomHeroImage('richard-carapaz-temporada-2026-tour-vuelta', {
+    url: '/images/headers/carapaz-temporada-cover.jpg',
+    altText: 'Richard Carapaz, el latinoamericano más completo de 2026: puños, montaña y regularidad',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
