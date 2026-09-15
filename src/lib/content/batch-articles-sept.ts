@@ -579,9 +579,13 @@ export async function publishTarmacSl9Article() {
   const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'tecnologia' } })
   const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
 
-  const heroImageId = await ensureHeroImage('specialized-tarmac-sl9-lanzamiento-2026', {
-    title: 'Specialized Tarmac SL9',
-    label: 'Tecnología',
+  const heroImageId = await ensureCustomHeroImage('specialized-tarmac-sl9-lanzamiento-2026', {
+    url: '/images/headers/tarmac-sl9-cover.jpg',
+    altText: 'La Specialized Tarmac SL9 no es más ligera, pero ahorra 28 segundos en 100 km',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
