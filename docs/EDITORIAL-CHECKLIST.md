@@ -40,7 +40,9 @@ producción (no solo escrito localmente).
 - **Última hora**: diario, 1-3 posts/día según cuánto esté pasando ese día en el pelotón. No forzar volumen si no hay noticia real.
 - **Grand Tours**: cobertura en vivo mientras haya una grande en curso; fuera de temporada, 1 artículo/semana de "efeméride" (una etapa memorable de Giro/Tour/Vuelta) — siempre con fecha, datos y fuente real verificados antes de publicar, igual que el resto del sitio.
 - **Ciclismo femenino**: hueco real (5 carreras Women's WorldTour ya cargadas, solo 1 artículo). Antes de tener cadencia regular aquí falta importar equipos/rosters reales del Women's WorldTour (mismo proceso que se hizo para hombres).
-- **Secciones de nav**: hecho — "Fichajes" pasó a "Latinos" y se agregó "MTB y Gravel" con su propio calendario real de próximos eventos (2026-09-14). Sin contenido propio todavía en ninguna de las dos, falta escribir el primer artículo de cada una.
+- **Secciones de nav**: hecho — "Fichajes" pasó a "Latinos" y se agregó "MTB y Gravel" con su propio calendario real de próximos eventos (2026-09-14).
+- **Primer artículo real en cada sección que no tenía uno** (hecho, noche del 2026-09-14): Última Hora (caída de Ayuso en Quebec), Ciclismo Femenino (previa Mundial femenino), Latinos (temporada de Carapaz), Tecnología (reglas técnicas UCI 2026), MTB y Gravel (resultados Mundial MTB Val di Sole). Todos con el banner automático de chips como imagen — pendiente reemplazar por imagen horneada con foto real cuando el usuario esté disponible para generarla en ChatGPT.
+- **Efeméride de Grand Tour investigada, no publicada todavía**: Vuelta a España 2016, etapa 15 (Formigal) — Contador atacó desde el km 0, Quintana se sumó y aisló a Froome; ganó la etapa Gianluca Brambilla pero Quintana amplió su ventaja sobre Froome de 0:54 a 3:37. Verificado vía Cyclingnews/Press Reader/SI.com. Lista para convertirse en artículo si se confirma.
 
 ## Cómo lo usamos
 
