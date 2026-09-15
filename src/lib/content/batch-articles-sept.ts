@@ -246,9 +246,13 @@ export async function publishLombardiaPreviewArticle() {
   const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'clasicas' } })
   const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
 
-  const heroImageId = await ensureHeroImage('il-lombardia-2026-previa-sin-pogacar', {
-    title: 'Il Lombardia sin Pogačar',
-    label: 'Clásicas',
+  const heroImageId = await ensureCustomHeroImage('il-lombardia-2026-previa-sin-pogacar', {
+    url: '/images/headers/lombardia-cover.jpg',
+    altText: 'Sin Pogačar, quién hereda el trono de Il Lombardia',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
