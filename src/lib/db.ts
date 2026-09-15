@@ -1,9 +1,14 @@
 import { PrismaClient } from '@prisma/client'
 
 /**
- * Cliente Prisma singleton (evita agotar conexiones con hot-reload
- * en desarrollo). Las páginas públicas son dinámicas (§ ver app/(site)),
- * así que `next build` nunca necesita una conexión a la BD en build time.
+ * Cliente Prisma singleton — cacheado en `globalThis` en TODOS los
+ * entornos, incluida producción. Sin esto, cada vez que Node vuelve a
+ * evaluar este módulo (hot-reload en dev, pero también cada reinicio
+ * del proceso en producción) se crea un PrismaClient nuevo, y cada uno
+ * abre su propio pool de conexiones — en un hosting con límite de
+ * conexiones/hora (p.ej. `max_connections_per_hour` de MySQL) esto
+ * agota el límite en minutos si el proceso se reinicia varias veces.
+ * Ver incidente 2026-09-15: `ERROR 42000 (1226) ... max_connections_per_hour`.
  */
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
 
@@ -13,7 +18,7 @@ export const prisma =
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   })
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+globalForPrisma.prisma = prisma
 
 /**
  * Envuelve una consulta a la BD para que un fallo de conexión nunca
