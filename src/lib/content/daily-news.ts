@@ -209,3 +209,90 @@ export async function publishDelToroEvenepoelAnalysisArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Arranca el Tour de Luxemburgo 2026 — Van der Poel repite la
+// fórmula de 2024 antes del Mundial de Montreal.
+// Fuentes: Cyclingnews, CyclingUpToDate, Domestique Cycling, ProCyclingStats.
+// ————————————————————————————————————————————————————————————
+
+const luxembourg2026Content = `
+<p>Mientras Remco Evenepoel e Isaac del Toro se jugaban sus últimas cartas antes del Mundial en el circuito real de Mont Royal, Mathieu van der Poel (Alpecin-Premier Tech) tomaba el camino contrario. Este miércoles arrancó la 86ª edición del Tour de Luxemburgo —cinco etapas, 701,3&nbsp;km en total, hasta el domingo 20 de septiembre— y Van der Poel es, con diferencia, el nombre que todos miran en el pelotón, exactamente una semana antes de la prueba en línea masculina del 27 de septiembre.</p>
+
+<p>La etapa inaugural, de 157,5&nbsp;km entre el Knuedler y el Fëschmaart, ambos en pleno centro de la capital luxemburguesa, sale a las 14:52 hora local por calles adoquinadas del casco histórico antes de abrirse a las carreteras onduladas de las afueras. No es un final para un sprinter puro: en las últimas tres ediciones lo ha ganado un velocista rápido pero capaz de digerir un repecho final —Corbin Strong en 2023, el propio Van der Poel en 2024 y Romain Grégoire en 2025—, lo que anticipa una llegada explosiva más que un esprint masivo clásico.</p>
+
+<p>Van der Poel fue directo sobre por qué eligió Luxemburgo en vez de las clásicas canadienses que sí disputaron Evenepoel y Del Toro: &laquo;Después de mi bloque de mountain bike, sin duda puedo usar ritmo de carrera y kilómetros de competición en carretera&raquo;, explicó. &laquo;Ese es el objetivo principal para mí aquí&raquo;. No habló de ganar la general ni de un resultado concreto — habló de recuperar sensaciones, que es exactamente lo que dice haber necesitado en 2024.</p>
+
+<p>Porque no es la primera vez que sigue este guion. En la edición de 2024, Van der Poel ganó la primera etapa, terminó segundo en la clasificación general final por detrás de Antonio Tiberi, y semanas más tarde subió al podio del Mundial de Zúrich con el bronce. &laquo;Más importante aún, tuve un buen Mundial en Zúrich después, lo que demostró que esta carrera fue una muy buena preparación final&raquo;, recordó esta semana. &laquo;Creo que puede servir el mismo propósito este año antes del Mundial en Canadá&raquo;. La apuesta no es improvisada: es la repetición deliberada de una fórmula que ya funcionó.</p>
+
+<p>La contraposición con sus rivales directos al maillot arcoíris no podría ser más clara. Evenepoel pasó tres semanas y media en altura en Livigno y después usó el Gran Premio de Quebec y el de Montreal —este último sobre el circuito real de Mont Royal— como examen directo, terminando quinto pese a ganar en Quebec. Del Toro hizo lo mismo y se llevó la victoria en Montreal, aunque admitiendo después que no se sintió bien durante la carrera. Van der Poel, en cambio, ni siquiera ha pisado el trazado de Montreal esta temporada. Apuesta a que su explosividad pura en el último kilómetro compense no haber hecho el reconocimiento directo que sí hicieron sus dos rivales más mencionados.</p>
+
+<p>El resto de la semana no está pensado para corredores de la explosividad de Van der Poel, lo que hace más interesante su apuesta por la general: la etapa 2 repite un perfil ondulado similar al de hoy, pero la etapa reina llega el viernes, entre Wiltz y Weiswampach, en el extremo norte del país, para bajar después hasta Diekirch —cerca de 179&nbsp;km por el terreno más exigente de Luxemburgo, con desnivel constante y varios puertos cortos que deberían abrir diferencias reales en la general—. El sábado, la contrarreloj individual de Ettelbruck (20,4&nbsp;km, rápida pero técnica) suele ser el punto donde se decide todo antes de la etapa de cierre del domingo en la capital.</p>
+
+<p>El pelotón de esta edición reúne a 102 corredores de equipos WorldTour y continentales. Entre los nombres a seguir además de Van der Poel están Davide Piganzoli (Visma | Lease a Bike), Igor Arrieta (UAE Team Emirates-XRG), Mikkel Honoré (EF Education-EasyPost), Aurélien Paret-Peintre (Decathlon CMA CGM), Jasper Stuyven (Soudal Quick-Step) y Søren Kragh Andersen (Lidl-Trek) — un pelotón con perfil de clásicas y de puertos cortos, coherente con un recorrido que evita las grandes montañas pero no perdona a los sprinters puros ni premia a quien llegue sin piernas para los repechos finales.</p>
+
+<p>Lo que hay en juego en Montreal para Van der Poel no es poca cosa. Ganó el maillot arcoíris en 2023, en Glasgow, y lo defendió sin éxito en 2024, cuando terminó con el bronce en Zúrich. Con Pogačar confirmado fuera de la salida tras su caída en la Vuelta, este año es, en el papel, la mejor oportunidad que ha tenido en tiempo para recuperar el título — pero también la que más rivales de perfil similar concentra en una sola carrera, con Evenepoel, Del Toro, Van Aert y Paul Seixas ya asomando en las quinielas después de Quebec y Montreal.</p>
+
+<p>La carrera tendrá cobertura de Eurosport 1 y HBO Max durante toda la semana, con la etapa reina del viernes y la contrarreloj del sábado como los dos días que de verdad importan para quien busque la general. Pero para Van der Poel, el resultado final en la clasificación de Luxemburgo importa menos que llegar a Montreal con la misma sensación de puesta a punto que en 2024 — el año en que esta misma carrera, ganada a medias, terminó pagando dividendos tres semanas después en forma de podio mundial. Si el guion se repite tal cual, la última pieza que falta por confirmar en Montreal es si esta vez el bronce de Zúrich se convierte finalmente en oro.</p>
+`.trim()
+
+export async function publishLuxembourg2026Article() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const [vdp, team] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'mathieu-van-der-poel' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'alpecin-premier-tech' }, select: { id: true } }),
+  ])
+
+  const heroImageId = await ensureCustomHeroImage('tour-de-luxemburgo-2026-van-der-poel-mundial', {
+    url: '/images/headers/luxembourg-2026-cover.jpg',
+    altText: 'Arranca el Tour de Luxemburgo 2026: Van der Poel repite la fórmula de 2024 antes del Mundial de Montreal',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title: 'Arranca el Tour de Luxemburgo: Van der Poel repite la fórmula de 2024 antes del Mundial',
+    subtitle: 'Mientras Evenepoel y Del Toro se jugaban sus cartas en el circuito real de Montreal, Van der Poel eligió Luxemburgo — el mismo plan que le dio el bronce en Zúrich 2024',
+    excerpt:
+      'Arrancó la 86ª edición del Tour de Luxemburgo (16-20 de septiembre), con Mathieu van der Poel como gran referencia a una semana del Mundial de Montreal. El neerlandés repite la estrategia de 2024, cuando esta misma carrera precedió a su podio mundial en Zúrich.',
+    content: luxembourg2026Content,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.cyclingnews.com/pro-cycling/teams-riders/this-race-was-a-very-good-final-preparation-mathieu-van-der-poel-returns-to-luxembourg-to-build-rhythm-and-form-ahead-of-road-world-championships/',
+      'https://cyclinguptodate.com/cycling/tour-de-luxembourg-2026-gc-stage-1-preview-profile-favourites-predictions-mathieu-van-der-poels-big-pre-world-championships-test',
+      'https://www.domestiquecycling.com/en/news/van-der-poel-adds-tour-de-luxembourg-to-intriguing-worlds-preparation/',
+      'https://www.procyclingstats.com/race/tour-de-luxembourg/2026',
+    ]),
+    sourceNames: toJsonField(['Cyclingnews', 'CyclingUpToDate', 'Domestique Cycling', 'ProCyclingStats']),
+    seoTitle: 'Tour de Luxemburgo 2026: Van der Poel antes del Mundial',
+    seoDescription:
+      'Arranca el Tour de Luxemburgo 2026 (16-20 sept.) con Van der Poel como referencia, repitiendo la estrategia de preparación que le dio el bronce mundial en 2024.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'tour-de-luxemburgo-2026-van-der-poel-mundial' },
+    update: {
+      ...baseFields,
+      riders: vdp ? { set: [{ id: vdp.id }] } : undefined,
+      teams: team ? { set: [{ id: team.id }] } : undefined,
+    },
+    create: {
+      slug: 'tour-de-luxemburgo-2026-van-der-poel-mundial',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: vdp ? { connect: [{ id: vdp.id }] } : undefined,
+      teams: team ? { connect: [{ id: team.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
