@@ -29,10 +29,10 @@ export default function AboutPage() {
         </p>
         <p>
           {branding.name} nace en 2026 como un proyecto editorial independiente, sin vínculo con
-          ninguna federación, equipo profesional u organizador de carreras. Está operado por una
-          persona física con base en México, con un proceso editorial que combina investigación
-          humana con asistencia de inteligencia artificial bajo supervisión y verificación en cada
-          publicación — el detalle completo está en nuestra{' '}
+          ninguna federación, equipo profesional u organizador de carreras. Está operado por{' '}
+          {branding.legal.holderName}, con base en México, con un proceso editorial que combina
+          investigación humana con asistencia de inteligencia artificial bajo supervisión y
+          verificación en cada publicación — el detalle completo está en nuestra{' '}
           <a href="/editorial-policy" className="text-accent hover:underline">
             política editorial
           </a>

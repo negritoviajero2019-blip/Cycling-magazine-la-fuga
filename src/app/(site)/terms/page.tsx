@@ -26,10 +26,11 @@ export default function TermsPage() {
         <section>
           <h2 className="mb-2 font-heading text-lg font-bold">2. Titularidad</h2>
           <p>
-            {branding.name} es un proyecto editorial independiente operado por una persona física
-            con domicilio en México. No forma parte de ninguna empresa editora, federación
-            ciclista, equipo profesional ni organizador de carreras; toda referencia a equipos,
-            ciclistas o competiciones se hace con fines exclusivamente informativos.
+            {branding.name} es un proyecto editorial independiente operado por{' '}
+            {branding.legal.holderName}, una persona física con domicilio en México. No forma
+            parte de ninguna empresa editora, federación ciclista, equipo profesional ni
+            organizador de carreras; toda referencia a equipos, ciclistas o competiciones se hace
+            con fines exclusivamente informativos.
           </p>
         </section>
 

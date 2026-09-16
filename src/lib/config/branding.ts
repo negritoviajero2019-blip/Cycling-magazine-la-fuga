@@ -31,10 +31,11 @@ export const branding = {
   contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL || '',
   /** Identidad legal del titular del sitio, usada en Aviso de Privacidad, Términos y Sobre nosotros. */
   legal: {
+    holderName: 'Humberto Cruz',
     holderType: 'persona física' as const,
     jurisdiction: 'México',
-    lastUpdatedTerms: '15 de septiembre de 2026',
-    lastUpdatedPrivacy: '15 de septiembre de 2026',
+    lastUpdatedTerms: '16 de septiembre de 2026',
+    lastUpdatedPrivacy: '16 de septiembre de 2026',
   },
 } as const
 

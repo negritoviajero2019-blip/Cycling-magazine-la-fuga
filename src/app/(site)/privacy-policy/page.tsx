@@ -17,11 +17,11 @@ export default function PrivacyPolicyPage() {
         <section>
           <h2 className="mb-2 font-heading text-lg font-bold">1. Identidad del responsable</h2>
           <p>
-            {branding.name} es un proyecto editorial independiente operado por una persona física,
-            con domicilio en México. Por tratarse de un proyecto personal, no publicamos un
-            domicilio físico completo por razones de seguridad; el canal de contacto oficial para
-            cualquier asunto relacionado con tus datos personales es el correo electrónico indicado
-            en la sección 7 de este aviso.
+            {branding.name} es un proyecto editorial independiente operado por{' '}
+            {branding.legal.holderName}, una persona física con domicilio en México. Por tratarse
+            de un proyecto personal, no publicamos un domicilio físico completo por razones de
+            seguridad; el canal de contacto oficial para cualquier asunto relacionado con tus datos
+            personales es el correo electrónico indicado en la sección 7 de este aviso.
           </p>
         </section>
 
