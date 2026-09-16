@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureHeroImage, ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -103,6 +103,107 @@ export async function publishPogacarBackOnBikeArticle() {
       publishedAt: new Date(),
       riders: pogacar ? { connect: [{ id: pogacar.id }] } : undefined,
       teams: team ? { connect: [{ id: team.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Del Toro, favorito "a la fuerza", y el aviso de Evenepoel sobre
+// el circuito de Montreal — junta los puntos 6 y 7 de la lista del
+// 16-sept en un solo análisis.
+// Fuentes: Cyclingnews, idlprocycling, cyclinguptodate (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const delToroEvenepoelAnalysisContent = `
+<p>Con Tadej Pogačar confirmado fuera del Mundial, alguien tenía que cargar con la etiqueta de favorito. Esta semana, tras el fin de semana de las clásicas canadienses, la llevan —cada uno a su manera y ninguno del todo cómodo con ella— Isaac del Toro y Remco Evenepoel.</p>
+
+<p>Del Toro ganó el Grand Prix Cycliste de Montréal el domingo, superando a Paul Seixas en el mismo circuito de Mont Royal que decidirá el Mundial el 27 de septiembre. Cyclingnews tituló la crónica sin rodeos: se proclamaba &laquo;favorito al maillot arcoíris&raquo;. El propio corredor, sin embargo, no lo contó como una victoria de sensaciones. &laquo;Fue una situación extraña al principio de la carrera. No entendíamos tan bien a los otros equipos [...] Decidimos meter un ritmo normal, pero luego no me sentí tan bien y me apoyaron. Lo volvimos a intentar en la parte final&raquo;, explicó. Ganó, en sus propias palabras, sin sentirse bien.</p>
+
+<p>La queja tiene más sentido si se mira la carrera anterior. Dos días antes, en el Grand Prix de Québec, Del Toro había terminado 55º, a 3:18 del ganador —el propio Evenepoel—. Pasar de ese resultado a ganar en Montreal en apenas 48 horas no es la progresión de un corredor que llega sobrado de confianza; es, más bien, la prueba de lo voluble que puede ser la forma física en esta recta final de temporada, incluso para quien termina llevándose la carrera.</p>
+
+<p>Lo que le hizo aguantar, contó después, fue un consejo tan directo como gráfico de su equipo: &laquo;meter toda mi mierda en el bolsillo trasero y simplemente seguir corriendo&raquo;. La frase no es casual dentro de UAE Team Emirates-XRG: hace unos meses, tras dominar en el Tourmalet durante el Tour de Francia, fue el propio Pogačar quien le hizo una advertencia distinta —&laquo;fuiste demasiado rápido&raquo;— en un vídeo detrás de cámaras que se hizo viral. Del Toro asumió entonces el rol de alumno del esloveno dentro del equipo; con Pogačar fuera de la ecuación esta semana, es su otro consejo, el de guardarse las dudas y seguir pedaleando, el que le acaba de dar una victoria.</p>
+
+<p>El otro protagonista de Montreal fue, de nuevo, Paul Seixas. El francés de 19 años terminó segundo tras perder la referencia del esprint en el momento clave: &laquo;Tuve un despiste tratando de ver qué tan cerca estaban los perseguidores. No encontraba el cartel de los 200 metros, y así, sin más, él [Del Toro] se fue&raquo;, contó. Lejos de lamentarse, lo enmarcó como aprendizaje de cara al 27 de septiembre: &laquo;Vine aquí a cometer errores [...] Sentí que soy capaz de más. Creo que lo vamos a ver en el Mundial&raquo;. Entre un ganador que no se sintió bien y un segundo que perdió por perder de vista un cartel, Montreal dejó más dudas que certezas sobre quién llega realmente fino.</p>
+
+<p>Del otro lado de la moneda está Remco Evenepoel, que llegó a Canadá tras tres semanas y media de altura en Livigno pensadas explícitamente para el Mundial. Por su propia cuenta, el objetivo en Québec y Montreal no era llegar ya en su pico de forma, sino &laquo;volver a ser competitivo&raquo; y reconectar con las sensaciones de carrera. Ganó el Grand Prix de Québec al sprint por delante de Giulio Ciccone, pero no pudo seguir los ataques decisivos unos días después en Montreal, donde terminó quinto. Greg Van Avermaet, ganador de la prueba en el pasado, admitió que esperaba más de él: &laquo;Sinceramente, pensé que Montreal le sentaría incluso mejor que Québec, pero al parecer tuvo un día algo peor&raquo;, y apuntó a un factor externo — &laquo;no hay que olvidar que el jet lag también juega un papel&raquo;. El propio Evenepoel no ocultó su frustración durante la carrera, llegando a protestarle a Toms Skujins en la fase final por cómo se estaba corriendo el grupo de cabeza —una escena que, más que un enfado aislado, retrató a un corredor que llegaba con expectativas altas y las vio escaparse en tiempo real.</p>
+
+<p>En vez de esconder esa diferencia, Evenepoel la convirtió en un pronóstico público: &laquo;Con la forma en que se corre el puerto más largo, es realmente difícil para los corredores más pesados&raquo;, dijo tras la carrera, en referencia al Camilien-Houde, una subida de casi 2&nbsp;km al 7,4-8% de media —más larga que el Koppenberg y el Paterberg juntos—. &laquo;Si miras el peso medio del top&nbsp;10, probablemente estemos en 63 o 65&nbsp;kilos&raquo;, calculó.</p>
+
+<p>El aviso apuntaba, sin nombrarlos al principio, a dos de los grandes favoritos habituales: Mathieu van der Poel y Wout van Aert, ambos con un perfil más de clásicas que de escalador puro. Evenepoel matizó después que no los descartaba: &laquo;No son hombres pesados, pero corredores como Wout y Mathieu pueden sobrevivir esto en un día excepcional&raquo;. Es, en el fondo, la misma lectura que ya adelantó La Fuga al repasar el reparto de favoritos: Van der Poel decidió no pisar el circuito real esta temporada —prefirió el Tour de Luxemburgo como preparación—, apostando a que su explosividad en el último kilómetro compense no haber hecho el ensayo directo que sí hicieron Evenepoel, Del Toro y Seixas.</p>
+
+<p>Lo que deja la semana, en definitiva, no es un favorito claro sino tres corredores administrando expectativas por caminos distintos: uno ganando sin sentirse a gusto y cargando con una etiqueta que dice no sentir todavía, otro terminando segundo por un despiste que promete no repetir, y un tercero perdiendo la última prueba directa pero convirtiendo esa derrota en un argumento a su favor. A diez días del Mundial, esa es quizás la lectura más honesta del estado de forma real del pelotón: nadie llega diciendo &laquo;estoy listo&raquo;.</p>
+`.trim()
+
+export async function publishDelToroEvenepoelAnalysisArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'analisis' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const [delToro, evenepoel, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'remco-evenepoel' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [delToro?.id, evenepoel?.id].filter((id): id is number => id !== undefined)
+
+  const heroImageId = await ensureHeroImage('del-toro-evenepoel-favoritos-mundial-montreal-2026', {
+    title: '¿Del Toro, favorito? El aviso de Evenepoel sobre Montreal',
+    label: 'Análisis',
+    riders: [
+      { name: 'Isaac del Toro', team: 'UAE Team Emirates-XRG' },
+      { name: 'Remco Evenepoel', team: 'Soudal-QuickStep' },
+    ],
+  })
+
+  const baseFields = {
+    title: '¿Del Toro, favorito? El aviso de Evenepoel sobre Montreal',
+    subtitle: 'El mexicano ganó en Montreal sin sentirse bien; Evenepoel, quinto, avisa que el circuito no favorece a los más pesados',
+    excerpt:
+      'Isaac del Toro ganó el GP de Montréal admitiendo que no se sintió bien, y desde entonces se habla de él como favorito al Mundial. Remco Evenepoel, quinto en esa misma carrera, advierte que el circuito de Mont Royal es duro para corredores como Van der Poel o Van Aert.',
+    content: delToroEvenepoelAnalysisContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.cyclingnews.com/pro-cycling/racing/isaac-del-toro-announces-himself-as-rainbow-jersey-favourite-with-grand-prix-de-montreal-victory/',
+      'https://www.domestiquecycling.com/en/news/del-toro-makes-surprising-admission-after-montreal-win-i-didnt-feel-so-well/',
+      'https://cyclinguptodate.com/cycling/put-all-my-shit-in-my-back-pocket-isaac-del-toro-reveals-blunt-advice-that-inspired-montreal-victory',
+      'https://cyclinguptodate.com/cycling/really-difficult-for-the-heavier-riders-remco-evenepoel-argues-climbers-not-van-aert-or-van-der-poel-are-favoured-by-montreal-circuit',
+      'https://cyclinguptodate.com/cycling/you-cannot-forget-that-jet-lag-is-involved-remco-evenepoels-montreal-fifth-comes-with-greg-van-avermaet-warning-ahead-of-world-championships',
+      'https://www.cyclingnews.com/pro-cycling/teams-riders/i-was-here-to-make-mistakes-paul-seixas-confident-he-can-improve-after-second-at-gp-de-montreal-and-return-even-stronger-for-world-championships/',
+      'https://cyclinguptodate.com/cycling/results-gp-de-montreal-2026-isaac-del-toro-beats-paul-seixas-as-duo-dominate-with-final-lap-surge-as-focus-turns-to-world-championships',
+    ]),
+    sourceNames: toJsonField([
+      'Cyclingnews',
+      'Domestique Cycling',
+      'CyclingUpToDate',
+      'CyclingUpToDate',
+      'CyclingUpToDate',
+      'Cyclingnews',
+      'CyclingUpToDate',
+    ]),
+    seoTitle: 'Del Toro y Evenepoel, dudas de favoritos a días del Mundial de Montreal',
+    seoDescription:
+      'Isaac del Toro gana en Montreal sin sentirse bien y hereda la etiqueta de favorito; Remco Evenepoel avisa que el circuito no favorece a los corredores más pesados como Van der Poel o Van Aert.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'del-toro-evenepoel-favoritos-mundial-montreal-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+    },
+    create: {
+      slug: 'del-toro-evenepoel-favoritos-mundial-montreal-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
     },
   })
 
