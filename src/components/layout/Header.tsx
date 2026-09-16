@@ -15,17 +15,20 @@ export function Header() {
             width={branding.logoWidth}
             height={branding.logoHeight}
             priority
-            sizes="(min-width: 1024px) 230px, (min-width: 768px) 195px, 160px"
-            className="h-auto w-[160px] md:w-[195px] lg:w-[230px]"
+            sizes="(min-width: 1280px) 230px, (min-width: 768px) 195px, 160px"
+            className="h-auto w-[160px] md:w-[195px] xl:w-[230px]"
           />
         </Link>
 
-        <nav className="hidden flex-1 items-center justify-center gap-6 lg:flex" aria-label="Navegación principal">
-          {nav.slice(0, 7).map((item) => (
+        <nav
+          className="hidden flex-1 items-center justify-center gap-x-3 gap-y-1 flex-wrap lg:flex"
+          aria-label="Navegación principal"
+        >
+          {nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-ink transition-opacity duration-200 hover:opacity-55"
+              className="whitespace-nowrap text-[13px] font-medium text-ink transition-opacity duration-200 hover:opacity-55 xl:text-sm"
             >
               {item.label}
             </Link>
@@ -33,7 +36,7 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <SearchBox className="w-56" />
+          <SearchBox className="w-36 xl:w-56" />
         </div>
 
         <MobileMenu />
