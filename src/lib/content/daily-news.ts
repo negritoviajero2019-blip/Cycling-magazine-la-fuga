@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureHeroImage, ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -55,13 +55,13 @@ export async function publishPogacarBackOnBikeArticle() {
     prisma.team.findUnique({ where: { slug: 'uae-team-emirates-xrg' }, select: { id: true } }),
   ])
 
-  // Placeholder (banner automático) hasta tener la foto real generada
-  // por el usuario — ver conversación sobre por qué no se usa la
-  // primera imagen que compartió (mostraba a un atleta identificable).
-  const heroImageId = await ensureHeroImage('pogacar-vuelve-a-la-bici-rodillo-septiembre-2026', {
-    title: 'Pogačar vuelve a la bici, 17 días después de la caída en la Vuelta',
-    label: 'Recuperación',
-    riders: pogacar ? [{ name: 'Tadej Pogačar', team: 'UAE Team Emirates-XRG' }] : [],
+  const heroImageId = await ensureCustomHeroImage('pogacar-vuelve-a-la-bici-rodillo-septiembre-2026', {
+    url: '/images/headers/pogacar-recovery-cover.jpg',
+    altText: 'Pogačar vuelve a la bici: primeras imágenes en el rodillo, 17 días después de la caída en la Vuelta',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
