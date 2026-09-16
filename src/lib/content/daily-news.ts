@@ -296,3 +296,113 @@ export async function publishLuxembourg2026Article() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Leyendas — Annemiek van Vleuten: tres vértebras rotas en Río 2016
+// y el círculo que cerró en Yorkshire 2019.
+// Primer artículo de la nueva sección "Leyendas" (historias de
+// superación / grandes hazañas históricas, no ligadas a la
+// actualidad diaria). Fuentes: Cyclingnews, Cycling Weekly, NBC
+// Olympics, ESPN, Wikipedia (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const vanVleutenLegendContent = `
+<p>El 7 de agosto de 2016, Annemiek van Vleuten iba líder de la prueba en línea de los Juegos Olímpicos de Río de Janeiro, a unos 11&nbsp;km de la meta en Copacabana, en lo que ella misma describiría después como la mejor carrera de su carrera. En la bajada final salió despedida por encima del manillar y cayó de cabeza contra el asfalto. Pasó las siguientes 24 horas en cuidados intensivos. El parte médico habló de tres vértebras fracturadas y una conmoción cerebral severa. Desde la cama del hospital, todavía aturdida, escribió en Twitter: &laquo;Estoy en el hospital con algunas lesiones y fracturas, pero voy a estar bien. Sobre todo, súper decepcionada después de la mejor carrera de mi carrera&raquo;. Tenía 33 años, y en ese momento nadie hubiera apostado a que volvería a competir al máximo nivel — mucho menos a que esa misma disciplina, la prueba en línea, sería donde terminaría de escribir la respuesta definitiva, tres años después.</p>
+
+<p>La recuperación no tuvo atajos. Poco más de un año después de Río, en septiembre de 2017, Van Vleuten volvió a subirse a un podio de Mundial — pero en la contrarreloj, en Bergen (Noruega), no en la prueba en línea. Fue una primera respuesta, pero no todavía la respuesta completa: había ganado un título mundial de vuelta de su caída, aunque en una disciplina distinta a la que la había dejado en cuidados intensivos.</p>
+
+<p>La respuesta completa llegó dos años más tarde, el 28 de septiembre de 2019, en Yorkshire. Van Vleuten atacó en solitario en las rampas bajas de Lofthouse, a 105&nbsp;km de la meta en Harrogate — una distancia de ataque que roza lo absurdo incluso para los estándares del ciclismo profesional, y que ella misma reconoció después sin rodeos: &laquo;Todo el día pensé que era súper estúpido lo que estaba haciendo&raquo;, contó, pero su director de equipo le insistió en que siguiera adelante—. Aguantó sola hasta el final y ganó con 2 minutos y 15 segundos de ventaja sobre su compatriota y entonces campeona defensora, Anna van der Breggen. Con 36 años y 355 días, se convirtió en la campeona del mundo de ruta más veterana de la historia, superando el récord que tenía Jeannie Longo-Ciprelli desde 1995. Era, casi al día por día, la misma prueba —la línea, no la contrarreloj— en la que había estado a punto de quedar paralizada en Río.</p>
+
+<p>En meta, con su madre presente entre el público, lo resumió así: &laquo;Tantas emociones... era un sueño muy grande para mí ser campeona del mundo. Ya había sido campeona del mundo de la contrarreloj, pero en ruta te la puedes poner muchas más veces&raquo; —en referencia al maillot arcoíris, que el campeón de ruta viste en carreras durante todo el año siguiente, a diferencia del de la especialidad contrarreloj—. El ambiente en la meta, dijo, fue &laquo;fantástico, con tanta gente aquí en Yorkshire animando&raquo;.</p>
+
+<p>Ni siquiera ahí terminó la historia de tropiezos y respuestas. En Tokio, en julio de 2021, Van Vleuten cruzó la meta de la prueba en línea olímpica levantando los brazos, convencida de que acababa de ganar el oro. No lo había ganado: la austriaca Anna Kiesenhofer se había escapado en solitario desde muy lejos, y el pelotón —incluida la propia Van Vleuten y la selección holandesa, que llevaba la cuenta de las corredoras que quedaban por delante— la dio por controlada cuando ya no lo estaba. Van Vleuten se enteró del error ya en la meta, con los brazos todavía en alto, celebrando un oro que en realidad era plata. Tres días después, en la contrarreloj individual, ganó el oro olímpico real — una prueba distinta a la de su caída en Río, pero la reafirmación de que un tropiezo, incluso uno tan público y doloroso como celebrar por error frente a las cámaras de medio mundo, no tiene por qué ser la última palabra de la semana.</p>
+
+<p>El resto de su palmarés terminó de confirmar que Río y Yorkshire no fueron un pico aislado. Ganó el Giro d'Italia Donne (la antigua Giro Rosa) cuatro veces —2018, 2019, 2022 y 2023—, y en 2022 se llevó las tres grandes vueltas femeninas de la temporada: Giro, Tour de Francia Femmes y Vuelta a España. Su victoria número 100 como profesional llegó, de forma simbólica, en ese mismo Giro d'Italia Donne de 2023, la edición con la que cerró una carrera de 16 años antes de retirarse a final de esa temporada. Pero si hay una sola imagen que resume esa carrera no es ninguna de esas victorias sueltas: es la distancia entre dos tardes de agosto y septiembre, Río 2016 y Yorkshire 2019, exactamente la misma prueba, exactamente la misma corredora, con un resultado que pasó de una ambulancia a un podio en la cima del mundo.</p>
+
+<p>Ninguna de las tres etapas de esta historia —Bergen 2017, Yorkshire 2019, Tokio 2021— borra la anterior ni la hace innecesaria. Van Vleuten no ganó una sola vez y se acabó la historia: cayó, volvió más despacio de lo que hubiera querido, ganó en una disciplina distinta primero, y solo tres años después, en la prueba exacta que casi la deja parapléjica, cerró el círculo del todo. Incluso entonces, la vida le tenía guardado un tropiezo más —la confusión de Tokio— antes de la última respuesta. Es, quizás, el retrato más honesto de lo que realmente significa levantarse: no una sola vuelta triunfal, sino varias, espaciadas en años, con recaídas de por medio, hasta que el marcador finalmente cambia de lado.</p>
+`.trim()
+
+export async function publishVanVleutenLegendArticle() {
+  const category = await prisma.category.upsert({
+    where: { slug: 'leyendas' },
+    update: { name: 'Leyendas' },
+    create: {
+      slug: 'leyendas',
+      name: 'Leyendas',
+      description: 'Historias de superación y grandes hazañas del ciclismo — no ligadas a la actualidad del día a día.',
+    },
+  })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const rider = await prisma.rider.upsert({
+    where: { slug: 'annemiek-van-vleuten' },
+    update: {},
+    create: {
+      slug: 'annemiek-van-vleuten',
+      name: 'Annemiek van Vleuten',
+      nationality: 'Países Bajos',
+      specialty: 'Prueba en línea / Contrarreloj',
+      bio: 'Ex ciclista profesional neerlandesa, retirada a finales de 2023. Campeona del mundo en ruta (2019) y contrarreloj (2017, entre otras), y campeona olímpica de contrarreloj en Tokio 2020/2021.',
+    },
+  })
+
+  const heroImageId = await ensureCustomHeroImage('van-vleuten-rio-2016-yorkshire-2019-leyenda', {
+    url: '/images/headers/van-vleuten-legend-cover.jpg',
+    altText: 'Caer y levantarse: Annemiek van Vleuten, de la caída en Río 2016 al Mundial en Yorkshire 2019',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title: 'Annemiek van Vleuten: tres vértebras rotas en Río 2016, campeona del mundo en Yorkshire 2019',
+    subtitle: 'Se cayó de cabeza liderando la prueba en línea de los Juegos de Río. Tres años después, en la misma disciplina, ganó el Mundial con un ataque en solitario de 105 kilómetros',
+    excerpt:
+      'En Río 2016, Annemiek van Vleuten se fracturó tres vértebras cayendo de cabeza cuando iba líder de la prueba olímpica en línea. Tres años después, en Yorkshire 2019, ganó el Mundial de esa misma disciplina con un ataque en solitario de 105 km, convirtiéndose en la campeona más veterana de la historia.',
+    content: vanVleutenLegendContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://www.si.com/olympics/2016/08/07/womens-road-race-leader-crash-annemiek-van-vleuten',
+      'https://gulfnews.com/sport/rio-olympics-ill-be-fine-injured-van-vleuten-says-1.1875752',
+      'https://www.cyclingweekly.com/news/racing/annemiek-van-vleuten-solos-100km-claim-womens-road-race-yorkshire-world-championships-439014',
+      'https://www.cyclingweekly.com/news/racing/thought-write-history-annemiek-van-vleuten-reflects-tactics-100km-solo-win-439043',
+      'https://olympics.nbcsports.com/2017/09/19/annemiek-van-vleuten-wins-time-trial-world-championship/',
+      'https://www.espn.com/olympics/cycling/story/_/id/31901661/',
+      'https://www.welovecycling.com/wide/2023/09/01/annemiek-van-vleutens-remarkable-cycling-career/',
+    ]),
+    sourceNames: toJsonField([
+      'Sports Illustrated',
+      'Gulf News',
+      'Cycling Weekly',
+      'Cycling Weekly',
+      'NBC Olympics',
+      'ESPN',
+      'Škoda We Love Cycling',
+    ]),
+    seoTitle: 'Van Vleuten: de la caída en Río 2016 al Mundial en Yorkshire 2019',
+    seoDescription:
+      'La historia real de Annemiek van Vleuten: fractura de tres vértebras en Río 2016 liderando la prueba en línea, y el título mundial en la misma disciplina tres años después.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'van-vleuten-rio-2016-yorkshire-2019-leyenda' },
+    update: {
+      ...baseFields,
+      riders: { set: [{ id: rider.id }] },
+    },
+    create: {
+      slug: 'van-vleuten-rio-2016-yorkshire-2019-leyenda',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: { connect: [{ id: rider.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}

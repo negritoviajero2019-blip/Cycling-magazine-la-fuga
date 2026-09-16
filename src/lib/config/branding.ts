@@ -51,6 +51,7 @@ export const nav = [
   { label: 'Ciclistas', href: '/riders' },
   { label: 'Tecnología', href: '/category/tecnologia' },
   { label: 'Análisis', href: '/category/analisis' },
+  { label: 'Leyendas', href: '/category/leyendas' },
 ] as const
 
 export const footerLinks = [
