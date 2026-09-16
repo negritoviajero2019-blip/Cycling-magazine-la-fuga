@@ -56,6 +56,12 @@ export default async function AutomationPage() {
         resultKind="generic"
       />
       <PublishActionButton
+        endpoint="/api/admin/publish-daily-news"
+        label="Publicar noticias del día"
+        description="Publica los artículos elegidos de la lista diaria de noticias relevantes (ver src/lib/content/daily-news.ts, va creciendo con cada artículo nuevo). Seguro de correr más de una vez."
+        resultKind="generic"
+      />
+      <PublishActionButton
         endpoint="/api/admin/publish-section-launch-articles"
         label="Publicar primer artículo de cada sección nueva"
         description="Publica un artículo real en cada sección que todavía no tenía uno: caída de Ayuso en Quebec (Última hora), previa del Mundial femenino (Ciclismo femenino), temporada de Richard Carapaz (Latinos), nuevas reglas técnicas UCI (Tecnología) y resultados del Mundial de MTB en Val di Sole (MTB y Gravel). Seguro de correr más de una vez."
