@@ -56,6 +56,12 @@ function parseLines(param: string): TitleLine[] {
  * Pensado para generarse UNA vez en desarrollo y guardar el PNG
  * resultante en public/images/headers/ (no en producción, que no
  * tiene librerías nativas de imagen disponibles).
+ *
+ * `bg` es opcional: sin foto (p.ej. para la carátula genérica de marca
+ * usada como respaldo en home/categorías/ciclistas/equipos/carreras,
+ * ver docs/SOCIAL-PREVIEW.md), se usa un fondo degradado propio en vez
+ * de una imagen — sigue generándose una sola vez en dev y guardándose
+ * como archivo estático, nunca en vivo en producción.
  */
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
@@ -66,30 +72,55 @@ export async function GET(request: Request) {
 
   const { antonFont: anton, interFont: inter, interFontExt: interExt } = await loadFonts()
 
-  const bgUrl = bg.startsWith('http') ? bg : `${origin}${bg}`
+  const bgUrl = bg ? (bg.startsWith('http') ? bg : `${origin}${bg}`) : ''
 
   return new ImageResponse(
     (
-      <div style={{ display: 'flex', width: WIDTH, height: HEIGHT, position: 'relative' }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={bgUrl}
-          width={WIDTH}
-          height={HEIGHT}
-          style={{ position: 'absolute', top: 0, left: 0, objectFit: 'cover' }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: WIDTH,
-            height: HEIGHT,
-            display: 'flex',
-            background:
-              'linear-gradient(100deg, rgba(7,17,11,0.92) 0%, rgba(7,17,11,0.75) 28%, rgba(7,17,11,0.15) 52%, rgba(7,17,11,0) 68%)',
-          }}
-        />
+      <div
+        style={{
+          display: 'flex',
+          width: WIDTH,
+          height: HEIGHT,
+          position: 'relative',
+          background: bgUrl ? undefined : 'linear-gradient(135deg, #0F1F13 0%, #07110B 55%, #0B160C 100%)',
+        }}
+      >
+        {bgUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={bgUrl}
+            width={WIDTH}
+            height={HEIGHT}
+            style={{ position: 'absolute', top: 0, left: 0, objectFit: 'cover' }}
+          />
+        )}
+        {!bgUrl && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: WIDTH,
+              height: HEIGHT,
+              display: 'flex',
+              background: 'linear-gradient(115deg, transparent 52%, rgba(199,255,33,0.16) 60%, transparent 68%)',
+            }}
+          />
+        )}
+        {bgUrl && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: WIDTH,
+              height: HEIGHT,
+              display: 'flex',
+              background:
+                'linear-gradient(100deg, rgba(7,17,11,0.92) 0%, rgba(7,17,11,0.75) 28%, rgba(7,17,11,0.15) 52%, rgba(7,17,11,0) 68%)',
+            }}
+          />
+        )}
         <div
           style={{
             position: 'absolute',

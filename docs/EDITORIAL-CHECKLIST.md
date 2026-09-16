@@ -34,6 +34,7 @@ producción (no solo escrito localmente).
 - [x] Imagen de portada con titular y bajada "horneados" (composición vía `/api/og-cover`, tipografía Anton/Roboto, paleta lima+blanco) — nuevo estándar para artículos destacados; el sitio detecta `heroImage.source === 'cover-composited'` y no vuelve a sobreponer su propio texto (ver `Hero.tsx`/`PelotonRadar.tsx`). Estrenada en la previa del Mundial.
 - [x] Extendido a los 4 artículos publicados: etapa 19, cierre de la Vuelta, clásicas canadienses y previa del Mundial — todos con imagen real + texto horneado. El banner automático de chips queda como respaldo (`ensureHeroImage`) para artículos futuros que no requieran una imagen a medida.
 - [ ] Decidir si seguimos publicando "a mano" (pedirle a Claude cada noticia) o retomamos la automatización completa (ANTHROPIC_API_KEY + cron) — ver conversación previa, se pospuso a propósito
+- [x] Carátula social (og:image) para enlaces compartidos en WhatsApp/Facebook/etc. — antes solo los artículos tenían imagen; home, categorías, ciclistas, equipos y carreras no mostraban nada al pegar el link. Se generó `public/images/og/default-cover.jpg` (fondo de marca, sin foto) vía `/api/og-cover` y se usa como respaldo automático en `buildMetadata` (`src/lib/seo/metadata.ts`) para cualquier página sin imagen propia (2026-09-15).
 
 ## Cadencia editorial por sección (acordado 2026-09-14)
 
