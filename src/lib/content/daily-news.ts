@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureHeroImage, ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -401,6 +401,89 @@ export async function publishVanVleutenLegendArticle() {
       ...baseFields,
       publishedAt: new Date(),
       riders: { connect: [{ id: rider.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Van der Poel gana la etapa 1 del Tour de Luxemburgo 2026 —
+// resultado del día, sigue del artículo de arranque ya publicado.
+// Fuentes: Cyclingnews, CyclingUpToDate, WielerFlits, DirectVelo
+// (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const luxembourgStage1ResultContent = `
+<p>Mathieu van der Poel (Alpecin-Premier Tech) ganó este miércoles la primera etapa del Tour de Luxemburgo, los 157,5&nbsp;km entre el Knuedler y el Fëschmaart en pleno centro de la capital luxemburguesa, y con eso se puso el primer maillot de líder de la 86ª edición de la carrera. No fue un triunfo cómodo ni previsible hasta el final: llegó después de que su propio ataque, lanzado a 11&nbsp;km de meta, terminara cazado por el pelotón a falta de apenas 4&nbsp;km.</p>
+
+<p>La secuencia fue la siguiente. Van der Poel probó suerte en solitario en el tramo final, buscando llegar a la meta sin necesidad de definir al sprint. El pelotón, sin embargo, no le dio margen y lo neutralizó cuando ya se veía el arco de meta. En vez de quedarse sin opciones tras el esfuerzo del ataque fallido, Van der Poel se recompuso y ganó igual al sprint, por delante de Pierre Gautherat (Decathlon CMA CGM) y Marijn van den Berg (EF Education-EasyPost). &laquo;Eso dolió&raquo;, resumió después, escuetamente, sobre el desgaste de atacar, ser cazado y aun así tener piernas para ganar el sprint que siguió.</p>
+
+<p>El resultado tiene un valor añadido que va más allá de la propia etapa: es la primera carrera en carretera de Van der Poel desde que el Tour de Francia terminó en los Campos Elíseos, en julio. Desde entonces se dedicó a un bloque de competición en mountain bike, y había sido explícito sobre lo que necesitaba de esta semana en Luxemburgo — no un resultado concreto, sino &laquo;ritmo de carrera y kilómetros de competición en carretera&raquo; antes del Mundial de Montreal, el 27 de septiembre. Ganar la primera etapa, y encima haciéndolo tras un ataque fallido y no por pura superioridad en un sprint controlado, es en todo caso una señal de que ese ritmo ya está ahí, no solo una casualidad favorable.</p>
+
+<p>El segundo lugar tiene su propio interés: Pierre Gautherat, francés de 23 años y especialista en clásicas dentro del Decathlon CMA CGM, ya había sido campeón de Europa sub-23 en ruta en 2024 y llega esta temporada firmando su cuarta victoria profesional. Colarse en el podio de una etapa ganada al sprint por uno de los corredores más rápidos del pelotón, incluso en segundo lugar y a rueda de Van der Poel, es exactamente el tipo de resultado que empieza a construir una reputación seria dentro del pelotón WorldTour, más allá de las categorías de formación donde ya se había hecho notar.</p>
+
+<p>La victoria también repite, punto por punto, el guion de 2024: aquel año Van der Poel también ganó la primera etapa de este mismo Tour de Luxemburgo, antes de terminar segundo en la general y subir después al podio del Mundial de Zúrich con el bronce. Él mismo lo reconoció esta semana al justificar por qué elegía Luxemburgo en vez de las clásicas canadienses que disputaron Evenepoel y Del Toro: &laquo;Tuve un buen Mundial en Zúrich después, lo que demostró que esta carrera fue una muy buena preparación final&raquo;. Un día uno con victoria de etapa es, como mínimo, un comienzo idéntico al de la última vez que el plan funcionó.</p>
+
+<p>La lectura de fondo para Montreal es la que más importa a diez días del Mundial. Van der Poel ya ganó el maillot arcoíris en 2023, en Glasgow, y lo perdió por poco en 2024, cuando terminó con el bronce en Zúrich. Con Tadej Pogačar confirmado fuera de la salida tras su caída en la Vuelta a España, este año se presenta como una de las oportunidades más claras que ha tenido para recuperar el título — siempre que la forma acompañe. Ganar hoy, y encima hacerlo de la forma más exigente posible (un ataque que no salió, seguido de un sprint que sí), es un tipo de evidencia que pesa más que un triunfo cómodo en un día tranquilo: demuestra que puede sufrir, recuperarse dentro de la misma carrera y aun así imponerse.</p>
+
+<p>Para el resto de la semana, el maillot de líder le da a Van der Poel y a su equipo el control simbólico de la carrera, aunque el verdadero examen de la general llega más adelante: la etapa reina del viernes, entre Wiltz y Weiswampach, con cerca de 179&nbsp;km por el terreno más exigente del país, y la contrarreloj individual de Ettelbruck el sábado, 20,4&nbsp;km descritos como rápidos pero técnicos. Ninguna de las dos favorece especialmente el perfil explosivo de Van der Poel frente a corredores más orientados a la montaña o la crono — así que defender el liderato hasta la meta final en la capital, el domingo, no está garantizado solo por haber ganado hoy.</p>
+
+<p>Lo que sí deja claro el resultado de hoy es que la apuesta por Luxemburgo, cuestionada por algunos frente a la decisión de Evenepoel y Del Toro de probar el circuito real de Montreal, ya está dando la primera señal concreta que Van der Poel necesitaba: piernas de carrera, encontradas de la forma menos previsible —un ataque que no funcionó del todo, y que aun así terminó en victoria—. Quedan cuatro etapas de carrera y diez días de calendario hasta la salida en Montreal. Si el resto de la semana —etapa reina, contrarreloj y cierre en la capital— confirma la sensación de hoy, la comparación con 2024 va a seguir siendo el punto de referencia obligado hasta que se dispute realmente el Mundial, el 27 de septiembre.</p>
+`.trim()
+
+export async function publishLuxembourgStage1ResultArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const [vdp, team] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'mathieu-van-der-poel' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'alpecin-premier-tech' }, select: { id: true } }),
+  ])
+
+  const heroImageId = await ensureHeroImage('van-der-poel-gana-etapa-1-luxemburgo-2026', {
+    title: 'Van der Poel gana la etapa 1 del Tour de Luxemburgo tras un ataque fallido',
+    label: 'Última hora',
+    riders: [{ name: 'Mathieu van der Poel', team: 'Alpecin-Premier Tech' }],
+  })
+
+  const baseFields = {
+    title: 'Van der Poel gana la etapa 1 del Tour de Luxemburgo tras un ataque fallido',
+    subtitle: 'Atacó a 11 km de meta, lo cazaron a 4, y aun así ganó el sprint por delante de Gautherat y Van den Berg — su primera carrera en ruta desde el Tour de Francia',
+    excerpt:
+      'Mathieu van der Poel ganó la etapa 1 del Tour de Luxemburgo 2026 tras ver cazado su propio ataque a 4 km de meta, imponiéndose igual al sprint. Es su primera carrera en carretera desde el Tour de Francia y repite, etapa por etapa, el guion de 2024, cuando esta misma carrera precedió a su bronce mundial en Zúrich.',
+    content: luxembourgStage1ResultContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.cyclingnews.com/pro-cycling/racing/tour-de-luxembourg-mathieu-van-der-poel-claims-sprint-victory-on-stage-1-after-late-race-attack-is-caught/',
+      'https://cyclinguptodate.com/cycling/results-tour-de-luxembourg-2026-stage-1-mathieu-van-der-poel-attacks-from-11km-out-gets-caught-and-still-powers-to-opening-victory',
+      'https://www.wielerflits.nl/nieuws/mathieu-van-der-poel-wint-in-luxemburg-en-mikt-op-eindzege/',
+      'https://www.directvelo.com/actualite/131968/skoda-tour-de-luxembourg-et-1-classements',
+    ]),
+    sourceNames: toJsonField(['Cyclingnews', 'CyclingUpToDate', 'WielerFlits', 'DirectVelo']),
+    seoTitle: 'Van der Poel gana la etapa 1 del Tour de Luxemburgo 2026',
+    seoDescription:
+      'Mathieu van der Poel gana la etapa 1 del Tour de Luxemburgo tras un ataque fallido a 4 km de meta, ganando igual al sprint. Primer maillot de líder de la carrera.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'van-der-poel-gana-etapa-1-luxemburgo-2026' },
+    update: {
+      ...baseFields,
+      riders: vdp ? { set: [{ id: vdp.id }] } : undefined,
+      teams: team ? { set: [{ id: team.id }] } : undefined,
+    },
+    create: {
+      slug: 'van-der-poel-gana-etapa-1-luxemburgo-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: vdp ? { connect: [{ id: vdp.id }] } : undefined,
+      teams: team ? { connect: [{ id: team.id }] } : undefined,
     },
   })
 
