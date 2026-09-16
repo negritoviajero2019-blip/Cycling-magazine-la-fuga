@@ -18,6 +18,24 @@ export function Footer() {
             className="h-auto w-[170px]"
           />
           <p className="mt-3 max-w-xs text-sm text-muted">{branding.tagline}</p>
+          {branding.social.instagram && (
+            <div className="mt-4 flex gap-2">
+              <a
+                href={branding.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="La Fuga en Instagram"
+                title="La Fuga en Instagram"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-ink transition-colors hover:border-accent hover:text-accent"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-[18px] w-[18px]" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="5" />
+                  <circle cx="12" cy="12" r="4.2" />
+                  <circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none" />
+                </svg>
+              </a>
+            </div>
+          )}
         </div>
 
         <div>

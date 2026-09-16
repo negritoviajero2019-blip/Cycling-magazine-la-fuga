@@ -20,7 +20,7 @@ export const branding = {
   social: {
     twitter: '',
     facebook: '',
-    instagram: '',
+    instagram: 'https://www.instagram.com/la_fuga_cycling_magazine',
   },
   /**
    * Sin correo real configurado, dejamos vacío en vez de una dirección
