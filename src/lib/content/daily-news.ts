@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureHeroImage, ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -440,10 +440,13 @@ export async function publishLuxembourgStage1ResultArticle() {
     prisma.team.findUnique({ where: { slug: 'alpecin-premier-tech' }, select: { id: true } }),
   ])
 
-  const heroImageId = await ensureHeroImage('van-der-poel-gana-etapa-1-luxemburgo-2026', {
-    title: 'Van der Poel gana la etapa 1 del Tour de Luxemburgo tras un ataque fallido',
-    label: 'Última hora',
-    riders: [{ name: 'Mathieu van der Poel', team: 'Alpecin-Premier Tech' }],
+  const heroImageId = await ensureCustomHeroImage('van-der-poel-gana-etapa-1-luxemburgo-2026', {
+    url: '/images/headers/vdp-luxembourg-stage1-cover.jpg',
+    altText: 'Van der Poel gana la etapa 1 del Tour de Luxemburgo: atacó a 11 km, lo cazaron a 4, y aun así ganó el sprint',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
