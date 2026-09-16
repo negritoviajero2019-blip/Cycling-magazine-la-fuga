@@ -139,14 +139,13 @@ export async function GET(request: Request) {
           style={{
             position: 'absolute',
             top: '6%',
-            left: '5%',
-            right: '5%',
+            left: '7%',
+            width: '58%',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 0.96 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 0.96 }}>
             {lines.map((line, i) => (
               <div
                 key={i}
@@ -164,16 +163,16 @@ export async function GET(request: Request) {
             ))}
           </div>
           {subtitle && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', width: 130, height: 6, background: LIME, marginTop: 28, marginBottom: 22 }} />
               <div
                 style={{
                   display: 'flex',
                   fontFamily: 'Inter, InterExt',
-                  fontSize: 52,
+                  fontSize: 36,
                   color: 'rgba(255,255,255,0.92)',
                   lineHeight: 1.3,
-                  textAlign: 'center',
+                  textAlign: 'left',
                 }}
               >
                 {subtitle}
