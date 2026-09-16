@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureHeroImage, ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -146,13 +146,13 @@ export async function publishDelToroEvenepoelAnalysisArticle() {
   ])
   const riderIds = [delToro?.id, evenepoel?.id].filter((id): id is number => id !== undefined)
 
-  const heroImageId = await ensureHeroImage('del-toro-evenepoel-favoritos-mundial-montreal-2026', {
-    title: '¿Del Toro, favorito? El aviso de Evenepoel sobre Montreal',
-    label: 'Análisis',
-    riders: [
-      { name: 'Isaac del Toro', team: 'UAE Team Emirates-XRG' },
-      { name: 'Remco Evenepoel', team: 'Soudal-QuickStep' },
-    ],
+  const heroImageId = await ensureCustomHeroImage('del-toro-evenepoel-favoritos-mundial-montreal-2026', {
+    url: '/images/headers/del-toro-evenepoel-cover.jpg',
+    altText: '¿Del Toro, favorito? El aviso de Evenepoel sobre el circuito de Montreal',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
