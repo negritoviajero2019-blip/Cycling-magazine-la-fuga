@@ -49,6 +49,16 @@ function parseLines(param: string): TitleLine[] {
 }
 
 /**
+ * Título grande (estilo "espectacular"): tamaño base ~2.1x el anterior
+ * (84px → 176px), reducido solo si la línea más larga no cabría en el
+ * ancho disponible — evita tener que ajustar a mano cada titular.
+ */
+function titleFontSize(lines: TitleLine[]): number {
+  const longest = Math.max(...lines.map((l) => l.text.length), 1)
+  return Math.round(Math.min(176, Math.max(108, 2500 / longest)))
+}
+
+/**
  * Compone el titular y la bajada reales sobre una imagen de fondo ya
  * terminada (foto generada con IA o banner propio) — nunca modifica
  * la imagen de fondo en sí, solo agrega texto encima siguiendo la
@@ -62,6 +72,10 @@ function parseLines(param: string): TitleLine[] {
  * ver docs/SOCIAL-PREVIEW.md), se usa un fondo degradado propio en vez
  * de una imagen — sigue generándose una sola vez en dev y guardándose
  * como archivo estático, nunca en vivo en producción.
+ *
+ * Texto anclado centro-superior a tamaño "espectacular" (2026-09-16,
+ * feedback: se veía chico y pegado abajo-izquierda) — el degradado de
+ * contraste pasó de lateral a vertical (oscuro arriba) para acompañar.
  */
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
@@ -117,28 +131,29 @@ export async function GET(request: Request) {
               height: HEIGHT,
               display: 'flex',
               background:
-                'linear-gradient(100deg, rgba(7,17,11,0.92) 0%, rgba(7,17,11,0.75) 28%, rgba(7,17,11,0.15) 52%, rgba(7,17,11,0) 68%)',
+                'linear-gradient(180deg, rgba(7,17,11,0.88) 0%, rgba(7,17,11,0.62) 34%, rgba(7,17,11,0.18) 58%, rgba(7,17,11,0) 74%)',
             }}
           />
         )}
         <div
           style={{
             position: 'absolute',
+            top: '6%',
             left: '5%',
-            right: '45%',
-            bottom: '7%',
+            right: '5%',
             display: 'flex',
             flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 0.98 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 0.96 }}>
             {lines.map((line, i) => (
               <div
                 key={i}
                 style={{
                   display: 'flex',
                   fontFamily: 'Anton',
-                  fontSize: 84,
+                  fontSize: titleFontSize(lines),
                   color: line.color,
                   textTransform: 'uppercase',
                   letterSpacing: -1,
@@ -149,9 +164,18 @@ export async function GET(request: Request) {
             ))}
           </div>
           {subtitle && (
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'flex', width: 90, height: 5, background: LIME, marginTop: 22, marginBottom: 18 }} />
-              <div style={{ display: 'flex', fontFamily: 'Inter, InterExt', fontSize: 27, color: 'rgba(255,255,255,0.88)', lineHeight: 1.35 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{ display: 'flex', width: 130, height: 6, background: LIME, marginTop: 28, marginBottom: 22 }} />
+              <div
+                style={{
+                  display: 'flex',
+                  fontFamily: 'Inter, InterExt',
+                  fontSize: 52,
+                  color: 'rgba(255,255,255,0.92)',
+                  lineHeight: 1.3,
+                  textAlign: 'center',
+                }}
+              >
                 {subtitle}
               </div>
             </div>
