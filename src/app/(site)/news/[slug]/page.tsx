@@ -5,6 +5,7 @@ import { Breadcrumbs } from '@/components/editorial/Breadcrumbs'
 import { Badge } from '@/components/ui/Badge'
 import { CategoryChip } from '@/components/editorial/CategoryChip'
 import { ShareButtons } from '@/components/editorial/ShareButtons'
+import { LikeDislike } from '@/components/editorial/LikeDislike'
 import { RelatedArticles } from '@/components/editorial/RelatedArticles'
 import { EditorialFallbackCard } from '@/components/editorial/EditorialFallbackCard'
 import { AdInArticle } from '@/components/ads/AdInArticle'
@@ -165,8 +166,9 @@ export default async function ArticlePage({ params }: Props) {
             </div>
           )}
 
-          <div className="mt-6">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
             <ShareButtons url={url} title={article.title} />
+            <LikeDislike slug={article.slug} initialLikes={article.likeCount} initialDislikes={article.dislikeCount} />
           </div>
 
           <div className="mt-8 rounded-md bg-primary p-6 text-white">

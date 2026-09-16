@@ -7,7 +7,17 @@ export const dynamic = 'force-dynamic'
 export default async function AdminArticlesPage() {
   const articles = await prisma.article.findMany({
     orderBy: { updatedAt: 'desc' },
-    select: { id: true, title: true, status: true, breakingNews: true, featured: true, updatedAt: true },
+    select: {
+      id: true,
+      title: true,
+      status: true,
+      breakingNews: true,
+      featured: true,
+      updatedAt: true,
+      viewCount: true,
+      likeCount: true,
+      dislikeCount: true,
+    },
   })
 
   return (
@@ -26,6 +36,8 @@ export default async function AdminArticlesPage() {
               <th className="p-3">Título</th>
               <th className="p-3">Estado</th>
               <th className="p-3">Marcas</th>
+              <th className="p-3">Vistas</th>
+              <th className="p-3">👍 / 👎</th>
               <th className="p-3">Actualizado</th>
             </tr>
           </thead>
@@ -41,6 +53,12 @@ export default async function AdminArticlesPage() {
                 <td className="p-3 text-xs">
                   {article.breakingNews && <span className="mr-1 text-breaking">● Breaking</span>}
                   {article.featured && <span className="text-accent">★ Destacado</span>}
+                </td>
+                <td className="p-3 text-xs text-muted">{article.viewCount}</td>
+                <td className="p-3 text-xs">
+                  <span className="text-accent">{article.likeCount}</span>
+                  {' / '}
+                  <span className="text-muted">{article.dislikeCount}</span>
                 </td>
                 <td className="p-3 text-xs text-muted">{new Intl.DateTimeFormat('es-ES').format(article.updatedAt)}</td>
               </tr>

@@ -64,6 +64,13 @@ model Article {
   // (§94: no inventar tendencias).
   viewCount Int @default(0)
 
+  // Reacciones del lector (👍/👎), para saber qué contenido funciona.
+  // Sin cuentas de usuario: cada visitante vota una vez por artículo,
+  // controlado en el cliente (localStorage) — señal editorial liviana,
+  // no una votación a prueba de fraude.
+  likeCount    Int @default(0)
+  dislikeCount Int @default(0)
+
   tags   Tag[]
   riders Rider[]
   teams  Team[]
