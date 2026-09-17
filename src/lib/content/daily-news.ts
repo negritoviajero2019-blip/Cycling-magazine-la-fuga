@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -535,10 +535,13 @@ export async function publishDelToroProfileArticle() {
     prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
   ])
 
-  const heroImageId = await ensureHeroImage('isaac-del-toro-presente-futuro-ciclismo-mexico', {
-    title: 'El presente y el futuro del ciclismo mexicano',
-    label: 'Latinos',
-    riders: delToro ? [{ name: 'Isaac del Toro', team: 'uae-team-emirates-xrg' }] : [],
+  const heroImageId = await ensureCustomHeroImage('isaac-del-toro-presente-futuro-ciclismo-mexico', {
+    url: '/images/headers/del-toro-perfil-cover.jpg',
+    altText: 'Joven maravilla: el presente y el futuro del ciclismo en México',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
