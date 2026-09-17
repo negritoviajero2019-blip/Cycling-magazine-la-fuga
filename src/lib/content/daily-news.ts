@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -487,6 +487,103 @@ export async function publishLuxembourgStage1ResultArticle() {
       publishedAt: new Date(),
       riders: vdp ? { connect: [{ id: vdp.id }] } : undefined,
       teams: team ? { connect: [{ id: team.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Perfil: Isaac del Toro, el presente y el futuro del ciclismo
+// mexicano — de Ensenada al podio del Tour de Francia 2026.
+// Fuentes: Wikipedia, BikeRadar, Olympics.com, El Imparcial, N+,
+// TV Azteca, El Informador (ver sourceUrls). Imagen: banner
+// automático mientras se produce una carátula compatible con la
+// política de imágenes del sitio (ver nota interna).
+// ————————————————————————————————————————————————————————————
+
+const delToroProfileContent = `
+<p>A diez días del Mundial de ruta en Montreal (20-27 de septiembre), Isaac del Toro (UAE Team Emirates-XRG) aparece en las quinielas de favoritos casi por descarte: sin Tadej Pogačar en la salida tras su caída en la Vuelta a España, y con Remco Evenepoel avisando de que el circuito de Mont Royal no favorece a los corredores más pesados, el mexicano de 22 años llega como una de las cartas más sólidas del pelotón. Es una frase que, hace apenas tres años, habría sonado a ciencia ficción para el ciclismo mexicano.</p>
+
+<p>Del Toro nació el 27 de noviembre de 2003 en Ensenada, Baja California, hijo de un ciclista aficionado que introdujo tanto a él como a su hermano en el deporte desde niños. Antes de dedicarse en serio a la carretera pasó por el mountain bike y el ciclocross, disciplinas donde afinó un manejo de bicicleta que hoy sus rivales describen como fuera de lo común para un escalador puro. Compitió en el campeonato nacional mexicano a los 16 años, en 2020, y al año siguiente ya corría en Italia y disputaba el Mundial júnior en Bélgica — el primer salto real fuera de México.</p>
+
+<p>El camino no fue lineal. En el invierno de 2022 sufrió una fractura de fémur que lo dejó fuera de competición durante meses, justo cuando empezaba a asomar en carreras como el Gran Premio Industria o el Giro della Valle d'Aosta, donde terminó 22º en la general y 5º en la clasificación de jóvenes. La recuperación de esa lesión es, para quienes siguen de cerca su carrera, el primer episodio de un patrón que se repetiría después más de una vez: un golpe que, en lugar de frenarlo, se convirtió en el punto de partida de la temporada siguiente.</p>
+
+<p>Esa temporada siguiente fue 2023, y en ella ganó el Tour de l'Avenir — el "pequeño Tour de Francia" reservado a corredores sub-23 y considerado desde hace décadas el mejor termómetro para detectar futuros ganadores de grandes vueltas. Del Toro se convirtió en el primer mexicano en levantar ese título, un logro que le abrió las puertas del WorldTour: UAE Team Emirates lo fichó para debutar como profesional en 2024.</p>
+
+<p>Ese primer año como profesional lo pasó, sobre todo, como gregario de montaña — el corredor que reparte bidones y marca ritmo para que otros lleguen frescos a los puertos decisivos. Aun así, tuvo margen para mostrar algo propio: subió al podio en la Down Under Classic, ganó una etapa del Tour Down Under, lideró esa carrera durante tres jornadas y terminó tercero en la general. Eran señales, no titulares. El titular llegaría un año después, y sería de los que cambian una carrera de golpe.</p>
+
+<p>En el Giro de Italia de 2025, Del Toro vistió la maglia rosa desde la novena etapa, la mantuvo durante más de una semana, ganó la etapa 17 y se llevó la clasificación de mejor joven — el primer corredor norteamericano en la historia en lograrlo. La perdió en la penúltima jornada frente a Simon Yates, pero terminó segundo en la general: el primer mexicano en subir al podio de una gran vuelta, y a los 21 años, el ciclista más joven en lograrlo en el Giro desde 2018.</p>
+
+<p>Si 2025 fue la temporada de la confirmación, 2026 ha sido la de la consolidación. Del Toro llegó a mitad de año campeón del Tour de los Emiratos y de la Tirreno-Adriático, y sumó un tercer puesto en la Strade Bianche — resultados que ya lo situaban entre los mejores corredores de clásicas y de vueltas por etapas de una semana antes de que empezara julio. Pero fue en el Tour de Francia donde terminó de instalarse en la conversación sobre el futuro inmediato del ciclismo mundial: ganó la segunda etapa, con final en Barcelona, sumó otras cuatro terceras plazas parciales, se llevó el maillot blanco de mejor joven y cerró la carrera en el tercer escalón del podio final.</p>
+
+<p>Es, otra vez, un primero: el primer mexicano en subir al podio del Tour de Francia, el primer latinoamericano en lograrlo desde Richard Carapaz en 2021, y apenas el sexto corredor no europeo de las potencias tradicionales del ciclismo en conseguirlo en la historia de la carrera. Para dimensionar lo insólito del dato conviene mirar hacia atrás: el ciclismo mexicano tiene un solo antecedente comparable, y es de otra época por completo. Raúl Alcalá, nacido en Monterrey, debutó en el Tour de 1986 con el mítico 7-Eleven y terminó noveno en la general de 1987, llevándose también el maillot blanco — el mismo que Del Toro ganaría casi cuarenta años después. Ganó dos etapas del Tour, en 1989 y 1990, y cerró su carrera europea a mediados de los noventa en el Motorola, como compañero de equipo de un jovencísimo Lance Armstrong. Durante más de tres décadas, Alcalá fue prácticamente el único punto de referencia del país en las grandes vueltas europeas. Del Toro no solo iguala esa huella: la supera, y lo hace con veintidós años y, según su propio equipo, todavía sin haber corrido su mejor Tour de Francia.</p>
+
+<p>Precisamente por eso UAE Team Emirates decidió no incluirlo entre los ocho corredores para la Vuelta a España 2026: el equipo prefirió reservarlo tras el desgaste del Tour, con la idea explícita de cuidar su progresión a largo plazo en lugar de exprimirlo carrera tras carrera en un mismo año. Es una gestión poco habitual para un corredor de su nivel — y, a la vez, una señal de hasta qué punto UAE lo considera ya una pieza central de su proyecto: el mexicano tiene contrato con el equipo hasta 2029, con apenas 22 años cumplidos.</p>
+
+<p>El presente inmediato se juega en Montreal. Del Toro llega a la cita mundialista habiendo ganado ya el Gran Premio de Montreal disputado sobre el mismo circuito de Mont Royal, aunque admitió después no haberse sentido especialmente bien durante la carrera — una confesión que sus rivales han tomado más como advertencia que como excusa. El trazado, con la subida de Camilien-Houde repetida varias veces, castiga a los corredores más pesados y premia a escaladores explosivos como él. Si algo ha demostrado en los últimos dieciocho meses es que sabe administrar la etiqueta de favorito mejor que la mayoría de corredores de su edad: la cargó en el Giro, la cargó en el Tour, y ahora la carga de nuevo camino del maillot arcoíris.</p>
+
+<p>El futuro, mientras tanto, ya no se mide carrera a carrera. Con un contrato que lo ata a UAE Team Emirates hasta el final de la década, con Tadej Pogačar como compañero de equipo y con una progresión que en apenas tres temporadas lo llevó de gregario de montaña a podio del Tour de Francia, Isaac del Toro representa hoy, literalmente, las dos cosas que anuncia el título de este artículo: es el mejor resultado que el ciclismo mexicano ha tenido en casi cuarenta años, y al mismo tiempo la principal razón por la que, en un país donde el ciclismo profesional ha sido históricamente un deporte casi invisible, empieza a hablarse en serio de una generación que todavía está por llegar.</p>
+`.trim()
+
+export async function publishDelToroProfileArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const [delToro, team, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'uae-team-emirates-xrg' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+
+  const heroImageId = await ensureHeroImage('isaac-del-toro-presente-futuro-ciclismo-mexico', {
+    title: 'El presente y el futuro del ciclismo mexicano',
+    label: 'Latinos',
+    riders: delToro ? [{ name: 'Isaac del Toro', team: 'uae-team-emirates-xrg' }] : [],
+  })
+
+  const baseFields = {
+    title: 'El presente y el futuro del ciclismo en México',
+    subtitle: 'Quién es Isaac del Toro, de dónde viene, y cómo pasó en tres temporadas de gregario de montaña a subir al podio del Tour de Francia',
+    excerpt:
+      'De Ensenada al podio del Tour de Francia: la trayectoria de Isaac del Toro, el corredor mexicano de 22 años que llega como favorito al Mundial de Montreal tras romper, uno detrás de otro, los techos históricos del ciclismo de su país.',
+    content: delToroProfileContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://en.wikipedia.org/wiki/Isaac_del_Toro',
+      'https://www.bikeradar.com/features/racing/who-is-isaac-del-toro',
+      'https://www.olympics.com/es/noticias/isaac-del-toro-tour-francia-2026-resultados-clasificacion-ciclista-mexicano',
+      'https://www.elimparcial.com/deporte/2026/08/03/por-que-isaac-del-toro-no-correra-la-vuelta-a-espana-2026/',
+      'https://www.nmas.com.mx/deportes/isaac-del-toro-renacer-ciclismo-mexico-como-logro-triunfar-biografia-premios-ciclista/',
+      'https://www.tvazteca.com/aztecadeportes/raul-alcala-mexicano-participo-tour-francia-gano-etapa',
+      'https://www.informador.mx/deportes/los-tres-mexicanos-que-han-hecho-historia-en-el-tour-de-francia-20260704-0066.html',
+    ]),
+    sourceNames: toJsonField(['Wikipedia', 'BikeRadar', 'Olympics.com', 'El Imparcial', 'N+', 'TV Azteca', 'El Informador']),
+    seoTitle: 'Isaac del Toro: el presente y el futuro del ciclismo mexicano',
+    seoDescription:
+      'Quién es Isaac del Toro y de dónde viene: de Ensenada al podio del Tour de Francia 2026, la trayectoria del corredor mexicano que llega como favorito al Mundial de Montreal.',
+    readingTime: 7,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'isaac-del-toro-presente-futuro-ciclismo-mexico' },
+    update: {
+      ...baseFields,
+      riders: delToro ? { set: [{ id: delToro.id }] } : undefined,
+      teams: team ? { set: [{ id: team.id }] } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+    },
+    create: {
+      slug: 'isaac-del-toro-presente-futuro-ciclismo-mexico',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: delToro ? { connect: [{ id: delToro.id }] } : undefined,
+      teams: team ? { connect: [{ id: team.id }] } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
     },
   })
 

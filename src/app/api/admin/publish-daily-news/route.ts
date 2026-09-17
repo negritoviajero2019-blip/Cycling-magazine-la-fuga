@@ -6,6 +6,7 @@ import {
   publishLuxembourg2026Article,
   publishVanVleutenLegendArticle,
   publishLuxembourgStage1ResultArticle,
+  publishDelToroProfileArticle,
 } from '@/lib/content/daily-news'
 
 /**
@@ -25,6 +26,7 @@ export async function POST() {
       publishLuxembourg2026Article(),
       publishVanVleutenLegendArticle(),
       publishLuxembourgStage1ResultArticle(),
+      publishDelToroProfileArticle(),
     ])
     return NextResponse.json({ ok: true, articles: results })
   } catch (error) {
