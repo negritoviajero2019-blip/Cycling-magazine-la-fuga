@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -652,13 +652,13 @@ export async function publishLuxembourgStage2ResultArticle() {
   )
   const teamIds = [efTeam?.id, alpecinTeam?.id].filter((id): id is number => id !== undefined)
 
-  const heroImageId = await ensureHeroImage('van-der-poel-pierde-liderato-luxemburgo-etapa-2-2026', {
-    title: 'Van der Poel pierde el liderato en Luxemburgo',
-    label: 'Última hora',
-    riders: [
-      ...(vandenberg ? [{ name: 'Marijn van den Berg', team: 'ef-education-easypost' }] : []),
-      ...(vdp ? [{ name: 'Mathieu van der Poel', team: 'alpecin-premier-tech' }] : []),
-    ],
+  const heroImageId = await ensureCustomHeroImage('van-der-poel-pierde-liderato-luxemburgo-etapa-2-2026', {
+    url: '/images/headers/vdp-luxembourg-stage2-cover.jpg',
+    altText: 'Van der Poel pierde el liderato en Luxemburgo: Van den Berg gana al sprint en subida',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
