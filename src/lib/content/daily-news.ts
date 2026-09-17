@@ -523,6 +523,13 @@ const delToroProfileContent = `
 
 <p>El presente inmediato se juega en Montreal. Del Toro llega a la cita mundialista habiendo ganado ya el Gran Premio de Montreal disputado sobre el mismo circuito de Mont Royal, aunque admitió después no haberse sentido especialmente bien durante la carrera — una confesión que sus rivales han tomado más como advertencia que como excusa. El trazado, con la subida de Camilien-Houde repetida varias veces, castiga a los corredores más pesados y premia a escaladores explosivos como él. Si algo ha demostrado en los últimos dieciocho meses es que sabe administrar la etiqueta de favorito mejor que la mayoría de corredores de su edad: la cargó en el Giro, la cargó en el Tour, y ahora la carga de nuevo camino del maillot arcoíris.</p>
 
+<figure class="video-embed">
+  <a class="video-embed-link" href="https://youtu.be/HR2d9uobKzY" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.youtube.com/vi/HR2d9uobKzY/maxresdefault.jpg" alt="Isaac del Toro, campeón del Gran Premio de Montreal 2026 — resumen en video" />
+  </a>
+  <figcaption>Resumen del Gran Premio de Montreal 2026: Del Toro remonta tras problemas mecánicos y gana a Paul Seixas en los metros finales. Video: Claro Sports.</figcaption>
+</figure>
+
 <p>El futuro, mientras tanto, ya no se mide carrera a carrera. Con un contrato que lo ata a UAE Team Emirates hasta el final de la década, con Tadej Pogačar como compañero de equipo y con una progresión que en apenas tres temporadas lo llevó de gregario de montaña a podio del Tour de Francia, Isaac del Toro representa hoy, literalmente, las dos cosas que anuncia el título de este artículo: es el mejor resultado que el ciclismo mexicano ha tenido en casi cuarenta años, y al mismo tiempo la principal razón por la que, en un país donde el ciclismo profesional ha sido históricamente un deporte casi invisible, empieza a hablarse en serio de una generación que todavía está por llegar.</p>
 `.trim()
 
