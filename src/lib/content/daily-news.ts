@@ -704,3 +704,109 @@ export async function publishLuxembourgStage2ResultArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Grandes Enfrentamientos: Alberto Contador vs Andy Schleck — el
+// Chaingate de 2010, el Galibier de 2011 y un título entregado año
+// y medio tarde. Sección Leyendas.
+// Fuentes: Cycling Weekly, Cyclingnews, ESPN, Wikipedia (ver
+// sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const contadorSchleckRivalryContent = `
+<p>Entre 2009 y 2011, el ciclismo mundial tuvo un duelo que todavía se recuerda como uno de los más intensos de la era moderna del Tour de Francia: Alberto Contador contra Andy Schleck. Tres ediciones seguidas del Tour, dos podios compartidos, un incidente mecánico que se convirtió en escándalo, y un desenlace tan tardío que el propio protagonista terminó recibiendo el título de campeón año y medio después de que la carrera hubiera terminado.</p>
+
+<p>Cuando empezó todo, en 2009, Contador ya era un corredor consagrado: dos veces campeón del Tour (2007 y, esa misma edición, 2009), conocido por sus ataques explosivos en la montaña y por una capacidad de cambio de ritmo que pocos rivales podían seguir. Schleck, luxemburgués de Team Saxo Bank, era la gran promesa: un escalador puro, elegante sobre la bici, pero con una debilidad conocida —la contrarreloj— que Contador explotaba sin piedad cada vez que el calendario lo permitía. Ese año, Contador ganó el Tour y Schleck terminó segundo, ya entonces reconocido como su rival más serio.</p>
+
+<p>La rivalidad se volvió leyenda al año siguiente, en la etapa 15 del Tour de Francia 2010, en la ascensión al Port de Balès. Schleck, que llevaba el maillot amarillo, atacó a Contador en la subida. A los pocos segundos, se le salió la cadena. Pedaleó en el vacío durante un instante, incrédulo, antes de detenerse a repararla mientras Contador y el resto del grupo de favoritos pasaban de largo. El resultado fue brutal: Schleck perdió 39 segundos esa etapa, y Contador pasó de estar 31 segundos por detrás en la general a liderarla por 8.</p>
+
+<p>Lo que siguió fue una de las polémicas más comentadas en la historia reciente del ciclismo. Existe una regla no escrita en el pelotón —no aprovecharse de la mala suerte mecánica de un rival— y muchos consideraron que Contador la había roto. El propio Schleck no se guardó nada al llegar a meta: &laquo;Estoy realmente decepcionado. Tengo el estómago lleno de rabia, y quiero mi venganza&raquo;, dijo, y añadió: &laquo;Él puede estar nervioso los próximos días... esto me da rabia. Ya no soy el que persiguen, soy el que persigue. Esa es una gran diferencia&raquo;. Contador se defendió apelando a las circunstancias de la carrera: &laquo;Ataqué antes de saber que él tenía un problema con la cadena, y ya estaba por delante cuando lo supe&raquo;. La opinión de los expertos quedó dividida: Sean Kelly consideró que Contador debió esperar; Stephen Roche, que el error había sido de Schleck y que el ataque estaba justificado.</p>
+
+<p>El desenlace final de aquel Tour resultó casi poético en su crueldad estadística: Contador ganó por apenas 39 segundos sobre Schleck — exactamente el mismo margen que el luxemburgués había perdido en el Port de Balès. Sin aquel incidente mecánico, el resultado de todo el Tour muy probablemente habría sido otro.</p>
+
+<p>Pero la historia de ese Tour no terminó en París. El 30 de septiembre de 2010, la UCI anunció que Contador había dado positivo por clembuterol en un control antidopaje realizado durante la segunda jornada de descanso de la carrera. El corredor alegó contaminación por carne, y en febrero de 2011 la federación española de ciclismo lo exoneró. El caso, sin embargo, llegó al Tribunal de Arbitraje Deportivo (TAS), que celebró audiencias entre el 21 y el 24 de noviembre de 2011. El veredicto llegó el 6 de febrero de 2012: sanción de dos años, y pérdida de todos los resultados obtenidos desde el Tour de Francia 2010 en adelante, incluido ese propio Tour y el Giro de Italia que había ganado en 2011. Andy Schleck fue proclamado, con año y medio de retraso, campeón del Tour de Francia 2010 — sin ceremonia de podio, sin champán en los Campos Elíseos, con la noticia llegándole por un comunicado del TAS en lugar de por una victoria vivida en la carretera.</p>
+
+<p>Entre el incidente y el veredicto quedó, además, el propio Tour de Francia 2011 — la tercera y última gran cita de la rivalidad, y probablemente la más memorable desde el punto de vista puramente deportivo. Contador llegó a Francia después de haber ganado el Giro de Italia semanas antes, intentando un doblete Giro-Tour que pocos corredores logran completar, y con el caso de dopaje ya pesando sobre su temporada. No fue su mejor año: terminó quinto en la general, sin victorias de etapa ni un solo día de maillot amarillo. Schleck, en cambio, protagonizó una de las fugas más recordadas de la década: en la etapa 18, con 62&nbsp;km todavía por delante, atacó en el Izoard y llegó en solitario hasta la cima del Galibier, sacando dos minutos a un grupo que incluía a su propio hermano Fränk, a Cadel Evans y a Thomas Voeckler. Fue la última victoria de la carrera profesional de Schleck, y le sirvió para terminar segundo en la general final, con Fränk tercero — un podio con dos Schleck y ningún Contador, que Cadel Evans ganó por apenas 1&nbsp;minuto 34&nbsp;segundos sobre Andy.</p>
+
+<p>Con los años, la rivalidad se suavizó hasta convertirse en un recuerdo compartido con más respeto que rencor. Contador, ya retirado, llegó a declarar: &laquo;Andy fue mi mayor rival, mucho más que Froome, que solo llegó en los últimos dos años [de mi carrera]. Con él fue con quien más batallé, y también viví momentos muy buenos&raquo;. Es una frase que resume bien lo que fue aquel cruce de trayectorias: tres Tours de Francia decididos por márgenes mínimos, un incidente mecánico que se volvió símbolo de toda una polémica ética del deporte, y un título que tardó año y medio en encontrar a su verdadero dueño. Pocas rivalidades en la historia reciente del ciclismo combinan en partes tan iguales el drama deportivo y la controversia — razón de sobra para que, quince años después, Contador contra Schleck siga siendo la referencia obligada cuando se habla de grandes enfrentamientos en el pelotón.</p>
+`.trim()
+
+export async function publishContadorSchleckRivalryArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'leyendas' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const contador = await prisma.rider.upsert({
+    where: { slug: 'alberto-contador' },
+    update: {},
+    create: {
+      slug: 'alberto-contador',
+      name: 'Alberto Contador',
+      nationality: 'España',
+      specialty: 'Escalada / Vueltas por etapas',
+      bio: 'Ex ciclista profesional español, retirado en 2017. Ganador de siete grandes vueltas a lo largo de su carrera (con revisiones posteriores por sanción), uno de los escaladores más explosivos de su generación.',
+    },
+  })
+  const schleck = await prisma.rider.upsert({
+    where: { slug: 'andy-schleck' },
+    update: {},
+    create: {
+      slug: 'andy-schleck',
+      name: 'Andy Schleck',
+      nationality: 'Luxemburgo',
+      specialty: 'Escalada',
+      bio: 'Ex ciclista profesional luxemburgués, retirado en 2014. Campeón del Tour de Francia 2010 (título recibido en 2012 tras la sanción de Alberto Contador), subcampeón en 2009 y 2011.',
+    },
+  })
+
+  const heroImageId = await ensureCustomHeroImage('contador-vs-schleck-grandes-enfrentamientos', {
+    url: '/images/headers/contador-schleck-cover.jpg',
+    altText: 'Contador vs Schleck: el duelo de una era — Grandes Enfrentamientos en Leyendas',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title: 'Contador vs Schleck: el duelo que definió una era',
+    subtitle: 'Tres Tours de Francia, un Chaingate en el Port de Balès y un título que le llegó a Schleck año y medio tarde',
+    excerpt:
+      'Entre 2009 y 2011, Alberto Contador y Andy Schleck protagonizaron una de las grandes rivalidades del ciclismo moderno: el Chaingate de 2010, la fuga solitaria de Schleck en el Galibier 2011, y un título de Tour que cambió de dueño año y medio después de la carrera.',
+    content: contadorSchleckRivalryContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://www.cyclingweekly.com/news/latest-news/andy-schleck-biggest-rival-says-alberto-contador-143000',
+      'https://www.cyclingweekly.com/news/racing/tour-de-france/schleck-contador-friendship-turns-sour-following-chain-problem-58877',
+      'https://www.espn.com/olympics/tdf2010/news/story?id=5392117',
+      'https://www.cyclingnews.com/news/cas-sanction-contador-with-two-year-ban-in-clenbuterol-case/',
+      'https://en.wikipedia.org/wiki/2011_Tour_de_France',
+      'https://en.wikipedia.org/wiki/Andy_Schleck',
+    ]),
+    sourceNames: toJsonField(['Cycling Weekly', 'Cycling Weekly', 'ESPN', 'Cyclingnews', 'Wikipedia', 'Wikipedia']),
+    seoTitle: 'Contador vs Schleck: la rivalidad del Chaingate y el Galibier',
+    seoDescription:
+      'La historia completa de la rivalidad Contador-Schleck: el Chaingate de 2010 en el Port de Balès, la fuga de Schleck en el Galibier 2011, y el título del Tour que le llegó año y medio tarde.',
+    readingTime: 7,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'contador-vs-schleck-grandes-enfrentamientos' },
+    update: {
+      ...baseFields,
+      riders: { set: [{ id: contador.id }, { id: schleck.id }] },
+    },
+    create: {
+      slug: 'contador-vs-schleck-grandes-enfrentamientos',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: { connect: [{ id: contador.id }, { id: schleck.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
