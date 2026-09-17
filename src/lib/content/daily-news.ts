@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -594,6 +594,111 @@ export async function publishDelToroProfileArticle() {
       riders: delToro ? { connect: [{ id: delToro.id }] } : undefined,
       teams: team ? { connect: [{ id: team.id }] } : undefined,
       races: race ? { connect: [{ id: race.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Van der Poel pierde el liderato en Luxemburgo — Van den Berg gana
+// al sprint en subida en la etapa 2.
+// Fuentes: Cyclingnews, Domestique Cycling, CyclingUpToDate,
+// radsportaktuell.de (ver sourceUrls). Video: TNT Sports Cycling
+// (resumen de los últimos km, YouTube).
+// ————————————————————————————————————————————————————————————
+
+const luxembourgStage2ResultContent = `
+<p>Mathieu van der Poel (Alpecin-Premier Tech) perdió este jueves el maillot de líder del Tour de Luxemburgo que había conquistado un día antes. En la etapa 2, un sprint largo en subida entre Differdange/Niederkorn y Junglinster (166,8&nbsp;km), fue Marijn van den Berg (EF Education-EasyPost) quien se impuso, lanzando su remate desde lejos y aguantando hasta la línea por delante de Timo Kielich (Visma | Lease a Bike) y Pierre Gautherat (Decathlon CMA CGM). Van der Poel, que un día antes había ganado la etapa inaugural pese a ver cazado su propio ataque, no pudo seguir el ritmo en el repecho final y cruzó la meta quinto.</p>
+
+<p>La victoria fue la primera de la temporada 2026 para Van den Berg, y llegó de la manera en que suele construir sus triunfos: abriendo el sprint pronto, antes de que el grupo pudiera organizarse para perseguirlo, y resistiendo en el último centenar de metros con la rampa todavía subiendo. Es una fórmula que ya le había funcionado en otras citas de un día y que en Luxemburgo volvió a demostrar ser difícil de contrarrestar, incluso para rivales tan rápidos como Van der Poel o Kielich.</p>
+
+<p>El final de etapa no era terreno para un velocista puro. A diferencia del trazado más plano y adoquinado del día inaugural en la capital luxemburguesa, la llegada a Junglinster subía de forma constante en los últimos metros — el tipo de final que en el papel debía favorecer a corredores capaces de combinar velocidad y potencia en pendiente, precisamente el perfil de Van der Poel. Que haya sido superado en ese terreno específico, y no en un sprint masivo convencional, es la parte del resultado que más atención generó entre los equipos rivales de cara al Mundial de Montreal, todavía a diez días de distancia.</p>
+
+<p>La etapa 1, el miércoles, ya había dejado una pista de que Van der Poel no llegaba a Luxemburgo en su mejor punto de explosividad pura. Ganó esa jornada inaugural de 157,5&nbsp;km por las calles adoquinadas del casco histórico, pero tuvo que remontar un ataque propio que fue cazado a apenas 4&nbsp;km de meta antes de resolver el sprint del grupo reducido. Fue una victoria construida más sobre persistencia que sobre superioridad clara, y el resultado de este jueves confirma que, al menos en estos primeros días de competición en carretera tras su bloque de mountain bike, su punta de velocidad todavía no está al cien por cien frente a especialistas de sprint como Van den Berg o Kielich.</p>
+
+<p>El maillot de líder cambió de manos no solo por el resultado de la etapa, sino por la combinación de la victoria con las bonificaciones de tiempo en meta. Van den Berg encabeza ahora la general, seguido por Pierre Gautherat a 4 segundos y por el propio Van der Poel, también a 4 segundos, en el tercer escalón. Jasper Stuyven (Soudal Quick-Step) y Davide Piganzoli (Visma | Lease a Bike) completan las cinco primeras posiciones, ambos a 16 segundos del liderato. Son diferencias mínimas, del tipo que una sola bonificación mal repartida puede borrar de un plumazo — la clasificación general del Tour de Luxemburgo, a estas alturas, sigue completamente abierta.</p>
+
+<p>Para Van der Poel, la pérdida del liderato no cambia el objetivo real de su participación en esta carrera. Como explicó él mismo al llegar a Luxemburgo, no vino buscando necesariamente ganar la general, sino recuperar ritmo de competición en carretera después de su bloque de mountain bike, siguiendo el mismo guion que en 2024, cuando esta misma carrera precedió a su medalla de bronce en el Mundial de Zúrich. Perder unos segundos en un sprint cuesta arriba —terreno en el que no es, ni pretende ser, un especialista puro— no altera esa lógica de fondo, aunque sí deja la carrera bastante más abierta de lo que estaba tras la victoria de la etapa 1.</p>
+
+<p>Van den Berg, por su parte, llega a este resultado en un año que hasta ahora no había sido especialmente prolífico en victorias para él. El neerlandés, uno de los velocistas más completos del pelotón cuando la llegada no es completamente plana, encuentra en Luxemburgo el terreno ideal para su perfil: explosivo, capaz de rodar fuerte durante muchos metros y con margen de maniobra en finales que no se deciden a la velocidad pura de un sprint masivo. Para EF Education-EasyPost, un equipo que reparte sus opciones entre varios corredores según el tipo de etapa, tener a Van den Berg vestido de líder a falta de tres jornadas es una posición que no esperaban defender de entrada, pero que ahora deben gestionar con cuidado.</p>
+
+<p>Lo que queda de carrera no favorece precisamente a los velocistas. La etapa 3 de este viernes es la jornada reina: casi 180&nbsp;km entre Wiltz, en el extremo norte del país, y Weiswampach, antes de virar hacia el sur y terminar en Diekirch. El tramo final incluye un circuito con tres puertos cortos pero exigentes — 1,8&nbsp;km al 6,1%, 700&nbsp;metros al 8% y 1,1&nbsp;km al 7,2% — seguidos de una bajada corta y un tramo llano hasta meta, un perfil pensado para abrir diferencias reales entre los aspirantes a la general antes de la contrarreloj de Ettelbruck del sábado. Es, sobre el papel, el terreno donde Van der Poel puede intentar recuperar tiempo: explosivo, sin puertos largos, y exactamente el tipo de final en el que ya ha demostrado ser letal en ediciones anteriores de esta misma carrera.</p>
+
+<p>La pregunta que deja abierta la etapa 2 es si Van den Berg, un corredor más de sprint que de montaña, puede aguantar el maillot en un día con tres repechos consecutivos, o si el liderato volverá a cambiar de dueño antes del fin de semana. Con las diferencias actuales tan ajustadas —4 y 16 segundos entre los cinco primeros—, casi cualquier resultado en Wiltz-Weiswampach-Diekirch puede reordenar por completo la general a falta de una crono y una etapa de cierre en la capital el domingo.</p>
+
+<figure class="video-embed">
+  <a class="video-embed-link" href="https://www.youtube.com/watch?v=rs9BxLwZPBI" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.youtube.com/vi/rs9BxLwZPBI/maxresdefault.jpg" alt="Últimos kilómetros del sprint de la etapa 2 del Tour de Luxemburgo 2026" />
+  </a>
+  <figcaption>Los últimos kilómetros del sprint en subida de la etapa 2. Video: TNT Sports Cycling.</figcaption>
+</figure>
+`.trim()
+
+export async function publishLuxembourgStage2ResultArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const [vandenberg, vdp, kielich, gautherat, stuyven, efTeam, alpecinTeam] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'marijn-van-den-berg' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'mathieu-van-der-poel' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'timo-kielich' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'pierre-gautherat' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'jasper-stuyven' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'ef-education-easypost' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'alpecin-premier-tech' }, select: { id: true } }),
+  ])
+  const riderIds = [vandenberg?.id, vdp?.id, kielich?.id, gautherat?.id, stuyven?.id].filter(
+    (id): id is number => id !== undefined,
+  )
+  const teamIds = [efTeam?.id, alpecinTeam?.id].filter((id): id is number => id !== undefined)
+
+  const heroImageId = await ensureHeroImage('van-der-poel-pierde-liderato-luxemburgo-etapa-2-2026', {
+    title: 'Van der Poel pierde el liderato en Luxemburgo',
+    label: 'Última hora',
+    riders: [
+      ...(vandenberg ? [{ name: 'Marijn van den Berg', team: 'ef-education-easypost' }] : []),
+      ...(vdp ? [{ name: 'Mathieu van der Poel', team: 'alpecin-premier-tech' }] : []),
+    ],
+  })
+
+  const baseFields = {
+    title: 'Van der Poel pierde el liderato: Van den Berg gana al sprint en subida en Luxemburgo',
+    subtitle: 'El neerlandés lanzó su sprint desde lejos en la etapa 2 y resistió hasta Junglinster; Van der Poel, quinto, cede el maillot por apenas 4 segundos',
+    excerpt:
+      'Marijn van den Berg ganó la etapa 2 del Tour de Luxemburgo 2026 con un sprint largo en subida y le arrebató el liderato a Mathieu van der Poel, quinto en meta. La general queda abierta a tres jornadas del final, con la etapa reina de este viernes por delante.',
+    content: luxembourgStage2ResultContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.cyclingnews.com/pro-cycling/racing/tour-de-luxembourg-marijn-van-den-berg-claims-stage-2-with-long-sprint/',
+      'https://www.domestiquecycling.com/en/news/van-den-berg-powers-to-first-win-of-2026-as-van-der-poel-loses-luxembourg-lead/',
+      'https://cyclinguptodate.com/cycling/results-tour-de-luxembourg-2026-stage-2-van-der-poel-denied-in-uphill-sprint-as-marijn-van-den-berg-rides-into-leaders-jersey',
+      'https://radsportaktuell.de/radsport/ergebnisse-tour-de-luxembourg-2026-etappe-2-van-der-poel-im-bergaufsprint-geschlagen-marijn-van-den-berg-ubernimmt-das-fuhrungstrikot',
+    ]),
+    sourceNames: toJsonField(['Cyclingnews', 'Domestique Cycling', 'CyclingUpToDate', 'radsportaktuell.de']),
+    seoTitle: 'Van den Berg gana la etapa 2 del Tour de Luxemburgo y quita el liderato a Van der Poel',
+    seoDescription:
+      'Marijn van den Berg gana al sprint en subida la etapa 2 del Tour de Luxemburgo 2026 y le quita el maillot de líder a Mathieu van der Poel, quinto en meta.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'van-der-poel-pierde-liderato-luxemburgo-etapa-2-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      teams: teamIds.length ? { set: teamIds.map((id) => ({ id })) } : undefined,
+    },
+    create: {
+      slug: 'van-der-poel-pierde-liderato-luxemburgo-etapa-2-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      teams: teamIds.length ? { connect: teamIds.map((id) => ({ id })) } : undefined,
     },
   })
 
