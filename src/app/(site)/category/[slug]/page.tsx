@@ -30,7 +30,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
 
   const raceCategories = RACE_CATEGORIES_BY_SECTION[category.slug]
   const [articles, races] = await Promise.all([
-    getArticlesByCategory(category.id),
+    getArticlesByCategory(category.id, category.slug),
     raceCategories ? getUpcomingRacesByCategory(raceCategories) : Promise.resolve([]),
   ])
 

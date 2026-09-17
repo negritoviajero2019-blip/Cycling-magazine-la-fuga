@@ -794,17 +794,25 @@ export async function publishContadorSchleckRivalryArticle() {
     readingTime: 7,
   }
 
+  const grandToursTag = await prisma.tag.upsert({
+    where: { slug: 'grand-tours' },
+    update: {},
+    create: { slug: 'grand-tours', name: 'Grand Tours', type: 'topic' },
+  })
+
   const article = await prisma.article.upsert({
     where: { slug: 'contador-vs-schleck-grandes-enfrentamientos' },
     update: {
       ...baseFields,
       riders: { set: [{ id: contador.id }, { id: schleck.id }] },
+      tags: { set: [{ id: grandToursTag.id }] },
     },
     create: {
       slug: 'contador-vs-schleck-grandes-enfrentamientos',
       ...baseFields,
       publishedAt: new Date(),
       riders: { connect: [{ id: contador.id }, { id: schleck.id }] },
+      tags: { connect: [{ id: grandToursTag.id }] },
     },
   })
 

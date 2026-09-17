@@ -194,11 +194,20 @@ export async function getCategoryBySlug(slug: string) {
   return safeQuery(() => prisma.category.findUnique({ where: { slug } }), null)
 }
 
-export async function getArticlesByCategory(categoryId: number, page = 1, pageSize = 12) {
+/**
+ * Un artículo aparece en una categoría si es su categoría principal,
+ * o si tiene una etiqueta con el mismo slug — así un artículo de
+ * Leyendas (p.ej. un duelo histórico) puede listarse también en
+ * Grand Tours sin duplicarlo ni cambiarle su categoría principal.
+ */
+export async function getArticlesByCategory(categoryId: number, categorySlug?: string, page = 1, pageSize = 12) {
   return safeQuery(
     () =>
       prisma.article.findMany({
-        where: { status: { in: PUBLIC_STATUSES }, categoryId },
+        where: {
+          status: { in: PUBLIC_STATUSES },
+          OR: [{ categoryId }, ...(categorySlug ? [{ tags: { some: { slug: categorySlug } } }] : [])],
+        },
         orderBy: { publishedAt: 'desc' },
         skip: (page - 1) * pageSize,
         take: pageSize,
