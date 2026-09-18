@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -858,14 +858,13 @@ export async function publishWorldsTTOutsidersArticle() {
     (id): id is number => id !== undefined,
   )
 
-  const heroImageId = await ensureHeroImage('sorpresas-crono-femenina-mundial-montreal-2026', {
-    title: 'Las sorpresas de la crono femenina del Mundial',
-    label: 'Ciclismo Femenino',
-    riders: [
-      ...(kopecky ? [{ name: 'Lotte Kopecky' }] : []),
-      ...(faulkner ? [{ name: 'Kristen Faulkner' }] : []),
-      ...(hanson ? [{ name: 'Lauretta Hanson' }] : []),
-    ],
+  const heroImageId = await ensureCustomHeroImage('sorpresas-crono-femenina-mundial-montreal-2026', {
+    url: '/images/headers/tt-outsiders-cover.jpg',
+    altText: 'Kopecky, Faulkner y Hanson: las sorpresas de la crono femenina del Mundial',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
