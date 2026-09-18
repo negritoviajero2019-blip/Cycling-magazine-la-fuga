@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -1044,6 +1044,113 @@ export async function publishTransferMarket2027Article() {
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
       teams: teamIds.length ? { connect: teamIds.map((id) => ({ id })) } : undefined,
       tags: { connect: [{ id: latinosTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Reinderink gana su primera carrera como profesional en la etapa
+// reina del Tour de Luxemburgo; Piganzoli nuevo líder.
+// Fuentes: Domestique Cycling, Dicodusport, CiclismoAlDia,
+// Cyclismactu (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const luxembourgStage3ResultContent = `
+<p>Pepijn Reinderink (Soudal Quick-Step) consiguió este viernes la primera victoria de su carrera como profesional, y lo hizo en el peor —o mejor— terreno posible para debutar en el palmarés: la etapa reina del Tour de Luxemburgo, 179,6&nbsp;km entre Wiltz y Diekirch con desnivel constante desde el kilómetro cero. El neerlandés, de 24 años, se escapó en la última subida del día, la Montée de Haemerich, a apenas 3&nbsp;km de meta, y aguantó en solitario hasta la línea por un margen mínimo: un segundo sobre Davide Piganzoli (Visma | Lease a Bike) y Thomas Gachignard (TotalEnergies), que llegaron juntos persiguiéndolo sin conseguir cazarlo.</p>
+
+<p>El trazado no dio tregua en ningún momento. Tras salir de Wiltz, en el extremo norte del país, la etapa entró en un circuito final alrededor de Diekirch que había que completar dos veces, con dos puertos cortos pero exigentes repetidos en cada vuelta —Um Knupp, 1,8&nbsp;km al 6,9%, y la Montée de Knaphoscheid, 2,7&nbsp;km al 6%— antes de enlazar con la Montée de Haemerich en el tramo final. Ese patrón de subidas cortas y constantes, sin un puerto largo que permitiera controlar la carrera desde lejos, es precisamente el terreno donde una fuga bien gestionada tiene más opciones de aguantar hasta el final: exige que los equipos de los favoritos decidan exactamente cuándo lanzar la persecución, y un margen de error de pocos segundos puede ser la diferencia entre cazar al fugado o quedarse a las puertas.</p>
+
+<p>La victoria no fue casualidad ni un golpe de suerte aislado. Reinderink, debutante profesional con Soudal Quick-Step en 2024 tras destacar en el equipo de desarrollo del conjunto belga, se ha ido especializando en los últimos años en escapadas de largo recorrido — el tipo de corredor dispuesto a intentarlo incluso cuando las probabilidades parecen mínimas. Ya había mostrado ese perfil ganando la etapa inaugural del Triptyque Ardennais y el título nacional neerlandés en ruta en 2023. Este viernes no solo se llevó la etapa: también ganó cuatro de los cinco puertos puntuables del día, lo que le valió de paso el liderato de la clasificación de la montaña, con 18 puntos, tres más que Nils Politt.</p>
+
+<p>El otro protagonista de la jornada fue Davide Piganzoli, que sin ganar la etapa se llevó lo que en una carrera de cinco días vale más: el maillot de líder. El italiano, de 23 años, vive su primera temporada en el WorldTour después de tres años en el Polti VisitMalta, y llegó a Visma | Lease a Bike este año con un contrato de tres temporadas pensado para convertirlo en corredor de referencia en las grandes vueltas. Sus credenciales ya lo avalaban: dos participaciones en el Giro de Italia con 13º y 14º puesto en la general, un tercer lugar en el Tour de l'Avenir 2023 —por detrás de Isaac del Toro y Giulio Pellizzari—, y este mismo verano, una etapa de contrarreloj por equipos en el Tour de Francia corriendo como gregario de Jonas Vingegaard. En Luxemburgo, ese trabajo de equipo se convirtió en oportunidad propia: terminó segundo en meta, a un segundo de Reinderink, y asumió tanto el liderato general como el maillot de mejor joven.</p>
+
+<p>La general quedó así completamente reordenada a falta de dos etapas. Piganzoli lidera con 6 segundos de ventaja sobre Gachignard y 9 sobre Mattéo Vercher, tercero. Son diferencias del mismo calibre milimétrico que ya había dejado la etapa 2 —cuando Marijn van den Berg le quitó el liderato a Mathieu van der Poel por apenas 4 segundos—, lo que confirma que esta edición del Tour de Luxemburgo se está decidiendo por márgenes casi inexistentes entre los favoritos.</p>
+
+<p>Van der Poel, que había llegado a esta carrera como referencia principal antes del Mundial de Montreal, tampoco fue protagonista en la pelea final de la etapa reina. Sí disputó el primer sprint de montaña del día, en Um Knupp, a apenas 22,4&nbsp;km de salida, pero ahí se impuso Bauke Mollema y el neerlandés de Alpecin-Premier Tech quedó segundo. En el tramo decisivo, con la fuga de Reinderink ya consolidada, Van der Poel no apareció entre los nombres que se jugaron la etapa — una jornada más discreta para alguien que llegó a Luxemburgo, según sus propias palabras, buscando sobre todo recuperar ritmo de competición antes del Mundial, no necesariamente pelear la general.</p>
+
+<p>Lo que queda de carrera se decide rápido. Este sábado llega la contrarreloj individual de Ettelbruck, 20,4&nbsp;km que se perfilan como el examen decisivo antes de la etapa de cierre del domingo en la capital luxemburguesa. Con Piganzoli defendiendo apenas 6 segundos sobre Gachignard, y con corredores de perfil muy distinto —un neo-líder de Grand Tour, un especialista de clásicas del equipo francés y el propio Van der Poel, siempre peligroso contra el crono— todavía dentro del margen de un buen día, la general del Tour de Luxemburgo 2026 sigue sin tener un favorito claro a dos jornadas del final.</p>
+
+<p>Para Soudal Quick-Step, la victoria de Reinderink llega además en un momento en que el equipo belga necesitaba precisamente este tipo de resultado: una etapa ganada desde la fuga, con un corredor de la casa que lleva años entrenando exactamente esta clase de escenario, sin depender de sus nombres más mediáticos. Es el tipo de triunfo que no cambia planes de temporada ni headlines de portada, pero que construye la credibilidad de un corredor que, a partir de este viernes, ya no llega a las escapadas como una incógnita.</p>
+`.trim()
+
+export async function publishLuxembourgStage3ResultArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const gachignard = await prisma.rider.upsert({
+    where: { slug: 'thomas-gachignard' },
+    update: {},
+    create: {
+      slug: 'thomas-gachignard',
+      name: 'Thomas Gachignard',
+      nationality: 'Francia',
+      specialty: 'Ciclismo en ruta',
+      bio: 'Ciclista profesional francés del equipo TotalEnergies.',
+    },
+  })
+
+  const [reinderink, piganzoli, vdp, soudal, visma, alpecin] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'pepijn-reinderink' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'davide-piganzoli' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'mathieu-van-der-poel' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'soudal-quick-step' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'visma-lease-a-bike' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'alpecin-premier-tech' }, select: { id: true } }),
+  ])
+  const riderIds = [reinderink?.id, piganzoli?.id, gachignard.id, vdp?.id].filter(
+    (id): id is number => id !== undefined,
+  )
+  const teamIds = [soudal?.id, visma?.id, alpecin?.id].filter((id): id is number => id !== undefined)
+
+  const heroImageId = await ensureHeroImage('reinderink-gana-etapa-3-tour-luxemburgo-2026', {
+    title: 'Reinderink gana su primera carrera como profesional',
+    label: 'Última hora',
+    riders: [
+      ...(reinderink ? [{ name: 'Pepijn Reinderink', team: 'soudal-quick-step' }] : []),
+      ...(piganzoli ? [{ name: 'Davide Piganzoli', team: 'visma-lease-a-bike' }] : []),
+    ],
+  })
+
+  const baseFields = {
+    title: 'Reinderink gana su primera carrera como profesional en la etapa reina de Luxemburgo',
+    subtitle: 'Se escapó a 3 km de meta en la Montée de Haemerich y aguantó por 1 segundo; Piganzoli, segundo en meta, es el nuevo líder de la general',
+    excerpt:
+      'Pepijn Reinderink logró su primera victoria profesional en la etapa reina del Tour de Luxemburgo, escapándose en el último kilómetro y resistiendo por apenas 1 segundo. Davide Piganzoli, segundo en meta, asume el liderato general con 6 segundos sobre Gachignard antes de la crono de Ettelbruck.',
+    content: luxembourgStage3ResultContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.domestiquecycling.com/en/news/reinderink-takes-maiden-pro-win-on-tour-de-luxembourg-queen-stage-as-piganzoli-seizes-lead/',
+      'https://dicodusport.fr/blog/au-terme-dun-immense-numero-pepijn-reinderink-remporte-la-3e-etape-du-tour-de-luxembourg-2026/',
+      'https://ciclismoaldia.es/ciclismo/resultados-tour-de-luxembourg-2026-etapa-3-pepijn-reinderink-se-marcha-en-solitario-y-contiene-al-heroico-davide-piganzoli-en-una-etapa-vibrante',
+      'https://www.cyclismactu.net/news-cyclisme-tour-de-luxembourg-pepijn-reinderink-3e-etape-piganzoli-en-tete-du-general-96092.html',
+    ]),
+    sourceNames: toJsonField(['Domestique Cycling', 'Dicodusport', 'CiclismoAlDia', 'Cyclismactu']),
+    seoTitle: 'Reinderink gana la etapa reina del Tour de Luxemburgo, Piganzoli nuevo líder',
+    seoDescription:
+      'Pepijn Reinderink logra su primera victoria profesional en la etapa reina del Tour de Luxemburgo 2026. Davide Piganzoli asume el liderato general antes de la crono de Ettelbruck.',
+    readingTime: 7,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'reinderink-gana-etapa-3-tour-luxemburgo-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      teams: teamIds.length ? { set: teamIds.map((id) => ({ id })) } : undefined,
+    },
+    create: {
+      slug: 'reinderink-gana-etapa-3-tour-luxemburgo-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      teams: teamIds.length ? { connect: teamIds.map((id) => ({ id })) } : undefined,
     },
   })
 
