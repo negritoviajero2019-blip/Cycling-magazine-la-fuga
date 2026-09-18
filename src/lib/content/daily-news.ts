@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -813,6 +813,101 @@ export async function publishContadorSchleckRivalryArticle() {
       publishedAt: new Date(),
       riders: { connect: [{ id: contador.id }, { id: schleck.id }] },
       tags: { connect: [{ id: grandToursTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Las tres sorpresas posibles de la crono femenina del Mundial:
+// Kopecky, Faulkner y Hanson. Fuentes: Cyclingnews, ProCyclingUK,
+// TOUR Magazin, ProCyclingStats (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const worldsTTOutsidersContent = `
+<p>El Mundial de Montreal arranca este domingo 20 de septiembre con la contrarreloj individual femenina, 39,2&nbsp;km entre el Circuito Gilles-Villeneuve, el Parc Jean-Drapeau y un cierre por el Puente Concordia hasta la avenida du Parc, con apenas 220&nbsp;metros de desnivel. Es un trazado mayormente llano y largo — el tipo de recorrido que premia la posición aerodinámica sostenida durante más de media hora, más que la explosividad de una crono corta. Marlen Reusser, campeona mundial vigente, y Demi Vollering llegan como las dos favoritas claras. Pero hay al menos tres nombres más que, en un día perfecto, podrían colarse en el podio: Lotte Kopecky, Kristen Faulkner y Lauretta Hanson.</p>
+
+<p>La referencia de forma es la contrarreloj del Tour de Francia Femmes de este verano, donde Reusser ganó por apenas 4 segundos sobre Lieke Nooijen, 18 sobre Vollering y 20 sobre Zoe Bäckstedt — márgenes mínimos entre las cuatro primeras que muestran lo apretado que está el nivel en la parte alta de la general. Vollering llega además reforzada por una temporada dominante: ganó tanto el Giro de Italia como el Tour de Francia Femmes en 2026, una combinación que la sitúa como la rival más completa de Reusser en cualquier terreno.</p>
+
+<p>Lotte Kopecky (Bélgica) es el nombre menos previsible del lote de outsiders, y también el que arrastra más potencia bruta. Ganó la Milán-San Remo femenina el 21 de marzo y llegó a vestir el maillot de líder en la primera semana de la Vuelta Femenina 2026 — resultados que confirman que sigue siendo una de las corredoras más completas del pelotón, con un bagaje de pista y de clásicas que le permite sostener potencias altas en casi cualquier terreno. El problema es específico: un trazado de 39&nbsp;km recompensa cualidades de contrarreloj muy particulares —posición aerodinámica sostenida, gestión del esfuerzo a lo largo de más de media hora— en las que Kopecky, devastadora en esfuerzos cortos, se enfrenta a rivales mucho más especializadas exactamente en ese formato. Sus resultados contrarreloj en 2026 no han sido especialmente destacados, lo que la deja como una apuesta de alto riesgo y alto techo antes que como una candidata segura.</p>
+
+<p>Kristen Faulkner (Estados Unidos, EF Education-Oatly) llega a Montreal con una temporada irregular pero con una constante clara: cuando hay un reloj de por medio, aparece. La doble campeona olímpica en París 2024 —oro en ruta y en persecución por equipos en pista— tuvo un arranque de año lento, condicionado por una lesión, y su única victoria de 2026 hasta ahora llegó precisamente contrarreloj: el título panamericano, 31,4&nbsp;km resueltos en 38:31 por delante de su compatriota Emily Ehrlich. A eso se suma un sexto puesto en la crono del Tour de Francia Femmes en Gevrey-Chambertin, su único otro top-10 del año. A los 33 años, y con prácticamente todos sus mejores resultados de la temporada concentrados en el formato contrarreloj, Faulkner es precisamente el tipo de corredora que nunca se puede descartar cuando se trata de rodar sola contra el cronómetro.</p>
+
+<p>Lauretta Hanson (Australia, Lidl-Trek) es la que llega con la forma más reciente y más directamente verificable de las tres: terminó tercera en la Chrono Féminin de Gatineau esta misma semana, a 1 minuto 17 segundos de una Reusser que llegó a esa cita ya lanzada de cara al Mundial, por delante de Felicity Wilson-Haffenden. A sus 31 años, Hanson no es un nombre habitual en las quinielas de podio mundialista, pero un resultado así, a solo unos días de Montreal y sobre un terreno con similitudes de perfil, es exactamente el tipo de señal que los equipos rivales toman en serio a la hora de repartir marcajes y expectativas.</p>
+
+<p>El contexto histórico añade un aliciente distinto para cada una. Estados Unidos tiene tradición real en esta prueba —Amber Neben ganó dos veces (la última en 2016) y Chloé Dygert se colgó el arcoíris en 2019 y 2023—, así que un podio de Faulkner encajaría dentro de una racha ya consolidada. Australia llega en su mejor momento histórico en la disciplina: Grace Brown fue campeona del mundo en 2024 y plata en 2022, con Katrin Garfoot sumando un bronce en 2016 — un podio de Hanson prolongaría una tradición que el propio país construyó apenas en los últimos años. Bélgica, en cambio, nunca ha subido al podio de esta prueba en toda su historia: ni Kopecky ni ninguna otra corredora belga lo ha logrado hasta ahora, lo que convierte cualquier resultado top-3 suyo en algo sin precedentes para su país en este formato específico.</p>
+
+<p>Lo que une a las tres es que ninguna llega como favorita en el sentido estricto de la palabra, pero las tres tienen argumentos reales y recientes para colarse donde no se las espera. Kopecky aporta el techo más alto si logra sostener su potencia durante los 39&nbsp;km completos; Faulkner aporta la especialización pura de una corredora que este año solo ha brillado contrarreloj; Hanson aporta la forma más fresca, confirmada literalmente esta semana sobre suelo canadiense. En una contrarreloj tan larga y tan dependiente de la gestión del esfuerzo, la diferencia entre pelear por el arcoíris y quedarse fuera del top&nbsp;10 puede ser cuestión de cómo cada una reparte sus fuerzas entre el Circuito Gilles-Villeneuve y la recta final de la avenida du Parc.</p>
+
+<p>La cita es este domingo a las 9:00 hora local de Montreal (EDT). Con Reusser y Vollering como favoritas declaradas, pero con Kopecky, Faulkner y Hanson pisándoles los talones desde el papel, la primera prueba de fuego del Mundial 2026 promete estar mucho más abierta de lo que sugiere el orden de las quinielas.</p>
+`.trim()
+
+export async function publishWorldsTTOutsidersArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ciclismo-femenino' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const [kopecky, faulkner, hanson, reusser, vollering, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'lotte-kopecky' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'kristen-faulkner' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'lauretta-hanson' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'marlen-reusser' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'demi-vollering' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [kopecky?.id, faulkner?.id, hanson?.id, reusser?.id, vollering?.id].filter(
+    (id): id is number => id !== undefined,
+  )
+
+  const heroImageId = await ensureHeroImage('sorpresas-crono-femenina-mundial-montreal-2026', {
+    title: 'Las sorpresas de la crono femenina del Mundial',
+    label: 'Ciclismo Femenino',
+    riders: [
+      ...(kopecky ? [{ name: 'Lotte Kopecky' }] : []),
+      ...(faulkner ? [{ name: 'Kristen Faulkner' }] : []),
+      ...(hanson ? [{ name: 'Lauretta Hanson' }] : []),
+    ],
+  })
+
+  const baseFields = {
+    title: 'Kopecky, Faulkner y Hanson: las sorpresas posibles de la crono femenina del Mundial',
+    subtitle: 'Reusser y Vollering son las favoritas claras en Montreal, pero tres nombres más tienen argumentos recientes para colarse en el podio de la contrarreloj',
+    excerpt:
+      'A dos días del Mundial de Montreal, Marlen Reusser y Demi Vollering encabezan las quinielas de la crono femenina (39,2 km). Lotte Kopecky, Kristen Faulkner y Lauretta Hanson llegan como outsiders con argumentos recientes y reales para pelear un puesto en el podio.',
+    content: worldsTTOutsidersContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://procyclinguk.com/womens-world-championships-time-trial-2026-preview-reusser-faces-backstedt-and-vollering-in-montreal/',
+      'https://www.cyclingnews.com/pro-cycling/womens-cycling/marlen-reusser-or-demi-vollering-can-anyone-challenge-the-two-favourites-in-the-world-championships-elite-womens-time-trial/',
+      'https://www.cyclingnews.com/pro-cycling/womens-cycling/kristen-faulkner-and-emily-ehrlich-go-one-two-in-time-trial-for-team-usa-at-pan-american-road-championships/',
+      'https://www.cyclingnews.com/pro-cycling/womens-cycling/chrono-feminin-de-gatineau-marlen-reusser-smashes-individual-time-trial-showing-strong-form-ahead-of-worlds/',
+      'https://www.tour-magazin.de/en/professional-cycling/latest-news/women-s-world-championship-individual-time-trial-who-will-claim-the-first-rainbow-jersey-in-montreal/',
+      'https://en.wikipedia.org/wiki/UCI_Road_World_Championships_%E2%80%93_Women%27s_time_trial',
+    ]),
+    sourceNames: toJsonField(['ProCyclingUK', 'Cyclingnews', 'Cyclingnews', 'Cyclingnews', 'TOUR Magazin', 'Wikipedia']),
+    seoTitle: 'Kopecky, Faulkner y Hanson: outsiders de la crono femenina del Mundial 2026',
+    seoDescription:
+      'A dos días del Mundial de Montreal, repasamos a las tres outsiders con opciones reales de sorprender en la contrarreloj femenina: Lotte Kopecky, Kristen Faulkner y Lauretta Hanson.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'sorpresas-crono-femenina-mundial-montreal-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+    },
+    create: {
+      slug: 'sorpresas-crono-femenina-mundial-montreal-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
     },
   })
 
