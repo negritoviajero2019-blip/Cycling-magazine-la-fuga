@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -978,13 +978,13 @@ export async function publishTransferMarket2027Article() {
     (id): id is number => id !== undefined,
   )
 
-  const heroImageId = await ensureHeroImage('mercado-fichajes-2027-septiembre', {
-    title: 'Mercado de fichajes 2027',
-    label: 'Última hora',
-    riders: [
-      ...(molano ? [{ name: 'Juan Sebastián Molano' }] : []),
-      ...(asgreen ? [{ name: 'Kasper Asgreen' }] : []),
-    ],
+  const heroImageId = await ensureCustomHeroImage('mercado-fichajes-2027-septiembre', {
+    url: '/images/headers/transfers-2027-cover.jpg',
+    altText: 'Mercado de fichajes 2027: Molano, Asgreen y Van Anrooij cambian de equipo',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
