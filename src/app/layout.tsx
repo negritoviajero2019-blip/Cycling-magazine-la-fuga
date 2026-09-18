@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import localFont from 'next/font/local'
-import Script from 'next/script'
 import './globals.css'
 import { branding } from '@/lib/config/branding'
 import { Analytics } from '@/components/layout/Analytics'
@@ -56,19 +55,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang={branding.locale} className={`${inter.variable} ${anton.variable}`}>
       {/*
         Script de verificación/conexión de Google AdSense — Google lo
-        pide en <head> de cada página para poder revisar el sitio.
-        Por sí solo NO muestra anuncios (eso depende de los ad-slots
-        reales, gateados aparte por NEXT_PUBLIC_ADSENSE_ADS_READY, ver
-        src/components/ads/AdBanner.tsx). beforeInteractive asegura
-        que quede en el HTML servido, no solo tras hidratar.
+        pide como etiqueta <script> literal en <head> de cada página
+        para poder revisar el sitio. Por sí solo NO muestra anuncios
+        (eso depende de los ad-slots reales, gateados aparte por
+        NEXT_PUBLIC_ADSENSE_ADS_READY, ver src/components/ads/AdBanner.tsx).
+        A propósito NO se usa next/script aquí: con strategy
+        "beforeInteractive" Next.js lo convierte en un <link
+        rel="preload"> + inyección por runtime, no en la etiqueta
+        <script src="..."> literal que el verificador de Google busca
+        en el HTML servido — por eso la verificación fallaba.
       */}
       {ADSENSE_PUBLISHER_ID && (
         <head>
-          <Script
+          <script
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
             crossOrigin="anonymous"
-            strategy="beforeInteractive"
           />
         </head>
       )}
