@@ -35,7 +35,7 @@ export const branding = {
     holderType: 'persona física' as const,
     jurisdiction: 'México',
     lastUpdatedTerms: '16 de septiembre de 2026',
-    lastUpdatedPrivacy: '16 de septiembre de 2026',
+    lastUpdatedPrivacy: '18 de septiembre de 2026',
   },
 } as const
 

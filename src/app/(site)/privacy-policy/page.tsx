@@ -46,6 +46,12 @@ export default function PrivacyPolicyPage() {
               <strong>Datos técnicos de servidor</strong> (registros de acceso), generados
               automáticamente por el funcionamiento del sitio.
             </li>
+            <li>
+              <strong>Identificadores de cookies publicitarias (cuando la publicidad esté activa):</strong>{' '}
+              si en el futuro activamos Google AdSense, y solo si aceptas las cookies no esenciales
+              en nuestro banner, Google puede usar cookies u otros identificadores para mostrar
+              anuncios y medir su desempeño. Ver la sección 5 para más detalle.
+            </li>
           </ul>
           <p>No recabamos datos personales sensibles (salud, origen étnico, creencias, etc.).</p>
         </section>
@@ -70,7 +76,11 @@ export default function PrivacyPolicyPage() {
               Analítica agregada para entender qué contenido interesa más y mejorar la línea
               editorial.
             </li>
-            <li>Eventuales comunicaciones sobre novedades del proyecto (no publicidad de terceros).</li>
+            <li>Eventuales comunicaciones sobre novedades del proyecto.</li>
+            <li>
+              Mostrar publicidad de terceros (Google AdSense), una vez que esté activa en el sitio
+              y solo si aceptaste las cookies no esenciales en el banner.
+            </li>
           </ul>
           <p>
             Si no deseas que tus datos se usen para finalidades secundarias, puedes indicarlo en
@@ -90,13 +100,46 @@ export default function PrivacyPolicyPage() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-heading text-lg font-bold">5. Transferencia de datos</h2>
+          <h2 className="mb-2 font-heading text-lg font-bold">5. Transferencia de datos y publicidad de terceros</h2>
           <p>
-            No vendemos ni compartimos tus datos personales con fines comerciales de terceros.
-            Utilizamos proveedores de infraestructura tecnológica (alojamiento del sitio, analítica
-            web y, en su caso, envío del boletín) que procesan datos técnicamente en nuestro nombre
-            y están obligados contractualmente a resguardarlos; esto no constituye una transferencia
-            para fines distintos a los aquí descritos.
+            No vendemos tus datos personales. Utilizamos proveedores de infraestructura tecnológica
+            (alojamiento del sitio, analítica web y, en su caso, envío del boletín) que procesan
+            datos técnicamente en nuestro nombre y están obligados contractualmente a resguardarlos;
+            esto no constituye una transferencia para fines distintos a los aquí descritos.
+          </p>
+          <p>
+            Cuando activemos publicidad en el sitio mediante Google AdSense, Google podrá usar
+            cookies y datos de navegación para mostrar anuncios personalizados o no personalizados,
+            según la elección que hagas en nuestro banner de cookies. En ese caso, Google actúa como
+            proveedor independiente sujeto a su propia{' '}
+            <a
+              href="https://policies.google.com/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:underline"
+            >
+              política de privacidad
+            </a>{' '}
+            y a su{' '}
+            <a
+              href="https://policies.google.com/technologies/ads"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:underline"
+            >
+              política de anuncios
+            </a>
+            . Puedes gestionar la personalización de anuncios de Google desde{' '}
+            <a
+              href="https://adssettings.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:underline"
+            >
+              adssettings.google.com
+            </a>
+            , además de rechazar las cookies no esenciales en nuestro propio banner. Esta sección se
+            ampliará con el detalle de cada cookie en cuanto la publicidad esté activa.
           </p>
         </section>
 
@@ -104,8 +147,10 @@ export default function PrivacyPolicyPage() {
           <h2 className="mb-2 font-heading text-lg font-bold">6. Cookies</h2>
           <p>
             Usamos cookies técnicas (necesarias para el funcionamiento del sitio) y, solo si las
-            aceptas expresamente en nuestro banner de consentimiento, cookies de analítica. Puedes
-            revisar y cambiar tu elección en cualquier momento desde &ldquo;Preferencias de
+            aceptas expresamente en nuestro banner de consentimiento, cookies de analítica. Las
+            cookies de publicidad (Google AdSense) todavía no están activas en el sitio; cuando lo
+            estén, seguirán la misma regla: solo se cargarán si aceptas las cookies no esenciales.
+            Puedes revisar y cambiar tu elección en cualquier momento desde &ldquo;Preferencias de
             cookies&rdquo; al pie de cualquier página. El detalle completo está en nuestra{' '}
             <a href="/cookie-policy" className="text-accent hover:underline">
               política de cookies
