@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -907,6 +907,143 @@ export async function publishWorldsTTOutsidersArticle() {
       publishedAt: new Date(),
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
       races: race ? { connect: [{ id: race.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Mercado de fichajes 2027: Molano a Lotto-Intermarché, Asgreen a
+// NSN, Van Anrooij a Canyon-SRAM y más. Fuentes: Cyclingnews,
+// Escape Collective, ProCyclingUK, Ciclo21 (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const transferMarket2027Content = `
+<p>Con el Mundial de Montreal todavía por delante, el mercado de fichajes de cara a 2027 no se ha detenido. Desde que se abrió el periodo de anuncios el 1 de agosto, varios movimientos de peso ya son oficiales — algunos de ellos cerrados apenas esta semana. Repasamos los más relevantes.</p>
+
+<p>El movimiento con más carga simbólica es la salida de Juan Sebastián Molano de UAE Team Emirates-XRG. El colombiano, que llevaba ocho temporadas en el equipo de Pogačar desde 2019 y sumó 19 victorias vistiendo esos colores, firmó un contrato de dos años con Lotto-Intermarché a partir de 2027. La razón que él mismo ha dado es simple: después de ocho años en el mismo entorno, quiere volver a tener la libertad de correr como esprínter propio en vez de repartir su temporada entre trabajo de equipo y oportunidades puntuales. El director general de Lotto-Intermarché, Jean-François Bourlart, ya adelantó que Molano tendrá vía libre para pelear sus propias victorias.</p>
+
+<p>Kasper Asgreen también cambia de aire. El danés, ganador del Tour de Flandes 2021 y una de las referencias de clásicas del pelotón, deja EF Education-EasyPost tras dos temporadas para firmar dos años con NSN Cycling Team. Antes de EF había pasado seis años en Soudal Quick-Step, donde construyó su palmarés de adoquín: además del Flandes, tiene un E3 Saxo Classic, una Kuurne-Brussel-Kuurne y etapas tanto en el Tour de Francia como en el Giro de Italia. En NSN se suma a un proyecto de clásicas ya reforzado con el colombiano Santiago Buitrago, y ha dejado clara su ambición para 2027: completar la trilogía de etapas en las tres grandes con un triunfo en la Vuelta a España, la única gran vuelta donde todavía no ha ganado.</p>
+
+<p>En el pelotón femenino, el traspaso más comentado es el de Shirin van Anrooij, que deja Lidl-Trek —el único equipo que ha conocido como profesional— para firmar con Canyon-SRAM hasta 2029. Lo curioso del caso es la fecha: en vez de esperar al 1 de enero de 2027 como es habitual, Van Anrooij se incorporará a su nuevo equipo el 1 de noviembre de 2026, porque la temporada de ciclocross —donde también compite regularmente— arranca antes de que termine el año. Terminará su calendario en ruta con Lidl-Trek como estaba previsto, pero ya vestirá los colores de Canyon-SRAM en las primeras citas de ciclocross del invierno. La neerlandesa, de 24 años, ganó el Trofeo Alfredo Binda en 2023 y ha subido al podio en clásicas como el Tour de Flandes y la Amstel Gold Race.</p>
+
+<p>Movistar, por su parte, sigue construyendo su proyecto femenino a mediano plazo: aseguró a la eslovaca Sofia Ungerová, de apenas 20 años, con un contrato que la vincula al equipo hasta 2029. Llega procedente del MAT Atom Deweloper Wrocław, donde ha corrido las últimas dos temporadas.</p>
+
+<p>También hay movimiento en la categoría ProTeam, con un regreso a Europa que suma otro nombre latinoamericano a la lista. Jonathan Caicedo, ecuatoriano de 33 años y ganador de una etapa en el Giro de Italia, firmó un año con el Burgos Burpellet BH, que lo confirmó como su segundo fichaje para 2027 tras el del estonio Romet Pajur. Caicedo llega procedente del Wheeltop Rotor Chengdu, equipo chino al que se había unido en junio pasado tras la desaparición del Petrolike por problemas financieros — y llega en buen momento: en su debut con el nuevo equipo, se llevó la general del Tour of Qinghai, vistiendo el maillot de líder durante cinco días y sumando dos segundos puestos de etapa.</p>
+
+<p>Pinarello Q36.5, uno de los equipos ProTeam más activos del mercado esta temporada, sigue sumando nombres: aseguró al velocista checo Pavel Bittner, de 23 años y máximo anotador de puntos UCI de su actual equipo, el Picnic-PostNL, con un contrato de dos años desde el 1 de enero de 2027; y al australiano Sebastian Berwick, procedente de Caja Rural-Seguros RGA, también por dos temporadas. Berwick llega en su mejor momento: en 2026 sumó top-10 en el Tour de Omán y el Tour de Eslovenia, y se llevó la general del Tour de Turquía en mayo.</p>
+
+<p>No todos los movimientos de esta semana son traspasos — también hay renovaciones. Red Bull-BORA-hansgrohe confirmó este miércoles que Ben Zwiehoff continuará en el equipo, asegurando así a uno de sus corredores de clásicas y apoyo en carreras por etapas para la temporada 2027.</p>
+
+<p>El patrón que dejan estos movimientos es el de un mercado que, año tras año, se mueve cada vez más rápido y cada vez más temprano: contratos que arrancan en plena temporada de ciclocross en vez de esperar al año nuevo, corredores de casi treinta años buscando un cambio de aire después de ocho temporadas en el mismo sitio, y equipos de categoría ProTeam como NSN Cycling Team, Burgos Burpellet BH o Pinarello Q36.5 compitiendo de igual a igual con estructuras WorldTour por fichajes de peso — algo que hace apenas unos años habría sido casi impensable. Para los equipos de nivel intermedio, cada uno de estos fichajes es también una apuesta de crecimiento: subir el nivel general de la plantilla para pelear resultados que hace poco parecían reservados solo a los grandes presupuestos.</p>
+
+<p>Con el Mundial de Montreal todavía en el horizonte inmediato —arranca este mismo domingo— y con casi todo el pelotón concentrado en cerrar bien la temporada 2026, el mercado de 2027 seguirá moviéndose en segundo plano durante todo el otoño, con nuevos nombres confirmándose semana a semana hasta que arranque la pretemporada.</p>
+`.trim()
+
+export async function publishTransferMarket2027Article() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const ungerova = await prisma.rider.upsert({
+    where: { slug: 'sofia-ungerova' },
+    update: {},
+    create: {
+      slug: 'sofia-ungerova',
+      name: 'Sofia Ungerová',
+      nationality: 'Eslovaquia',
+      specialty: 'Ciclismo en ruta',
+      bio: 'Ciclista profesional eslovaca, de 20 años, fichada por Movistar Team hasta 2029 procedente del MAT Atom Deweloper Wrocław.',
+    },
+  })
+
+  const [molano, asgreen, vanAnrooij, zwiehoff, uae, ef, lidlTrek, canyonSram, lottoIntermarche, redBull, nsn] =
+    await Promise.all([
+      prisma.rider.findUnique({ where: { slug: 'juan-sebastian-molano' }, select: { id: true } }),
+      prisma.rider.findUnique({ where: { slug: 'kasper-asgreen' }, select: { id: true } }),
+      prisma.rider.findUnique({ where: { slug: 'shirin-van-anrooij' }, select: { id: true } }),
+      prisma.rider.findUnique({ where: { slug: 'ben-zwiehoff' }, select: { id: true } }),
+      prisma.team.findUnique({ where: { slug: 'uae-team-emirates-xrg' }, select: { id: true } }),
+      prisma.team.findUnique({ where: { slug: 'ef-education-easypost' }, select: { id: true } }),
+      prisma.team.findUnique({ where: { slug: 'lidl-trek' }, select: { id: true } }),
+      prisma.team.findUnique({ where: { slug: 'canyon-sram' }, select: { id: true } }),
+      prisma.team.findUnique({ where: { slug: 'lotto-intermarche' }, select: { id: true } }),
+      prisma.team.findUnique({ where: { slug: 'red-bull-bora-hansgrohe' }, select: { id: true } }),
+      prisma.team.findUnique({ where: { slug: 'nsn-cycling-team' }, select: { id: true } }),
+    ])
+  const riderIds = [molano?.id, asgreen?.id, vanAnrooij?.id, zwiehoff?.id, ungerova.id].filter(
+    (id): id is number => id !== undefined,
+  )
+  const teamIds = [uae?.id, ef?.id, lidlTrek?.id, canyonSram?.id, lottoIntermarche?.id, redBull?.id, nsn?.id].filter(
+    (id): id is number => id !== undefined,
+  )
+
+  const heroImageId = await ensureHeroImage('mercado-fichajes-2027-septiembre', {
+    title: 'Mercado de fichajes 2027',
+    label: 'Última hora',
+    riders: [
+      ...(molano ? [{ name: 'Juan Sebastián Molano' }] : []),
+      ...(asgreen ? [{ name: 'Kasper Asgreen' }] : []),
+    ],
+  })
+
+  const baseFields = {
+    title: 'Mercado de fichajes 2027: Molano deja a Pogačar, Asgreen ficha por NSN, Van Anrooij a Canyon-SRAM',
+    subtitle: 'El colombiano rompe ocho temporadas en UAE Team Emirates, el danés busca su trilogía de etapas en grandes vueltas, y la neerlandesa cambiará de equipo antes de que acabe el año por el calendario de ciclocross',
+    excerpt:
+      'Repaso a los movimientos más relevantes del mercado de fichajes 2027: Juan Sebastián Molano deja UAE tras ocho temporadas por Lotto-Intermarché, Kasper Asgreen ficha por NSN Cycling, Shirin van Anrooij se va a Canyon-SRAM, y Movistar asegura a la eslovaca Sofia Ungerová hasta 2029.',
+    content: transferMarket2027Content,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://escapecollective.com/juan-sebastian-molano-signs-a-two-year-deal-with-lotto-intermarche/',
+      'https://procyclinguk.com/kasper-asgreen-joins-nsn-cycling-team-on-two-year-deal-for-2027-and-2028/',
+      'https://www.cyclingnews.com/pro-cycling/transfers/shirin-van-anrooij-makes-bold-switch-to-canyon-sram-with-transfer-to-come-into-force-before-2026-is-over/',
+      'https://www.ciclo21.com/mercado-fichajes-2027-septiembre7/',
+      'https://www.eldiario.ec/deportes/regresa-a-europa-jonathan-caicedo-ficha-por-el-burgos-burpellet-bh-para-la-temporada-2027-28082026',
+      'https://procyclinguk.com/pavel-bittner-to-join-pinarello-q36-5-on-two-year-deal-from-2027/',
+      'https://cyclingflash.com/news/after-three-years-at-caja-rural-sebastian-berwick-takes-step-to-top-team-again',
+    ]),
+    sourceNames: toJsonField([
+      'Escape Collective',
+      'ProCyclingUK',
+      'Cyclingnews',
+      'Ciclo21',
+      'El Diario (Ecuador)',
+      'ProCyclingUK',
+      'CyclingFlash',
+    ]),
+    seoTitle: 'Mercado de fichajes 2027: Molano, Asgreen y Van Anrooij cambian de equipo',
+    seoDescription:
+      'Los movimientos más relevantes del mercado de fichajes 2027 en el ciclismo: Molano deja UAE por Lotto-Intermarché, Asgreen ficha por NSN, Van Anrooij se va a Canyon-SRAM.',
+    readingTime: 6,
+  }
+
+  const latinosTag = await prisma.tag.upsert({
+    where: { slug: 'latinos' },
+    update: {},
+    create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+  })
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'mercado-fichajes-2027-septiembre' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      teams: teamIds.length ? { set: teamIds.map((id) => ({ id })) } : undefined,
+      tags: { set: [{ id: latinosTag.id }] },
+    },
+    create: {
+      slug: 'mercado-fichajes-2027-septiembre',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      teams: teamIds.length ? { connect: teamIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: [{ id: latinosTag.id }] },
     },
   })
 
