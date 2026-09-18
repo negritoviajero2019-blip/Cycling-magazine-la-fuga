@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import localFont from 'next/font/local'
+import Script from 'next/script'
 import './globals.css'
 import { branding } from '@/lib/config/branding'
 import { Analytics } from '@/components/layout/Analytics'
@@ -48,9 +49,29 @@ export const metadata: Metadata = {
   alternates: { types: { 'application/rss+xml': `${branding.url}/feed.xml` } },
 }
 
+const ADSENSE_PUBLISHER_ID = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang={branding.locale} className={`${inter.variable} ${anton.variable}`}>
+      {/*
+        Script de verificación/conexión de Google AdSense — Google lo
+        pide en <head> de cada página para poder revisar el sitio.
+        Por sí solo NO muestra anuncios (eso depende de los ad-slots
+        reales, gateados aparte por NEXT_PUBLIC_ADSENSE_ADS_READY, ver
+        src/components/ads/AdBanner.tsx). beforeInteractive asegura
+        que quede en el HTML servido, no solo tras hidratar.
+      */}
+      {ADSENSE_PUBLISHER_ID && (
+        <head>
+          <Script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
+            crossOrigin="anonymous"
+            strategy="beforeInteractive"
+          />
+        </head>
+      )}
       <body className="font-body antialiased">
         <noscript>
           <style>{`.reveal { opacity: 1 !important; transform: none !important; }`}</style>
