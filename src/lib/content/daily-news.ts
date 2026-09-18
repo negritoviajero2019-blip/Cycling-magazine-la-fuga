@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -1104,13 +1104,13 @@ export async function publishLuxembourgStage3ResultArticle() {
   )
   const teamIds = [soudal?.id, visma?.id, alpecin?.id].filter((id): id is number => id !== undefined)
 
-  const heroImageId = await ensureHeroImage('reinderink-gana-etapa-3-tour-luxemburgo-2026', {
-    title: 'Reinderink gana su primera carrera como profesional',
-    label: 'Última hora',
-    riders: [
-      ...(reinderink ? [{ name: 'Pepijn Reinderink', team: 'soudal-quick-step' }] : []),
-      ...(piganzoli ? [{ name: 'Davide Piganzoli', team: 'visma-lease-a-bike' }] : []),
-    ],
+  const heroImageId = await ensureCustomHeroImage('reinderink-gana-etapa-3-tour-luxemburgo-2026', {
+    url: '/images/headers/reinderink-luxembourg-cover.jpg',
+    altText: 'Reinderink gana su primera carrera como profesional en la etapa reina de Luxemburgo',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
