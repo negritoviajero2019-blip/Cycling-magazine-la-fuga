@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -1151,6 +1151,260 @@ export async function publishLuxembourgStage3ResultArticle() {
       publishedAt: new Date(),
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
       teams: teamIds.length ? { connect: teamIds.map((id) => ({ id })) } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Piganzoli gana también la crono de Ettelbruck (etapa 4) y encarrila
+// la general del Tour de Luxemburgo. Fuentes: Cyclingnews, Domestique
+// Cycling, CyclingUpToDate, Team Visma | Lease a Bike (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const luxembourgStage4ResultContent = `
+<p>Davide Piganzoli (Visma | Lease a Bike) encadenó este sábado su segundo golpe de autoridad en dos días en el Tour de Luxemburgo. Después de llevarse el liderato general el viernes en la etapa reina, ganó también la contrarreloj individual de Ettelbruck —20,4&nbsp;km de ida y vuelta sobre la misma localidad— con un tiempo de 26:49, y con ese resultado estira su ventaja en la general a falta de una sola etapa.</p>
+
+<p>La victoria fue ajustada en la parte alta de la clasificación, pero contundente en el mensaje: Piganzoli superó por apenas 2 segundos a Andrea Raccagni Noviero, y por 18 a Leo Hayter, tercero. &laquo;Es muy bonito ganar aquí. El plan era salir a tope desde el inicio en la crono de hoy, y es genial terminar con este resultado&raquo;, explicó el italiano tras la carrera. &laquo;Cuando marqué el mejor tiempo en el intermedio supe que podía competir por la victoria, aunque la parte técnica final estaba más pensada para los especialistas puros&raquo;.</p>
+
+<p>Ese último comentario no es un detalle menor. Piganzoli no es, sobre el papel, un especialista de contrarreloj — es un corredor de Grand Tour en construcción, fichado por Visma | Lease a Bike precisamente para convertirse en referencia de montaña a medio plazo. Que haya sido capaz de ganar una crono técnica por delante de corredores dedicados específicamente a este formato dice tanto de su estado de forma actual como de su margen de mejora: un corredor completo, capaz de defender minutos en la montaña y también de no perder terreno —o directamente ganarlo— contra el reloj.</p>
+
+<p>El trazado de Ettelbruck no era una crono llana y sencilla: 20,4&nbsp;km de ida y vuelta con un tramo técnico en la segunda mitad, el tipo de recorrido que suele beneficiar a corredores con más experiencia específica en la disciplina que un escalador de 23 años en su primera temporada plena en el WorldTour. Que Piganzoli haya marcado el mejor tiempo en el intermedio y haya sabido defenderlo en la parte más técnica, según relató él mismo, es una demostración adicional de la versatilidad con la que Visma | Lease a Bike lo está terminando de formar como corredor de referencia para las grandes vueltas.</p>
+
+<p>El resultado reordenó la parte alta de la general de forma favorable para el propio Piganzoli. Ahora lidera con 47 segundos de ventaja sobre Mattéo Vercher, que escaló hasta la segunda plaza, y 49 sobre Thomas Gachignard —su compañero de equipo en TotalEnergies y protagonista, junto con Piganzoli, del podio de la etapa reina del viernes—. Son diferencias que, a falta de una sola etapa y con la general básicamente jugándose ya solo en el llano de la jornada de cierre, dejan a Piganzoli en una posición prácticamente inexpugnable camino de su primera gran victoria por etapas en el WorldTour.</p>
+
+<p>Para Mathieu van der Poel, el sábado fue el día que terminó de confirmar que esta edición del Tour de Luxemburgo no iba a ser la suya en la general. El neerlandés, que había llegado a la carrera como referencia principal y llegó a vestir el maillot de líder tras ganar la etapa 1, cerró la contrarreloj de Ettelbruck en el puesto 61 — un resultado que lo aleja definitivamente de la pelea por el podio final. No es, sin embargo, una mala noticia real para sus planes: como ha repetido él mismo desde el inicio de la semana, el objetivo de disputar esta carrera nunca fue pelear la general, sino recuperar ritmo de competición en carretera antes del Mundial de Montreal, que arranca este mismo domingo con las contrarrelojes élite.</p>
+
+<p>Reinderink, autor de la sorpresa del viernes, conserva además el liderato de la clasificación de la montaña que conquistó en la etapa reina: al no haber puertos puntuables en una contrarreloj, esa clasificación no se movió este sábado, y llegará a la última etapa con ventaja suficiente para asegurarla salvo sorpresa mayúscula.</p>
+
+<p>La quinta y última etapa de este domingo, con llegada en la capital luxemburguesa, ya no debería alterar de forma sustancial una clasificación general que Piganzoli controla con un margen amplio para el tipo de diferencias que ha dejado esta carrera en días anteriores —recordemos que el liderato cambió de manos por apenas 4 segundos entre la etapa 1 y la 2, y por 1 segundo en la etapa reina—. Salvo un desplome inesperado o una caída, el Tour de Luxemburgo 2026 ya tiene, con un día de antelación, a su ganador prácticamente decidido: un corredor de 23 años que llegaba a esta carrera como gregario de lujo para las grandes citas de su equipo, y que se va camino de firmar la victoria por etapas más importante de su carrera hasta la fecha.</p>
+
+<p>La semana, en conjunto, deja una lectura clara de cara al Mundial de Montreal, que arranca mañana mismo con las contrarrelojes élite. Van der Poel llega sin el resultado en la general que probablemente esperaba al inicio de la semana, pero con los kilómetros de competición en carretera que decía necesitar tras su bloque de mountain bike. Piganzoli, por su parte, llega a Canadá como uno de los nombres que más ha crecido en esta última quincena — aunque su cita en Montreal será distinta, integrado en la selección italiana antes que como líder propio. Para Soudal Quick-Step, TotalEnergies y Visma | Lease a Bike, el balance de la semana en Luxemburgo ya es, de por sí, un argumento de peso antes de que arranque la cita que de verdad importa en el calendario de septiembre.</p>
+`.trim()
+
+export async function publishLuxembourgStage4ResultArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const [raccagni, hayter, vercher] = await Promise.all([
+    prisma.rider.upsert({
+      where: { slug: 'andrea-raccagni-noviero' },
+      update: {},
+      create: {
+        slug: 'andrea-raccagni-noviero',
+        name: 'Andrea Raccagni Noviero',
+        nationality: 'Italia',
+        specialty: 'Contrarreloj / Ciclismo en ruta',
+        bio: 'Ciclista profesional italiano.',
+      },
+    }),
+    prisma.rider.upsert({
+      where: { slug: 'leo-hayter' },
+      update: {},
+      create: {
+        slug: 'leo-hayter',
+        name: 'Leo Hayter',
+        nationality: 'Reino Unido',
+        specialty: 'Ciclismo en ruta',
+        bio: 'Ciclista profesional británico.',
+      },
+    }),
+    prisma.rider.upsert({
+      where: { slug: 'matteo-vercher' },
+      update: {},
+      create: {
+        slug: 'matteo-vercher',
+        name: 'Mattéo Vercher',
+        nationality: 'Francia',
+        specialty: 'Ciclismo en ruta',
+        bio: 'Ciclista profesional francés del equipo TotalEnergies.',
+      },
+    }),
+  ])
+
+  const [piganzoli, vdp, gachignard, visma, alpecin] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'davide-piganzoli' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'mathieu-van-der-poel' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'thomas-gachignard' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'visma-lease-a-bike' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'alpecin-premier-tech' }, select: { id: true } }),
+  ])
+  const riderIds = [piganzoli?.id, vdp?.id, gachignard?.id, raccagni.id, hayter.id, vercher.id].filter(
+    (id): id is number => id !== undefined,
+  )
+  const teamIds = [visma?.id, alpecin?.id].filter((id): id is number => id !== undefined)
+
+  const heroImageId = await ensureHeroImage('piganzoli-gana-etapa-4-crono-tour-luxemburgo-2026', {
+    title: 'Piganzoli gana también la crono de Ettelbruck',
+    label: 'Última hora',
+    riders: [...(piganzoli ? [{ name: 'Davide Piganzoli', team: 'visma-lease-a-bike' }] : [])],
+  })
+
+  const baseFields = {
+    title: 'Piganzoli gana también la crono de Ettelbruck y encarrila el Tour de Luxemburgo',
+    subtitle: 'El italiano supera a los especialistas del reloj por 2 segundos y estira su ventaja a 47 sobre Vercher; Van der Poel, 61º, ya piensa solo en el Mundial',
+    excerpt:
+      'Davide Piganzoli ganó la contrarreloj de Ettelbruck (etapa 4 del Tour de Luxemburgo) y amplió su liderato general a 47 segundos sobre Mattéo Vercher. Mathieu van der Poel, 61º en la crono, confirma que esta carrera ya no es su prioridad camino del Mundial de Montreal.',
+    content: luxembourgStage4ResultContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.cyclingnews.com/pro-cycling/racing/tour-de-luxembourg-davide-piganzoli-wins-stage-4-time-trial-and-increases-his-overall-lead/',
+      'https://www.domestiquecycling.com/en/news/piganzoli-extends-gc-lead-with-statement-tt-win-on-tour-de-luxembourg-stage-4/',
+      'https://cyclinguptodate.com/cycling/results-tour-de-luxembourg-2026-stage-4-davide-piganzoli-on-fire-again-as-he-takes-narrowest-time-trial-win-mathieu-van-der-poel-finishes-61st',
+      'https://www.teamvismaleaseabike.com/race-report/news/piganzoli-impressively-claims-time-trial-victory-at-tour-de-luxembourg/',
+    ]),
+    sourceNames: toJsonField(['Cyclingnews', 'Domestique Cycling', 'CyclingUpToDate', 'Team Visma | Lease a Bike']),
+    seoTitle: 'Piganzoli gana la crono de Ettelbruck y lidera el Tour de Luxemburgo',
+    seoDescription:
+      'Davide Piganzoli gana la contrarreloj de Ettelbruck (etapa 4) y amplía su ventaja en la general del Tour de Luxemburgo 2026 a 47 segundos sobre Mattéo Vercher.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'piganzoli-gana-etapa-4-crono-tour-luxemburgo-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      teams: teamIds.length ? { set: teamIds.map((id) => ({ id })) } : undefined,
+    },
+    create: {
+      slug: 'piganzoli-gana-etapa-4-crono-tour-luxemburgo-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      teams: teamIds.length ? { connect: teamIds.map((id) => ({ id })) } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// A un día de la crono del Mundial: favoritos, curso y horarios.
+// Fuentes: Rouleur, ProCyclingUK, Cyclingnews, TOUR Magazin (ver
+// sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const worldsTTEveContent = `
+<p>Mañana domingo arranca oficialmente el Mundial de ruta 2026 en Montreal, y lo hace de la manera en que arrancan todos los Mundiales desde hace años: con las contrarrelojes individuales élite, primero la femenina y después la masculina, sobre el mismo trazado de 39,2&nbsp;km entre el Circuito Gilles-Villeneuve, el Parc Jean-Drapeau y el cierre por el Puente Concordia hasta la avenida du Parc. El pronóstico anuncia condiciones mayormente soleadas, sin lluvia que complique las decisiones de material — buenas noticias para un recorrido pensado para la potencia aerodinámica sostenida más que para la habilidad técnica.</p>
+
+<p>El perfil es engañosamente sencillo: apenas 220&nbsp;metros de desnivel acumulado en casi 40&nbsp;km, con largos tramos junto al río San Lorenzo donde los especialistas pueden mantener la posición aerodinámica sin interrupción. La dificultad real llega al final, con una rampa de varios cientos de metros por encima del 6% justo antes de meta — lo suficiente para que un corredor que llegue sin piernas pierda ahí los segundos que no pudo perder en el llano, pero no tanto como para cambiar por completo el perfil de favoritos hacia los escaladores.</p>
+
+<p>En categoría femenina, que rueda primero a las 9:00 hora de Montreal, Marlen Reusser llega como la favorita más clara. La suiza defiende el título que ganó el año pasado y llega lanzada: se impuso en la crono del Tour de Francia Femmes este verano por 4 segundos sobre Lieke Nooijen y 18 sobre Demi Vollering, y remató la preparación ganando también la Chrono Féminin de Gatineau la semana pasada sobre suelo canadiense. Vollering, precisamente, es la rival más completa que puede oponerle: viene de ganar tanto el Giro de Italia como el Tour de Francia Femmes este año, un doblete que la sitúa como la corredora más en forma del pelotón femenino en cualquier terreno. La Fuga ya repasó en detalle a las outsiders con opciones reales de colarse en el podio —Lotte Kopecky, Kristen Faulkner y Lauretta Hanson— en un análisis publicado esta semana.</p>
+
+<p>En categoría masculina, que arranca a las 12:45 hora de Montreal, el favoritismo tiene un solo nombre escrito con mayúsculas: Remco Evenepoel. El belga busca su cuarto título mundial consecutivo de contrarreloj —ganó en 2023, 2024 y 2025— y llega a Montreal sin haber perdido una sola crono en toda la temporada: se impuso en las tres que disputó, incluida una victoria reciente en el GP de Quebec, y en el Tour de Francia de este verano batió a Tadej Pogačar por 28 segundos en la única contrarreloj individual de la carrera. Es, sobre el papel, una de las apuestas más seguras de todo el Mundial.</p>
+
+<p>Lo que Evenepoel persigue en Montreal no es solo un título más: es un récord histórico que nadie ha logrado antes. Ganó el Mundial de contrarreloj en 2023, 2024 y 2025 — tres consecutivos, la misma racha que antes solo habían firmado Michael Rogers y el alemán Tony Martin. Ningún hombre, en toda la historia de la prueba, ha ganado cuatro Mundiales de contrarreloj seguidos. Una victoria este domingo no solo igualaría a Fabian Cancellara y al propio Martin como los corredores con más títulos totales en la prueba (cuatro cada uno), sino que convertiría a Evenepoel en el primero en encadenar cuatro de forma consecutiva.</p>
+
+<p>Su rival más plausible es Filippo Ganna. El italiano, un especialista puro de las cronos largas, ganó esta temporada el test contrarreloj de 42&nbsp;km del Giro de Italia entre Viareggio y Massa por casi dos minutos de ventaja — una demostración de fuerza bruta en el terreno exacto que más se parece al de Montreal. Stefan Küng completa el trío de favoritos: el suizo llega motivado tras ganar la contrarreloj de la Vuelta a España este verano, con la ambición declarada de conseguir por fin el maillot arcoíris que se le ha resistido hasta ahora. Detrás de ese trío, el propio perfil del recorrido —rápido, con un repecho final que exige algo de potencia además de aerodinámica pura— deja una rendija abierta para algún nombre menos anunciado que llegue con las piernas frescas en el momento justo, algo que en las contrarrelojes de más de media hora de duración ocurre con más frecuencia de la que sugieren las quinielas previas.</p>
+
+<p>Lo que deja este cruce de nombres es una jornada de apertura del Mundial con perfiles de favoritismo muy distintos entre las dos categorías: una femenina donde Reusser llega como referencia pero con Vollering y hasta tres outsiders reales pisándole los talones, y una masculina donde Evenepoel se presenta como una apuesta casi cerrada, con Ganna y Küng peleando más por la plata que por arrebatarle el título. Ambas contrarrelojes se disputan este domingo, y servirán además como primera pista real de quién llega mejor de piernas a las pruebas en línea que cierran el Mundial el fin de semana siguiente.</p>
+
+<p>La semana de contrarrelojes no termina el domingo. El lunes 21 de septiembre se disputan las pruebas sub-23, y el martes 22 llega el relevo mixto por equipos, una modalidad que combina a tres hombres y tres mujeres de cada selección por un recorrido de 40,6&nbsp;km — el tipo de prueba donde la profundidad de una federación, no solo su corredor más rápido, termina marcando la diferencia. Recién después de esos tres días de contrarreloj el Mundial se traslada por completo al terreno de las carreras en línea, con la femenina el sábado 26 y la masculina el domingo 27 como gran cierre de la cita.</p>
+`.trim()
+
+export async function publishWorldsTTEveArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const [reusser, vollering, evenepoel, kopecky, faulkner, hanson, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'marlen-reusser' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'demi-vollering' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'remco-evenepoel' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'lotte-kopecky' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'kristen-faulkner' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'lauretta-hanson' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+
+  const ganna = await prisma.rider.upsert({
+    where: { slug: 'filippo-ganna' },
+    update: {},
+    create: {
+      slug: 'filippo-ganna',
+      name: 'Filippo Ganna',
+      nationality: 'Italia',
+      specialty: 'Contrarreloj',
+      bio: 'Ciclista profesional italiano, uno de los especialistas de contrarreloj más dominantes del pelotón.',
+    },
+  })
+  const kung = await prisma.rider.upsert({
+    where: { slug: 'stefan-kung' },
+    update: {},
+    create: {
+      slug: 'stefan-kung',
+      name: 'Stefan Küng',
+      nationality: 'Suiza',
+      specialty: 'Contrarreloj / Clásicas',
+      bio: 'Ciclista profesional suizo, especialista de contrarreloj y clásicas del norte.',
+    },
+  })
+
+  const riderIds = [
+    reusser?.id,
+    vollering?.id,
+    evenepoel?.id,
+    kopecky?.id,
+    faulkner?.id,
+    hanson?.id,
+    ganna.id,
+    kung.id,
+  ].filter((id): id is number => id !== undefined)
+
+  const heroImageId = await ensureCustomHeroImage('un-dia-crono-mundial-montreal-2026', {
+    url: '/images/headers/tt-eve-cover.jpg',
+    altText: 'Falta un día para la crono del Mundial: Reusser y Evenepoel, favoritos en Montreal',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title: 'Falta un día para la crono del Mundial: Reusser y Evenepoel, favoritos en Montreal',
+    subtitle: 'Las contrarrelojes élite femenina y masculina abren el Mundial de ruta este domingo sobre el mismo trazado de 39,2 km; Evenepoel busca su cuarto título consecutivo',
+    excerpt:
+      'A un día de que arranque el Mundial de Montreal con las contrarrelojes élite, repasamos el trazado, el horario y los favoritos: Marlen Reusser y Demi Vollering en la femenina, Remco Evenepoel —imbatido esta temporada— junto a Filippo Ganna y Stefan Küng en la masculina.',
+    content: worldsTTEveContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://www.rouleur.cc/racing/world-championships-2026-mens-time-trial-preview-montreal',
+      'https://procyclinguk.com/mens-world-championships-time-trial-2026-preview-evenepoel-faces-ganna-and-kung-in-montreal/',
+      'https://www.cyclingnews.com/pro-cycling/racing/remco-evenepoel-filippo-ganna-and-the-rest-analysing-the-contenders-for-the-elite-mens-time-trial-at-the-world-championships/',
+      'https://www.tour-magazin.de/en/professional-cycling/latest-news/women-s-world-championship-individual-time-trial-who-will-claim-the-first-rainbow-jersey-in-montreal/',
+      'https://www.flobikes.com/articles/16184376-remco-evenepoel-fourth-world-time-trial-title',
+    ]),
+    sourceNames: toJsonField(['Rouleur', 'ProCyclingUK', 'Cyclingnews', 'TOUR Magazin', 'FloBikes']),
+    seoTitle: 'A un día del Mundial: favoritos de la crono en Montreal 2026',
+    seoDescription:
+      'Todo listo para las contrarrelojes élite del Mundial de Montreal 2026: recorrido, horarios y favoritos, con Reusser y Evenepoel como grandes referencias.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'un-dia-crono-mundial-montreal-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+    },
+    create: {
+      slug: 'un-dia-crono-mundial-montreal-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
     },
   })
 
