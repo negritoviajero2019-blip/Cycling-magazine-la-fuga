@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -1479,10 +1479,13 @@ export async function publishWorldsScheduleByCountryArticle() {
   const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
   const race = await prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } })
 
-  const heroImageId = await ensureHeroImage('horarios-mundial-montreal-paises-2026', {
-    title: 'Horarios del Mundial en tu país',
-    label: 'Última hora',
-    riders: [],
+  const heroImageId = await ensureCustomHeroImage('horarios-mundial-montreal-paises-2026', {
+    url: '/images/headers/horarios-mundial-cover.jpg',
+    altText: 'Horarios del Mundial de Montreal por país: Canadá, México, Colombia, Argentina, España',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
