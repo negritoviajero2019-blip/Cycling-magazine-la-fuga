@@ -1235,10 +1235,13 @@ export async function publishLuxembourgStage4ResultArticle() {
   )
   const teamIds = [visma?.id, alpecin?.id].filter((id): id is number => id !== undefined)
 
-  const heroImageId = await ensureHeroImage('piganzoli-gana-etapa-4-crono-tour-luxemburgo-2026', {
-    title: 'Piganzoli gana también la crono de Ettelbruck',
-    label: 'Última hora',
-    riders: [...(piganzoli ? [{ name: 'Davide Piganzoli', team: 'visma-lease-a-bike' }] : [])],
+  const heroImageId = await ensureCustomHeroImage('piganzoli-gana-etapa-4-crono-tour-luxemburgo-2026', {
+    url: '/images/headers/piganzoli-stage4-cover.jpg',
+    altText: 'Piganzoli gana también la crono de Ettelbruck y estira su ventaja en el Tour de Luxemburgo',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
@@ -1404,6 +1407,119 @@ export async function publishWorldsTTEveArticle() {
       ...baseFields,
       publishedAt: new Date(),
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Horarios del Mundial de Montreal convertidos a hora local de
+// Canadá, México, Colombia, Argentina y España. Fuentes: RTVE/Teledeporte,
+// CiclismoAlDia, TOUR Magazin, UCI (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const worldsScheduleByCountryContent = `
+<p>El Mundial de ruta 2026 arranca mañana domingo en Montreal, y para una audiencia repartida entre Canadá, México, Colombia, Argentina y España, eso significa cuatro horas de inicio completamente distintas para cada evento. Aquí va la conversión completa de los cuatro eventos élite más importantes —las dos contrarrelojes de este domingo y las dos carreras en línea que cierran la cita el fin de semana siguiente— a la hora local de cada país. Todos los horarios están calculados sobre la hora oficial de Montreal (EDT, UTC-4) publicada por la organización, cruzada con las conversiones ya confirmadas por medios de cada país para evitar errores de redondeo entre husos horarios que no siempre coinciden en una hora exacta.</p>
+
+<p><strong>Domingo 20 de septiembre — Contrarreloj individual élite femenina</strong> (39,2 km, salida en Avenue du Parc):</p>
+<ul>
+<li><strong>Canadá (sede, hora de Montreal):</strong> 9:00 a.m.</li>
+<li><strong>México (Ciudad de México):</strong> 7:00 a.m.</li>
+<li><strong>Colombia (Bogotá):</strong> 8:00 a.m.</li>
+<li><strong>Argentina (Buenos Aires):</strong> 10:00 a.m.</li>
+<li><strong>España (península):</strong> 3:00 p.m.</li>
+</ul>
+
+<p><strong>Domingo 20 de septiembre — Contrarreloj individual élite masculina</strong> (mismo trazado de 39,2 km):</p>
+<ul>
+<li><strong>Canadá (sede):</strong> 12:45 p.m.</li>
+<li><strong>México:</strong> 10:45 a.m.</li>
+<li><strong>Colombia:</strong> 11:45 a.m.</li>
+<li><strong>Argentina:</strong> 1:45 p.m.</li>
+<li><strong>España:</strong> 6:45 p.m.</li>
+</ul>
+
+<p>Esa diferencia de casi cuatro horas entre las dos contrarrelojes del domingo tiene una explicación simple: entre medio se disputan las pruebas sub-23 de ambas categorías, así que el día se reparte en cuatro carreras completas antes de que caiga la tarde en Montreal.</p>
+
+<p>La semana siguiente, el Mundial se traslada del todo al terreno de las carreras en línea, con los dos eventos que de verdad definen quién se lleva a casa el maillot arcoíris más codiciado del calendario:</p>
+
+<p><strong>Sábado 26 de septiembre — Carrera en línea élite femenina</strong> (180,4 km, circuito final en Mont Royal):</p>
+<ul>
+<li><strong>Canadá (sede):</strong> 9:00 a.m.</li>
+<li><strong>México:</strong> 7:00 a.m.</li>
+<li><strong>Colombia:</strong> 8:00 a.m.</li>
+<li><strong>Argentina:</strong> 10:00 a.m.</li>
+<li><strong>España:</strong> 3:00 p.m.</li>
+</ul>
+
+<p><strong>Domingo 27 de septiembre — Carrera en línea élite masculina</strong> (273,7 km, el cierre del Mundial):</p>
+<ul>
+<li><strong>Canadá (sede):</strong> 9:00 a.m.</li>
+<li><strong>México:</strong> 7:00 a.m.</li>
+<li><strong>Colombia:</strong> 8:00 a.m.</li>
+<li><strong>Argentina:</strong> 10:00 a.m.</li>
+<li><strong>España:</strong> 3:00 p.m.</li>
+</ul>
+
+<p>Vale la pena un apunte sobre por qué estas conversiones no son simplemente "sumar o restar unas horas parejas" entre los cinco países. Canadá corre en horario de verano (EDT, UTC-4) hasta principios de noviembre. México eliminó el horario de verano en la mayor parte del país desde 2022, así que Ciudad de México se mantiene todo el año en UTC-6, dos horas por detrás de Montreal. Colombia (UTC-5) y Argentina (UTC-3) tampoco cambian de horario en ningún momento del año, lo que las deja una hora por detrás y una hora por delante de Montreal, respectivamente. España, en cambio, todavía está en horario de verano (CEST, UTC+2) hasta finales de octubre, lo que explica la diferencia de seis horas completas con la sede — la misma con la que empezamos a trabajar en la previa que publicamos ayer.</p>
+
+<p>Para quien piense seguir el Mundial completo desde América Latina, el dato más práctico es este: las dos carreras en línea —las que de verdad reparten los títulos más importantes, con el maillot arcoíris en juego para toda la temporada siguiente— arrancan a las 7:00 de la mañana en México y a las 8:00 en Colombia, un horario exigente pero manejable para quien quiera verlas en directo desde el arranque. En Argentina, a las 10:00 de la mañana, el horario es sin duda el más cómodo de toda Latinoamérica para no perderse ni un kilómetro. En España, en cambio, ambas caen ya entrada la tarde, a las 3:00 p.m., justo después de comer — probablemente el horario más cómodo de los cinco países para seguir el cierre del Mundial sin madrugar, aunque toque esperar hasta bien avanzado el día para ver la coronación de los nuevos campeones del mundo.</p>
+
+<p>Conviene recordar, además, por qué estos cuatro eventos concentran la atención por encima del resto del programa. Las contrarrelojes individuales reparten el primer maillot arcoíris del Mundial y suelen definir quién llega con mejores sensaciones a la semana de carreras en línea — el propio Remco Evenepoel, por ejemplo, encadena tres títulos consecutivos de contrarreloj antes de disputar la prueba en línea del domingo siguiente. Pero son las carreras en línea, con su desgaste de varias horas y su exigencia táctica de equipo, las que la afición identifica de verdad con "ganar el Mundial": son las que reparten el maillot arcoíris que el campeón vestirá durante toda la temporada 2027, en cualquier carrera que dispute, sea cual sea su equipo.</p>
+
+<p>Sobre dónde verlo: en España, Teledeporte y RTVE Play cubren gratis las señales principales, con Eurosport y HBO Max completando el resto de pruebas. En México, la transmisión corre por cuenta de Claro Sports. En Colombia y Argentina, la referencia es DirecTV Sports, la misma señal que cubre la cita en buena parte de Sudamérica —Bolivia, Brasil, Chile, Ecuador, Paraguay, Perú, Uruguay y Venezuela incluidos—. Como respaldo adicional, y sujeto a restricciones según el país, la UCI suele transmitir parte de las pruebas en su propio canal de YouTube — conviene revisar la disponibilidad exacta en cada territorio antes de depender de esa vía como única opción para seguir la carrera en directo.</p>
+
+<p>Esta guía cubre los cuatro eventos élite de mayor peso mediático; el programa completo del Mundial incluye además las pruebas sub-23, junior y el relevo mixto por equipos, con horarios propios que ya repasamos en detalle en nuestra nota sobre el calendario oficial completo de la UCI.</p>
+`.trim()
+
+export async function publishWorldsScheduleByCountryArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const race = await prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } })
+
+  const heroImageId = await ensureHeroImage('horarios-mundial-montreal-paises-2026', {
+    title: 'Horarios del Mundial en tu país',
+    label: 'Última hora',
+    riders: [],
+  })
+
+  const baseFields = {
+    title: 'Horarios del Mundial de Montreal: así se ven las carreras en Canadá, México, Colombia, Argentina y España',
+    subtitle: 'Las contrarrelojes arrancan mañana; convertimos los cuatro eventos élite más importantes a la hora local de cada país',
+    excerpt:
+      'Guía práctica de horarios del Mundial de ruta 2026 en Montreal, convertidos a hora local de Canadá, México, Colombia, Argentina y España: las dos contrarrelojes de este domingo y las dos carreras en línea que cierran la cita.',
+    content: worldsScheduleByCountryContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://ciclismoaldia.es/ciclismo/mundial-de-ciclismo-montreal-2026-donde-verlo-por-television-online-y-en-directo-en-espana-y-latinoamerica',
+      'https://www.eldiario.es/spin/deportes/mundial-ciclismo-ruta-montreal-2026-contrarreloj-lista-espana-calendario-horario-donde-ver-tv-pm_1_13523479.html',
+      'https://www.rouleur.cc/racing/world-championships-2026-mens-time-trial-preview-montreal',
+      'https://en.wikipedia.org/wiki/2026_UCI_Road_World_Championships',
+    ]),
+    sourceNames: toJsonField(['CiclismoAlDia', 'El Diario', 'Rouleur', 'Wikipedia']),
+    seoTitle: 'Horarios del Mundial de Montreal 2026 por país: México, Colombia, Argentina, España',
+    seoDescription:
+      'Todos los horarios del Mundial de ciclismo en ruta 2026 convertidos a la hora local de Canadá, México, Colombia, Argentina y España: contrarrelojes y carreras en línea.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'horarios-mundial-montreal-paises-2026' },
+    update: {
+      ...baseFields,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+    },
+    create: {
+      slug: 'horarios-mundial-montreal-paises-2026',
+      ...baseFields,
+      publishedAt: new Date(),
       races: race ? { connect: [{ id: race.id }] } : undefined,
     },
   })

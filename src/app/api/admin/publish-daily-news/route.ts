@@ -14,6 +14,7 @@ import {
   publishLuxembourgStage3ResultArticle,
   publishLuxembourgStage4ResultArticle,
   publishWorldsTTEveArticle,
+  publishWorldsScheduleByCountryArticle,
 } from '@/lib/content/daily-news'
 
 /**
@@ -41,6 +42,7 @@ export async function POST() {
       publishLuxembourgStage3ResultArticle(),
       publishLuxembourgStage4ResultArticle(),
       publishWorldsTTEveArticle(),
+      publishWorldsScheduleByCountryArticle(),
     ])
     return NextResponse.json({ ok: true, articles: results })
   } catch (error) {

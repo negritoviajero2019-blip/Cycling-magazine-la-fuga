@@ -87,6 +87,18 @@ body {
   margin-top: 1.5em;
   margin-bottom: 0.5em;
 }
+.prose-article ul {
+  margin: 0 0 1.5em;
+  padding-left: 1.25em;
+  list-style: disc;
+}
+.prose-article ul li {
+  margin-bottom: 0.5em;
+  line-height: 1.6;
+}
+.prose-article ul li strong {
+  font-weight: 700;
+}
 .prose-article a {
   color: rgb(var(--color-accent));
   text-decoration: underline;
