@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -1589,18 +1589,18 @@ export async function publishLuxembourgFinalStageArticle() {
   )
   const teamIds = [alpecin?.id, visma?.id, ef?.id, soudal?.id].filter((id): id is number => id !== undefined)
 
-  const heroImageId = await ensureHeroImage('van-der-poel-gana-etapa-5-piganzoli-campeon-luxemburgo-2026', {
-    title: 'Van der Poel gana; Piganzoli, campeón',
-    label: 'Última hora',
-    riders: [
-      ...(vdp ? [{ name: 'Mathieu van der Poel', team: 'alpecin-premier-tech' }] : []),
-      ...(piganzoli ? [{ name: 'Davide Piganzoli', team: 'visma-lease-a-bike' }] : []),
-    ],
+  const heroImageId = await ensureCustomHeroImage('van-der-poel-gana-etapa-5-piganzoli-campeon-luxemburgo-2026', {
+    url: '/images/headers/vdp-luxembourg-final-cover.jpg',
+    altText: 'Brutal exhibición de Van der Poel: escapada en solitario de 175 km en la etapa final de Luxemburgo',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
-    title: 'Van der Poel gana la última etapa en solitario; Piganzoli se corona campeón del Tour de Luxemburgo',
-    subtitle: 'El neerlandés completó 174 de 177 km en fuga para cerrar la semana con dos victorias de etapa; el italiano de Visma | Lease a Bike se lleva su primera gran general del WorldTour',
+    title: 'Brutal exhibición de Van der Poel: una escapada en solitario de 175 km en la etapa final de Luxemburgo',
+    subtitle: 'El neerlandés completó 174 de 177 km en fuga para cerrar la semana con dos victorias de etapa; Piganzoli, de Visma | Lease a Bike, se lleva su primera gran general del WorldTour',
     excerpt:
       'Mathieu van der Poel cerró el Tour de Luxemburgo 2026 con una fuga en solitario de 174 km en la etapa 5. Davide Piganzoli, cuarto en meta, se coronó campeón general por delante de Mattéo Vercher y Thomas Gachignard, ambos de TotalEnergies.',
     content: luxembourgFinalStageContent,
@@ -1624,7 +1624,7 @@ export async function publishLuxembourgFinalStageArticle() {
       'Team Visma | Lease a Bike',
       'Cyclismactu',
     ]),
-    seoTitle: 'Van der Poel gana la última etapa, Piganzoli campeón del Tour de Luxemburgo 2026',
+    seoTitle: 'Brutal exhibición de Van der Poel en la etapa final del Tour de Luxemburgo',
     seoDescription:
       'Mathieu van der Poel gana la etapa 5 del Tour de Luxemburgo con una fuga en solitario de 174 km. Davide Piganzoli se corona campeón general del WorldTour.',
     readingTime: 7,
