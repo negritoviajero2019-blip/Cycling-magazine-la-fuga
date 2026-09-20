@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -1524,6 +1524,125 @@ export async function publishWorldsScheduleByCountryArticle() {
       ...baseFields,
       publishedAt: new Date(),
       races: race ? { connect: [{ id: race.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Cierre del Tour de Luxemburgo: Van der Poel gana la etapa 5 en una
+// fuga en solitario de 175 km; Piganzoli campeón general.
+// Fuentes: Cyclingnews, Escape Collective, Team Visma | Lease a Bike,
+// Cyclismactu (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const luxembourgFinalStageContent = `
+<p>El Tour de Luxemburgo 2026 se cerró este domingo con dos historias que resumen bien lo que fue toda la semana. Mathieu van der Poel (Alpecin-Premier Tech) ganó la quinta y última etapa con una fuga en solitario casi desde el kilómetro cero, de las que quedan en la memoria durante años. Y Davide Piganzoli (Visma | Lease a Bike), el corredor que se había ido construyendo un liderato discreto en las tres jornadas centrales, se coronó campeón general — su primera gran victoria por etapas en el WorldTour.</p>
+
+<p><strong>Exhibición histórica:</strong> Van der Poel resistió el pulso de todo el pelotón prácticamente en solitario durante los 177&nbsp;km completos de la quinta etapa — atacó a los pocos kilómetros de la salida en Luxemburgo, y de esos 177&nbsp;km totales completó 174 completamente solo, sin que nadie lograra siquiera acercarse a tiempo de disputarle la victoria.</p>
+
+<p>Lo de Van der Poel no fue un ataque más. Se marchó del pelotón prácticamente al inicio de los 177&nbsp;km entre Luxemburgo y Luxemburgo-Limpertsberg, y no lo volvieron a ver: completó 174 de esos 177 kilómetros en solitario, llegando a meta con más de un minuto de ventaja sobre el resto del pelotón. &laquo;Al principio pensé que los perseguidores me alcanzarían, pero seguí rodando a mi potencia y la diferencia volvió a crecer, así que en ese momento decidí ir a por todas hasta meta&raquo;, explicó después. Es el tipo de decisión que solo toma un corredor con margen de sobra en las piernas — y también, según reconoció el propio neerlandés, una manera de cerrar con autoridad una semana que había empezado ganando la etapa 1 y perdiendo el liderato apenas veinticuatro horas después.</p>
+
+<p>Ese cierre en solitario deja a Van der Poel con dos victorias de etapa en cinco días de carrera —la primera y la última—, sin haber estado nunca realmente en la pelea por la general. Es, exactamente, el resultado que había ido a buscar a Luxemburgo: no ganar la clasificación general, sino llegar al Mundial de Montreal con piernas de carrera después de su bloque de mountain bike. Con la contrarreloj masculina del Mundial disputándose este mismo domingo, la exhibición de Limpertsberg llega en el momento justo para su moral de cara a la prueba en línea del 27 de septiembre.</p>
+
+<p>Detrás de esa fuga, la pelea por el podio de etapa también tuvo su propio mérito: Mikkel Honoré (EF Education-EasyPost) resistió en segundo lugar, y Pepijn Reinderink (Soudal Quick-Step) completó el podio, sumando así un resultado más a una semana en la que ya había firmado su primera victoria profesional en la etapa reina del viernes.</p>
+
+<p>Para Davide Piganzoli, el domingo no exigía ganar la etapa — exigía no perder la general. Y no la perdió: terminó cuarto en meta, con el mismo tiempo que Reinderink, una posición más que suficiente para blindar la ventaja que había construido en las dos jornadas anteriores. &laquo;Estoy extremadamente contento con nuestro rendimiento esta semana&raquo;, resumió el italiano al término de la carrera, y en declaraciones a medios franceses añadió: &laquo;Genial terminar con un resultado así&raquo;. La clasificación general final quedó con Piganzoli como campeón, Mattéo Vercher segundo y Thomas Gachignard tercero — ambos de TotalEnergies, que se lleva dos plazas del podio final pese a no haber ganado ni una sola etapa en toda la semana.</p>
+
+<p>El resumen de la carrera, visto en conjunto, cuenta la historia de un Tour de Luxemburgo que cambió de protagonista casi cada día: Van der Poel ganó y lideró la etapa 1, Marijn van den Berg le arrebató el maillot en la etapa 2, Reinderink sorprendió con su primera victoria profesional en la etapa reina del viernes mientras Piganzoli tomaba el liderato, el propio Piganzoli lo blindó ganando también la crono de Ettelbruck el sábado, y Van der Poel cerró el domingo con la actuación más vistosa de toda la semana sin que eso alterara ya nada en la general. Pocas carreras de cinco días dejan un resumen tan completo de lo que puede ofrecer el ciclismo de principio a fin: sorpresas, especialistas, favoritos que cumplen a medias y un ganador que, sin ser el nombre más mediático de la carrera, termina siendo el más completo de todos.</p>
+
+<p>Para Piganzoli, de 23 años y en su primera temporada plena en el WorldTour tras su fichaje por Visma | Lease a Bike, el triunfo confirma en carrera lo que el equipo ya sospechaba en los entrenamientos: un corredor capaz de ganar en la montaña, de rendir contra el reloj y de gestionar una ventaja mínima durante tres días consecutivos sin cometer errores. Para un equipo que lo fichó pensando en convertirlo en referencia de Grand Tour a medio plazo, el Tour de Luxemburgo 2026 queda como la primera prueba real de que ese plan va por buen camino.</p>
+
+<p>El cierre de esta carrera llega, además, en el momento justo del calendario. El propio domingo en que se decidía el Tour de Luxemburgo, la contrarreloj masculina del Mundial de Montreal se disputaba en paralelo, con Van der Poel como uno de los nombres a seguir tras su exhibición en Limpertsberg. Para el neerlandés, después de una semana repartida entre perder el liderato y ganar dos etapas por su cuenta, la moral con la que llega a Canadá es, cuando menos, la mejor posible dadas las circunstancias — exactamente el efecto que buscaba al elegir Luxemburgo en lugar de las clásicas canadienses como preparación final.</p>
+`.trim()
+
+export async function publishLuxembourgFinalStageArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const honore = await prisma.rider.upsert({
+    where: { slug: 'mikkel-honore' },
+    update: {},
+    create: {
+      slug: 'mikkel-honore',
+      name: 'Mikkel Honoré',
+      nationality: 'Dinamarca',
+      specialty: 'Ciclismo en ruta',
+      bio: 'Ciclista profesional danés del equipo EF Education-EasyPost.',
+    },
+  })
+
+  const [vdp, piganzoli, reinderink, vercher, gachignard, alpecin, visma, ef, soudal] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'mathieu-van-der-poel' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'davide-piganzoli' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'pepijn-reinderink' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'matteo-vercher' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'thomas-gachignard' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'alpecin-premier-tech' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'visma-lease-a-bike' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'ef-education-easypost' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'soudal-quick-step' }, select: { id: true } }),
+  ])
+  const riderIds = [vdp?.id, piganzoli?.id, reinderink?.id, vercher?.id, gachignard?.id, honore.id].filter(
+    (id): id is number => id !== undefined,
+  )
+  const teamIds = [alpecin?.id, visma?.id, ef?.id, soudal?.id].filter((id): id is number => id !== undefined)
+
+  const heroImageId = await ensureHeroImage('van-der-poel-gana-etapa-5-piganzoli-campeon-luxemburgo-2026', {
+    title: 'Van der Poel gana; Piganzoli, campeón',
+    label: 'Última hora',
+    riders: [
+      ...(vdp ? [{ name: 'Mathieu van der Poel', team: 'alpecin-premier-tech' }] : []),
+      ...(piganzoli ? [{ name: 'Davide Piganzoli', team: 'visma-lease-a-bike' }] : []),
+    ],
+  })
+
+  const baseFields = {
+    title: 'Van der Poel gana la última etapa en solitario; Piganzoli se corona campeón del Tour de Luxemburgo',
+    subtitle: 'El neerlandés completó 174 de 177 km en fuga para cerrar la semana con dos victorias de etapa; el italiano de Visma | Lease a Bike se lleva su primera gran general del WorldTour',
+    excerpt:
+      'Mathieu van der Poel cerró el Tour de Luxemburgo 2026 con una fuga en solitario de 174 km en la etapa 5. Davide Piganzoli, cuarto en meta, se coronó campeón general por delante de Mattéo Vercher y Thomas Gachignard, ambos de TotalEnergies.',
+    content: luxembourgFinalStageContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://www.cyclingnews.com/pro-cycling/racing/tour-de-luxembourg-extraordinary-scenes-as-mathieu-van-der-poel-wins-final-stage-with-jaw-dropping-solo-from-start-to-finish/',
+      'https://escapecollective.com/van-der-poel-spends-175-km-solo-to-win-final-stage-in-luxembourg/',
+      'https://cyclinguptodate.com/cycling/results-tour-de-luxembourg-2026-stage-5-mathieu-van-der-poel-completes-astonishing-170km-solo-raid-as-davide-piganzoli-seals-overall-victory',
+      'https://www.teamvismaleaseabike.com/race-report/news/piganzoli-claims-overall-victory-in-tour-de-luxembourg-after-fourth-place-in-final-stage/',
+      'https://www.cyclismactu.net/news-cyclisme-tour-de-luxembourg-davide-piganzoli-genial-de-conclure-avec-un-tel-resultat-96105.html',
+    ]),
+    sourceNames: toJsonField([
+      'Cyclingnews',
+      'Escape Collective',
+      'CyclingUpToDate',
+      'Team Visma | Lease a Bike',
+      'Cyclismactu',
+    ]),
+    seoTitle: 'Van der Poel gana la última etapa, Piganzoli campeón del Tour de Luxemburgo 2026',
+    seoDescription:
+      'Mathieu van der Poel gana la etapa 5 del Tour de Luxemburgo con una fuga en solitario de 174 km. Davide Piganzoli se corona campeón general del WorldTour.',
+    readingTime: 7,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'van-der-poel-gana-etapa-5-piganzoli-campeon-luxemburgo-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      teams: teamIds.length ? { set: teamIds.map((id) => ({ id })) } : undefined,
+    },
+    create: {
+      slug: 'van-der-poel-gana-etapa-5-piganzoli-campeon-luxemburgo-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      teams: teamIds.length ? { connect: teamIds.map((id) => ({ id })) } : undefined,
     },
   })
 
