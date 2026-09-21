@@ -4,9 +4,13 @@ Plantilla estándar de carátulas de La Fuga (1600x900).
 Guarda los parámetros de diseño acordados con el usuario el 21 de
 septiembre de 2026: tamaño/posición del bloque de texto respecto a la
 foto, tamaño de fuente, tipografía, y el nuevo lockup "LA FUGA /
-CYCLING MAGAZINE" en la esquina inferior izquierda. Este archivo es la
-referencia — cada script de carátula por artículo debe copiar esta
-función en vez de reinventar el layout.
+CYCLING MAGAZINE" en la esquina inferior izquierda. Ajustado el mismo
+día (2026-09-21, cover de Omar Andrade) a tamaños de texto más
+grandes/con más presencia sobre la foto, y a degradado 100% opaco en
+la zona sólida (antes 235/255, causaba "ghosting" de texto ya horneado
+en fotos base). Este archivo es la referencia — cada script de
+carátula por artículo debe copiar esta función en vez de reinventar el
+layout.
 
 Uso:
     from gen_cover_template import render_cover
@@ -55,9 +59,9 @@ def render_cover(
     title_lines,
     subtitle_lines,
     crop_top=100,
-    anton_size=68,
-    gradient_solid_end_frac=0.42,
-    gradient_fade_end_frac=0.66,
+    anton_size=104,
+    gradient_solid_end_frac=0.58,
+    gradient_fade_end_frac=0.80,
 ):
     src = Image.open(src_path).convert("RGB")
     sw, sh = src.size
@@ -65,16 +69,19 @@ def render_cover(
     crop = src.crop((0, crop_top, sw, crop_top + crop_h))
     canvas = crop.resize((W, H), Image.LANCZOS).convert("RGBA")
 
-    # degradado oscuro izquierda -> foto visible a la derecha
+    # degradado oscuro izquierda -> foto visible a la derecha. 100%
+    # opaco en la zona sólida: a 235/255 el texto ya horneado en la
+    # foto base (p.ej. una carátula previa reusada como fuente) se
+    # alcanza a transparentar ("ghosting") por debajo del texto nuevo.
     gradient = Image.new("L", (W, 1), color=0)
     solid_end = int(W * gradient_solid_end_frac)
     fade_end = int(W * gradient_fade_end_frac)
     for x in range(W):
         if x < solid_end:
-            a = 235
+            a = 255
         elif x < fade_end:
             t = (x - solid_end) / (fade_end - solid_end)
-            a = int(235 * (1 - t))
+            a = int(255 * (1 - t))
         else:
             a = 0
         gradient.putpixel((x, 0), a)
@@ -83,10 +90,11 @@ def render_cover(
     overlay.putalpha(gradient)
     canvas = Image.alpha_composite(canvas, overlay)
 
-    # degradado superior sutil, para que la etiqueta de categoría respire
+    # degradado superior, igualmente opaco, para que la etiqueta de
+    # categoría respire y cubra cualquier texto horneado arriba
     top_grad = Image.new("L", (1, H), color=0)
     for y in range(H):
-        a = 150 if y < 110 else max(0, int(150 * (1 - (y - 110) / 180)))
+        a = 255 if y < 130 else max(0, int(255 * (1 - (y - 130) / 160)))
         top_grad.putpixel((0, y), a)
     top_grad = top_grad.resize((W, H))
     top_overlay = Image.new("RGBA", (W, H), BG + (255,))
@@ -97,38 +105,38 @@ def render_cover(
     indent = int(W * 0.07)
 
     # ---- etiqueta de categoría + línea divisora a todo lo ancho ----
-    label_font = ImageFont.truetype(FONT_INTER, 24)
-    _draw_text_isolated(canvas, (indent, 54), label, label_font, LIME)
-    label_w = label_font.getbbox(label)[2] + 24
-    line_y = 54 + 12
+    label_font = ImageFont.truetype(FONT_INTER, 28)
+    _draw_text_isolated(canvas, (indent, 50), label, label_font, LIME)
+    label_w = label_font.getbbox(label)[2] + 28
+    line_y = 50 + 15
     draw.line([(indent + label_w, line_y), (W - indent, line_y)], fill=(*LIME, 140), width=2)
 
-    # ---- título ----
+    # ---- título (más grande, más presencia sobre la foto) ----
     title_font = ImageFont.truetype(FONT_ANTON, anton_size)
     y = 118
-    line_h = int(anton_size * 1.08)
+    line_h = int(anton_size * 1.02)
     for text, color_name in title_lines:
         _draw_text_isolated(canvas, (indent, y), text, title_font, COLORS[color_name])
         y += line_h
 
-    y += 14
-    draw.rectangle([indent, y, indent + 90, y + 5], fill=LIME)
-    y += 26
+    y += 22
+    draw.rectangle([indent, y, indent + 120, y + 7], fill=LIME)
+    y += 40
 
     # ---- subtítulo ----
-    sub_font = ImageFont.truetype(FONT_INTER, 26)
+    sub_font = ImageFont.truetype(FONT_INTER, 32)
     for line in subtitle_lines:
         _draw_text_isolated(canvas, (indent, y), line, sub_font, SUBGRAY)
-        y += 38
+        y += 46
 
     # ---- lockup de marca, esquina inferior izquierda ----
-    brand_font = ImageFont.truetype(FONT_ANTON, 34)
-    brand_y = H - 96
+    brand_font = ImageFont.truetype(FONT_ANTON, 36)
+    brand_y = H - 100
     _draw_text_isolated(canvas, (indent, brand_y), "LA FUGA", brand_font, WHITE)
-    rule_y = brand_y + 46
-    draw.rectangle([indent, rule_y, indent + 70, rule_y + 3], fill=LIME)
-    sub_brand_font = ImageFont.truetype(FONT_INTER, 15)
-    _draw_text_isolated(canvas, (indent, rule_y + 10), "C Y C L I N G   M A G A Z I N E", sub_brand_font, SUBGRAY)
+    rule_y = brand_y + 48
+    draw.rectangle([indent, rule_y, indent + 74, rule_y + 3], fill=LIME)
+    sub_brand_font = ImageFont.truetype(FONT_INTER, 16)
+    _draw_text_isolated(canvas, (indent, rule_y + 11), "C Y C L I N G   M A G A Z I N E", sub_brand_font, SUBGRAY)
 
     final = canvas.convert("RGB")
     final.save(out_path, quality=92)
