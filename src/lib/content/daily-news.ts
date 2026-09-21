@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -1873,6 +1873,114 @@ export async function publishMexicoAtWorldsArticle() {
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
       races: race ? { connect: [{ id: race.id }] } : undefined,
       tags: { connect: [{ id: grandTourTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Omar Andrade, la siguiente generación del semillero de Del Toro,
+// debuta en la crono junior del Mundial el martes 22.
+// Fuentes: El Imparcial, ESPN México, Wikipedia, ClaroSports,
+// Cyclingnews (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const omarAndradeContent = `
+<p>Mientras la atención en Montreal se concentra en Isaac del Toro y su sexto puesto en la contrarreloj élite, otro mexicano se prepara para debutar en un Mundial siguiendo casi al pie de la letra el mismo camino que llevó a Del Toro hasta el podio del Tour de Francia. Omar Andrade Fernández, de 18 años, correrá este martes 22 de septiembre la contrarreloj individual junior masculina — 20,3&nbsp;km con salida a las 12:15 hora de Montreal—, su segunda participación en un Campeonato Mundial de ruta.</p>
+
+<p>Andrade nació el 26 de febrero de 2008 y forma parte del equipo Sub-19 varonil de A.R. Monex Pro Cycling Team para la temporada 2026. En su palmarés nacional destacan el título de campeón mexicano juvenil A de contrarreloj en 2023 y el campeonato nacional de ruta en la categoría juvenil B — resultados que lo consolidaron como una de las piezas centrales de la cantera del equipo antes de dar el salto a competir en Europa bajo sus colores.</p>
+
+<p>No es la primera vez que Andrade viste los colores de México en una cita mundialista: en la edición de 2025, disputada en Kigali, Ruanda, ya había debutado en la contrarreloj junior, donde terminó en el puesto 45. Llega a Montreal, por tanto, con la experiencia de un primer Mundial ya digerida y el objetivo lógico de mejorar esa posición en un trazado más corto que el de Ruanda y sobre un circuito que, en la categoría élite, ya dejó esta semana a Remco Evenepoel por debajo de los 45 minutos en un recorrido de doble longitud.</p>
+
+<p>El nombre de A.R. Monex es, para cualquier aficionado mexicano al ciclismo, sinónimo de una sola cosa: el proyecto que llevó a Isaac del Toro desde Ensenada hasta el UAE Team Emirates. El equipo está registrado como Continental UCI en San Marino desde 2021 — el primero en hacerlo desde el Amica Chips-Knauf en 2009 —, dirigido por los hermanos mexicanos Luis y Alejandro Rodríguez Acevedo, con el objetivo explícito de desarrollar talento sub-23 nacional en el circuito europeo. Del Toro se integró al proyecto en 2019, antes de esa formalización como equipo Continental, y permaneció bajo sus colores hasta finales de 2023, cuando su victoria en el Tour de l'Avenir le abrió las puertas del WorldTour. Andrade, en ese sentido, no es solo un compañero más de cantera: es la generación que entrena bajo la misma estructura, con el ejemplo de Del Toro como prueba viviente de que el modelo funciona.</p>
+
+<p>Conviene precisar que las fuentes no coinciden del todo sobre la cronología exacta del proyecto — algunos medios ubican la llegada de Del Toro al equipo en 2019, cuando A.R. Monex aún operaba como estructura de desarrollo antes de su registro formal como Continental en San Marino en 2021 — pero el hilo conductor es el mismo en todas las versiones: un programa mexicano, financiado y dirigido por mexicanos, pensado específicamente para llevar a corredores jóvenes del ciclismo nacional al pelotón europeo. Ese programa incluye pruebas de selección físicas y psicológicas y programas de desarrollo de entre cuatro y ocho años, según ha detallado el propio equipo en entrevistas — el mismo proceso, en esencia, por el que pasó Andrade antes de ganar sus dos títulos nacionales.</p>
+
+<p>El título juvenil A de contrarreloj que Andrade conquistó en 2023 no es un dato menor: en el ciclismo de formación mexicano, la contrarreloj nacional juvenil suele ser el filtro donde se mide con mayor objetividad el potencial de un corredor, al eliminar variables tácticas y de equipo que sí pesan en una carrera en ruta. Sumar a ese título el campeonato nacional en ruta de la categoría juvenil B —conseguido en una edición anterior, ya como corredor de menor edad dentro de esa categoría— habla de una doble aptitud, tanto contrarrelojista como de carrera de fondo, poco común en corredores de su generación.</p>
+
+<p>En la contrarreloj junior de este martes, Andrade no estará solo representando a México: lo acompañan José Emilio Rodríguez Delgado y Daniel Santiago Moreno García, que completan el equipo junior varonil mexicano en Montreal. Es, en conjunto, la delegación juvenil más nutrida que ha llevado el país a un Mundial de ruta en los últimos años — una señal más de que el trabajo de scouting que A.R. Monex realiza anualmente en México empieza a rendir frutos en profundidad, no solo en la punta de lanza que representa Del Toro.</p>
+
+<p>La prueba llega, además, en una semana en la que el resto de la delegación mexicana ya dejó una huella histórica en Montreal: Del Toro terminó sexto en la crono élite masculina, Romina Hinojosa fue 28ª en la femenina y Sara Roel, campeona nacional de la especialidad, 33ª. Ese desempeño colectivo —el mejor que México ha mostrado en un Mundial de ciclismo de ruta en años recientes— es precisamente el telón de fondo sobre el que se mide la actuación de Andrade: no como un caso aislado, sino como la base de una pirámide que, por primera vez en mucho tiempo, tiene relevo generacional visible en más de una categoría a la vez.</p>
+
+<p>Nada de esto garantiza, por supuesto, un resultado concreto el martes. La contrarreloj es una disciplina que recompensa la experiencia acumulada tanto como el talento puro, y a los 18 años, con un solo Mundial anterior en las piernas, lo razonable es medir el progreso de Andrade en términos relativos más que en posiciones absolutas. Pero el mero hecho de que México vuelva a presentarse con un corredor de la cantera de A.R. Monex en la misma prueba que unos años atrás corría un adolescente de Ensenada hoy convertido en podio del Tour de Francia, es en sí mismo la historia: la de un país que dejó de depender de una sola generación dorada y empezó, en cambio, a construir una línea de producción.</p>
+`.trim()
+
+export async function publishOmarAndradeArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const andrade = await prisma.rider.upsert({
+    where: { slug: 'omar-andrade' },
+    update: {},
+    create: {
+      slug: 'omar-andrade',
+      name: 'Omar Andrade Fernández',
+      nationality: 'México',
+      specialty: 'Contrarreloj',
+      bio: 'Ciclista mexicano nacido el 26 de febrero de 2008. Corre con el equipo Sub-19 de A.R. Monex Pro Cycling Team, el mismo semillero que formó a Isaac del Toro. Campeón nacional juvenil A de contrarreloj (2023) y nacional de ruta juvenil B.',
+    },
+  })
+
+  const [delToro, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [andrade.id, delToro?.id].filter((id): id is number => id !== undefined)
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+
+  const heroImageId = await ensureHeroImage('omar-andrade-crono-junior-mundial-2026', {
+    title: 'Omar Andrade debuta en la crono junior',
+    label: 'Latinos',
+    riders: [{ name: 'Omar Andrade Fernández' }],
+  })
+
+  const baseFields = {
+    title: 'Omar Andrade, la siguiente generación del semillero de Del Toro, debuta en la crono junior del Mundial',
+    subtitle: 'El mexicano de 18 años, del mismo equipo A.R. Monex que formó a Isaac del Toro, corre este martes 22 de septiembre su segunda contrarreloj mundialista',
+    excerpt:
+      'Omar Andrade Fernández, de 18 años y del equipo A.R. Monex —el mismo semillero que llevó a Isaac del Toro al Tour de Francia—, debuta este martes en la contrarreloj junior del Mundial de Montreal, su segunda participación mundialista tras Kigali 2025.',
+    content: omarAndradeContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.elimparcial.com/deporte/2026/09/19/equipo-de-mexico-en-el-mundial-de-ciclismo-2026-quienes-son-los-27-mexicanos-que-competiran-con-isaac-del-toro/',
+      'https://www.espn.com.mx/ciclismo/nota/_/id/16364648/isaac-del-toro-modelo-a-seguir-ar-monex-ciclismo-mexico',
+      'https://en.wikipedia.org/wiki/A.R._Monex_Pro_Cycling_Team',
+      'https://www.clarosports.com/ciclismo/a-seguir-los-pasos-de-isaac-del-toro-ciclistas-mexicanos-se-unen-al-monex-pro-cycling-team/',
+      'https://www.procyclingstats.com/rider/omar-andrade',
+    ]),
+    sourceNames: toJsonField(['El Imparcial', 'ESPN México', 'Wikipedia', 'ClaroSports', 'ProCyclingStats']),
+    seoTitle: 'Omar Andrade: del semillero de A.R. Monex a la crono junior del Mundial',
+    seoDescription:
+      'Omar Andrade Fernández, de 18 años y del mismo equipo A.R. Monex que formó a Isaac del Toro, debuta el martes 22 de septiembre en la contrarreloj junior del Mundial de Montreal.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'omar-andrade-crono-junior-mundial-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: [{ id: ultimaHoraTag.id }] },
+    },
+    create: {
+      slug: 'omar-andrade-crono-junior-mundial-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: [{ id: ultimaHoraTag.id }] },
     },
   })
 
