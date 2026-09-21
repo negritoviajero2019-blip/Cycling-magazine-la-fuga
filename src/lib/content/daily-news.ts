@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -1688,10 +1688,13 @@ export async function publishEvenepoelFourthTTTitleArticle() {
   ])
   const riderIds = [evenepoel?.id, ganna?.id, seixas?.id].filter((id): id is number => id !== undefined)
 
-  const heroImageId = await ensureHeroImage('evenepoel-cuarto-titulo-mundial-crono-2026', {
-    title: 'Evenepoel iguala el récord histórico',
-    label: 'Última hora',
-    riders: [...(evenepoel ? [{ name: 'Remco Evenepoel', team: 'soudal-quick-step' }] : [])],
+  const heroImageId = await ensureCustomHeroImage('evenepoel-cuarto-titulo-mundial-crono-2026', {
+    url: '/images/headers/evenepoel-4th-tt-cover.jpg',
+    altText: 'Evenepoel gana su cuarta crono mundial consecutiva e iguala el récord histórico',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
