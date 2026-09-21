@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -1823,13 +1823,13 @@ export async function publishMexicoAtWorldsArticle() {
     create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
   })
 
-  const heroImageId = await ensureHeroImage('mexico-en-mundial-montreal-2026', {
-    title: 'México en el Mundial de Montreal',
-    label: 'Latinos',
-    riders: [
-      ...(delToro ? [{ name: 'Isaac del Toro' }] : []),
-      { name: 'Romina Hinojosa' },
-    ],
+  const heroImageId = await ensureCustomHeroImage('mexico-en-mundial-montreal-2026', {
+    url: '/images/headers/mexico-worlds-cover.jpg',
+    altText: 'México en el Mundial de Montreal: Del Toro sexto en la crono, Hinojosa hace historia',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
