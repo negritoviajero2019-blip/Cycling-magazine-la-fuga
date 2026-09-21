@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -1738,6 +1738,141 @@ export async function publishEvenepoelFourthTTTitleArticle() {
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
       races: race ? { connect: [{ id: race.id }] } : undefined,
       teams: soudal ? { connect: [{ id: soudal.id }] } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// La participación de México en el Mundial de Montreal 2026: Del
+// Toro 6º en la crono, Hinojosa y Roel top-35 femenino, 26 atletas
+// en 6 categorías. Fuentes: Excélsior, Infobae, El Imparcial,
+// UnoTV (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const mexicoAtWorldsContent = `
+<p>México llegó a Montreal con su delegación más numerosa en años: 26 atletas mexicanos repartidos en las seis categorías del Mundial de ruta 2026, encabezados por Isaac del Toro, cuarto en el ranking UCI y el mexicano mejor posicionado de la historia reciente del ciclismo nacional. Con la contrarreloj ya disputada y la carrera en línea todavía por delante, el balance hasta ahora deja motivos reales para el optimismo.</p>
+
+<p>Del Toro abrió la participación mexicana el domingo con un sexto lugar en la contrarreloj élite masculina, sobre un trazado mayormente llano junto al río San Lorenzo con un repecho final exigente — terreno que en el papel no era el más favorable para un escalador de su perfil. Completó los 39,2&nbsp;km en 46:31.96 —a 1:38.83 del ganador, Remco Evenepoel, que hizo historia con su cuarto título mundial consecutivo—. Es, en los números fríos, una décima ligeramente peor que su quinto puesto de la edición de 2025, pero el contexto importa: la contrarreloj es la disciplina en la que Del Toro menos ha destacado a lo largo de su carrera, y terminar sexto en un campo con los mejores especialistas del mundo, a solo una posición y unos segundos del podio, confirma que su nivel general sigue subiendo incluso en el terreno que menos le favorece — una prueba más de que su margen de mejora, a los 22 años, todavía no ha tocado techo.</p>
+
+<p>La historia más entrañable del día, sin embargo, la protagonizó su pareja. Romina Hinojosa, novia de Isaac del Toro y ya de por sí un nombre propio del ciclismo mexicano tras convertirse este verano en la primera mexicana en terminar el Tour de Francia Femenino, debutó en una contrarreloj de Mundial terminando 28ª, con un tiempo de 56:06.46 — a 5:42.02 de la campeona, Marlen Reusser. Junto a ella, Sara Roel, campeona nacional mexicana de contrarreloj, cerró 33ª con 57:53.48. Entre las dos, México firmó lo que varios medios locales ya describen como una actuación histórica: dos mexicanas dentro del top-35 mundial en la misma prueba, algo que no tenía precedentes recientes para el ciclismo femenino nacional — y una señal concreta de que el crecimiento del ciclismo mexicano ya no depende de un solo nombre.</p>
+
+<p>El resto de la delegación mexicana se reparte entre las pruebas en línea que todavía quedan por disputarse. En la élite masculina, junto a Del Toro correrán Eder Frayre, Edgar Cadena, Ulises Castillo, Carlos García, Antonio Escárcega y Tomás Aguirre — siete corredores en total, la delegación masculina más grande que ha llevado México a un Mundial de ruta en mucho tiempo. En la élite femenina, Hinojosa y Roel se suman a Andrea Ramírez Fregoso, campeona nacional de ruta y primera mexicana en disputar la Vuelta a España Femenina este verano, y a Yareli Salazar, con experiencia olímpica, para completar un cuarteto que buscará dejar huella en la carrera en línea del próximo sábado.</p>
+
+<p>Antes de esa cita masculina, el sábado 26 llega la prueba en línea femenina, de 180,4&nbsp;km sobre el mismo circuito final en el Mont Royal que usarán los hombres al día siguiente. Es la oportunidad de Hinojosa, Roel, Ramírez Fregoso y Salazar de confirmar en un formato distinto —más largo, más táctico, decidido en equipo— lo que ya insinuaron en la contrarreloj: que el ciclismo femenino mexicano tiene, por primera vez en mucho tiempo, un grupo compacto de corredoras compitiendo al nivel que exige un Mundial.</p>
+
+<p>El plato fuerte para México, sin embargo, llega el domingo 27 de septiembre, con la prueba en línea masculina de 273,7&nbsp;km. Del Toro ya figuraba antes del Mundial en la lista de favoritos que manejaba buena parte de la prensa especializada —junto a Evenepoel, Van der Poel y Van Aert— tras su victoria en el GP de Montreal disputado sobre este mismo circuito hace apenas unas semanas. Ese antecedente, sumado a su sexto puesto en la crono y a la confianza que da haber subido al podio del Tour de Francia este verano, mantiene a México con una opción real de pelear por una medalla en la prueba que de verdad reparte el maillot arcoíris más codiciado del calendario.</p>
+
+<p>El resto del equipo masculino tendrá un papel decisivo en esa carrera, aunque no aparezca en los titulares. Con 273,7&nbsp;km por delante y doce vueltas al circuito final de Montreal, ningún corredor gana un Mundial en línea solo: hace falta un equipo que controle el ritmo, cierre huecos y proteja a su líder hasta el momento exacto en que decida atacar. Frayre, Cadena, Castillo, García, Escárcega y Aguirre serán esos seis compañeros — corredores que probablemente no figuren entre los favoritos individuales, pero de cuyo trabajo silencioso depende en gran medida que Del Toro llegue con piernas frescas a la parte decisiva de la carrera.</p>
+
+<p>Lo que deja esta primera jornada, en cualquier caso, va más allá de los resultados individuales. Un país que durante décadas tuvo en Raúl Alcalá su única referencia real en el ciclismo de élite europeo hoy lleva a un Mundial a 26 atletas, con un candidato a medalla en la prueba reina y dos mujeres marcando récords propios el mismo fin de semana. Es, en el sentido más literal, la generación más numerosa y más competitiva que el ciclismo mexicano ha llevado nunca a una cita de este nivel — y todavía quedan por delante los dos días de carreras en línea que de verdad pueden marcar la diferencia en la historia reciente del deporte en el país.</p>
+`.trim()
+
+export async function publishMexicoAtWorldsArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const [hinojosa, roel, ramirezFregoso] = await Promise.all([
+    prisma.rider.upsert({
+      where: { slug: 'romina-hinojosa' },
+      update: {},
+      create: {
+        slug: 'romina-hinojosa',
+        name: 'Romina Hinojosa',
+        nationality: 'México',
+        specialty: 'Ciclismo en ruta',
+        bio: 'Ciclista profesional mexicana, primera mexicana en terminar el Tour de Francia Femenino (2026).',
+      },
+    }),
+    prisma.rider.upsert({
+      where: { slug: 'sara-roel' },
+      update: {},
+      create: {
+        slug: 'sara-roel',
+        name: 'Sara Roel',
+        nationality: 'México',
+        specialty: 'Contrarreloj',
+        bio: 'Ciclista profesional mexicana, campeona nacional de contrarreloj.',
+      },
+    }),
+    prisma.rider.upsert({
+      where: { slug: 'andrea-ramirez-fregoso' },
+      update: {},
+      create: {
+        slug: 'andrea-ramirez-fregoso',
+        name: 'Andrea Ramírez Fregoso',
+        nationality: 'México',
+        specialty: 'Ciclismo en ruta / Contrarreloj',
+        bio: 'Ciclista profesional mexicana nacida en Zapopan, Jalisco. Campeona nacional de ruta y primera mexicana en disputar la Vuelta a España Femenina (2026).',
+      },
+    }),
+  ])
+
+  const [delToro, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [delToro?.id, hinojosa.id, roel.id, ramirezFregoso.id].filter(
+    (id): id is number => id !== undefined,
+  )
+
+  const grandTourTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+
+  const heroImageId = await ensureHeroImage('mexico-en-mundial-montreal-2026', {
+    title: 'México en el Mundial de Montreal',
+    label: 'Latinos',
+    riders: [
+      ...(delToro ? [{ name: 'Isaac del Toro' }] : []),
+      { name: 'Romina Hinojosa' },
+    ],
+  })
+
+  const baseFields = {
+    title: 'La participación de México en el Mundial de Montreal: Del Toro sexto en la crono, Hinojosa hace historia',
+    subtitle: '26 atletas mexicanos compiten en Canadá; Del Toro llega como favorito a la prueba en línea del 27 de septiembre tras terminar sexto en la contrarreloj',
+    excerpt:
+      'México lleva su delegación más numerosa en años al Mundial de Montreal 2026: 26 atletas en seis categorías. Isaac del Toro terminó sexto en la contrarreloj élite, mientras Romina Hinojosa y Sara Roel firmaron una actuación histórica en la femenina.',
+    content: mexicoAtWorldsContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://www.infobae.com/mexico/deportes/2026/09/19/isaac-del-toro-y-la-delegacion-mexicana-que-competira-en-el-mundial-de-ciclismo-de-ruta-montreal-2026/',
+      'https://www.excelsior.com.mx/deportes/isaac-toro-lider-seleccion-mexicana-mundial-ciclismo-ruta-2026-montreal',
+      'https://www.elhorizonte.mx/deportes/del-toro-queda-en-6-lugar-en-contrarreloj-mundial-de-ruta-2026/2274631462',
+      'https://www.elimparcial.com/deporte/2026/09/20/romina-hinojosa-novia-de-isaac-del-toro-debuto-en-la-contrarreloj-del-mundial-de-ciclismo-como-le-fue/',
+      'https://www.unotv.com/deportes/romina-hinojosa-termina-en-el-lugar-28-de-la-contrarreloj-femenina-del-mundial-de-ruta/',
+    ]),
+    sourceNames: toJsonField(['Infobae', 'Excélsior', 'El Horizonte', 'El Imparcial', 'UnoTV']),
+    seoTitle: 'México en el Mundial de Montreal 2026: Del Toro, Hinojosa y Roel',
+    seoDescription:
+      'La delegación mexicana en el Mundial de ciclismo de Montreal 2026: Isaac del Toro sexto en la contrarreloj, Romina Hinojosa y Sara Roel en el top-35 femenino.',
+    readingTime: 7,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'mexico-en-mundial-montreal-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: [{ id: grandTourTag.id }] },
+    },
+    create: {
+      slug: 'mexico-en-mundial-montreal-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: [{ id: grandTourTag.id }] },
     },
   })
 
