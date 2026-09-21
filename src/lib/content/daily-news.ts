@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -1934,10 +1934,13 @@ export async function publishOmarAndradeArticle() {
     create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
   })
 
-  const heroImageId = await ensureHeroImage('omar-andrade-crono-junior-mundial-2026', {
-    title: 'Omar Andrade debuta en la crono junior',
-    label: 'Latinos',
-    riders: [{ name: 'Omar Andrade Fernández' }],
+  const heroImageId = await ensureCustomHeroImage('omar-andrade-crono-junior-mundial-2026', {
+    url: '/images/headers/omar-andrade-cover.jpg',
+    altText: 'El futuro de México: mexicano junior en el Mundial de ciclismo de Montreal 2026',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
   })
 
   const baseFields = {
