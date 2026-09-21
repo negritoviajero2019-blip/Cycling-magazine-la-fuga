@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -1643,6 +1643,98 @@ export async function publishLuxembourgFinalStageArticle() {
       publishedAt: new Date(),
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
       teams: teamIds.length ? { connect: teamIds.map((id) => ({ id })) } : undefined,
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Evenepoel gana su cuarta crono mundial consecutiva, iguala el
+// récord de Cancellara y Martin. Fuentes: Cyclingnews, Cycling
+// Weekly, Domestique Cycling (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const evenepoelFourthTTTitleContent = `
+<p>Remco Evenepoel (Soudal Quick-Step) hizo historia este domingo en Montreal: ganó la contrarreloj individual élite del Mundial de ruta por cuarta vez consecutiva, y con ese resultado igualó el récord de más títulos mundiales de contrarreloj que hasta ahora compartían el suizo Fabian Cancellara y el alemán Tony Martin, con cuatro cada uno. La diferencia es que ni Cancellara ni Martin los ganaron de forma consecutiva — Evenepoel es el primer corredor en toda la historia de la prueba, disputada desde 1994, en encadenar cuatro títulos seguidos.</p>
+
+<p>El belga completó los 39,2&nbsp;km del trazado montrealés en 44:53, a una media de 52,4&nbsp;km/h, y fue el único corredor de todo el día en bajar de los 45 minutos. Filippo Ganna, su rival más directo sobre el papel, tuvo que conformarse otra vez con la plata, a 57 segundos — la tercera vez consecutiva que el italiano termina segundo por detrás de Evenepoel en un Mundial de contrarreloj. El bronce fue para la gran sorpresa de la jornada: Paul Seixas, francés de 19 años, a 1:13 del ganador.</p>
+
+<p>El trazado no dejaba mucho margen para sorpresas de recorrido: 39,2&nbsp;km mayormente llanos junto al río San Lorenzo, con apenas 220&nbsp;metros de desnivel acumulado, pensados para premiar la posición aerodinámica sostenida durante más de tres cuartos de hora. Era, sobre el papel, el terreno perfecto para Evenepoel — y el belga lo confirmó desde el primer parcial, donde ya marcaba la referencia, hasta el repecho final antes de meta, donde ni siquiera perdió el ritmo que había impuesto desde la salida.</p>
+
+<p>&laquo;Es increíble. Obviamente el objetivo era venir aquí y ganar por cuarta vez consecutiva. Fue una motivación muy grande&raquo;, dijo Evenepoel tras cruzar la meta. &laquo;Solo tengo que agradecer a todo el equipo a mi alrededor por la preparación, y a Specialized por el material nuevo que hicieron&raquo;. Son palabras que resumen bien lo que ha sido su temporada contrarreloj: tres victorias en tres cronos disputadas antes de Montreal, incluida una reciente en el GP de Quebec, y una exhibición sobre Tadej Pogačar por 28 segundos en la única contrarreloj individual del Tour de Francia de este verano. Llegaba a Canadá sin haber perdido una sola vez en 2026 contra el reloj, y se va de Canadá exactamente igual.</p>
+
+<p>Su racha de títulos mundiales de contrarreloj arrancó en Glasgow 2023, siguió en Zúrich 2024 y Kigali 2025, y se corona ahora en Montreal — cuatro ciudades, cuatro continentes distintos, cuatro victorias seguidas en una disciplina donde ni siquiera los especialistas más dominantes de la historia habían logrado hilar más de tres. Para dimensionar lo insólito de la racha: ni Cancellara ni Martin, pese a sumar cuatro arcoíris cada uno a lo largo de sus carreras, consiguieron nunca defender el título dos años seguidos de forma consecutiva.</p>
+
+<p>Pero si el resultado en la parte alta de la general era, hasta cierto punto, previsible, la sorpresa del día llegó en el tercer escalón del podio. Paul Seixas, con apenas 19 años y en su primera temporada completa con Decathlon CMA CGM, terminó a solo 16 segundos de Ganna — un resultado que confirma que su 2026 no ha sido casualidad. El francés ya había ganado el título júnior de contrarreloj en el Mundial de 2024, pero este año dio el salto definitivo: se llevó el Tour del País Vasco, y ganó la Flecha Valona convirtiéndose en el vencedor más joven de la historia de esa clásica. &laquo;Es la prueba definitiva de que soy uno de los especialistas&raquo;, dijo tras la carrera, guiado en su preparación por el seleccionador francés Thomas Voeckler. &laquo;Quizás algún día pueda aspirar al primer puesto&raquo;.</p>
+
+<p>El título de este domingo se suma además a un palmarés que ya era extraordinario para un corredor de apenas 26 años: campeón olímpico de contrarreloj y de ruta en los mismos Juegos de París 2024 —el primer ciclista masculino en la historia en lograr ese doblete—, campeón del mundo en ruta en 2023, y ahora cuatro arcoíris consecutivos contra el reloj. Pocas veces un solo corredor ha dominado de forma tan simultánea las dos grandes disciplinas del ciclismo de un día — la ruta y la contrarreloj — durante un período tan largo.</p>
+
+<p>El resultado deja además una lectura clara de cara a la prueba en línea masculina que cierra el Mundial el próximo domingo 27 de septiembre. Evenepoel llega a Montreal en el mejor estado de forma posible, con la moral de un récord histórico recién conseguido, y se suma a la lista de favoritos que ya manejábamos esta semana —Del Toro, Van der Poel, Van Aert— con un argumento que ninguno de ellos puede igualar ahora mismo: no ha perdido ni una sola contrarreloj en toda la temporada. Ganna, por su parte, tendrá que esperar una vez más para colgarse su primer arcoíris individual en esta disciplina, algo que empieza a pesar tanto en su palmarés como en las conversaciones sobre su carrera: tres platas consecutivas ante el mismo rival son, a estas alturas, casi tan difíciles de digerir como una derrota.</p>
+
+<p>Para Seixas, el podio de Montreal llega apenas unos días antes de cumplir 20 años, y confirma una temporada que ya lo había situado en la conversación sobre las nuevas generaciones del pelotón. De cara a la prueba en línea masculina del próximo domingo, su nombre entra ahora también en la lista de corredores a vigilar — no como favorito, pero sí como el tipo de corredor joven capaz de aprovechar cualquier grieta que dejen los favoritos habituales.</p>
+`.trim()
+
+export async function publishEvenepoelFourthTTTitleArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const [evenepoel, ganna, seixas, race, soudal] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'remco-evenepoel' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'filippo-ganna' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'paul-seixas' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+    prisma.team.findUnique({ where: { slug: 'soudal-quick-step' }, select: { id: true } }),
+  ])
+  const riderIds = [evenepoel?.id, ganna?.id, seixas?.id].filter((id): id is number => id !== undefined)
+
+  const heroImageId = await ensureHeroImage('evenepoel-cuarto-titulo-mundial-crono-2026', {
+    title: 'Evenepoel iguala el récord histórico',
+    label: 'Última hora',
+    riders: [...(evenepoel ? [{ name: 'Remco Evenepoel', team: 'soudal-quick-step' }] : [])],
+  })
+
+  const baseFields = {
+    title: 'Evenepoel gana su cuarta crono mundial consecutiva e iguala el récord histórico',
+    subtitle: 'El belga bate a Ganna por 57 segundos y se convierte en el primer corredor en encadenar cuatro títulos mundiales de contrarreloj seguidos; el francés Paul Seixas, de 19 años, sorprende con el bronce',
+    excerpt:
+      'Remco Evenepoel ganó la contrarreloj élite del Mundial de Montreal por cuarta vez consecutiva, igualando el récord de Fabian Cancellara y Tony Martin (4 títulos) pero siendo el primero en lograrlo de forma seguida. Filippo Ganna, plata; Paul Seixas, de 19 años, sorprende con el bronce.',
+    content: evenepoelFourthTTTitleContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://www.cyclingnews.com/pro-cycling/record-breaking-remco-evenepoel-makes-it-four-in-a-row-with-blistering-time-trial-performance-in-montreal/',
+      'https://www.cyclingweekly.com/road-world-championships/remco-evenepoel-crushes-world-championships-elite-mens-time-trial-in-montreal-to-win-his-fourth-consecutive-title',
+      'https://www.domestiquecycling.com/en/news/maybe-one-day-i-can-aim-for-first-paul-seixas-stuns-with-worlds-time-trial-bronze/',
+      'https://www.cyclingnews.com/pro-cycling/teams-riders/its-definitive-proof-that-im-one-of-the-specialists-paul-seixas-makes-his-mark-on-world-championships-time-trial-with-podium/',
+      'https://www.olympics.com/en/news/remco-evenepoel-wins-gold-paris-2024-cycling-men-invididual-time-trial',
+    ]),
+    sourceNames: toJsonField(['Cyclingnews', 'Cycling Weekly', 'Domestique Cycling', 'Cyclingnews', 'Olympics.com']),
+    seoTitle: 'Evenepoel gana su cuarta crono mundial consecutiva en Montreal 2026',
+    seoDescription:
+      'Remco Evenepoel gana la contrarreloj élite del Mundial de Montreal por cuarta vez seguida, un récord histórico. Ganna plata, Paul Seixas sorprende con el bronce.',
+    readingTime: 7,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'evenepoel-cuarto-titulo-mundial-crono-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      teams: soudal ? { set: [{ id: soudal.id }] } : undefined,
+    },
+    create: {
+      slug: 'evenepoel-cuarto-titulo-mundial-crono-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      teams: soudal ? { connect: [{ id: soudal.id }] } : undefined,
     },
   })
 

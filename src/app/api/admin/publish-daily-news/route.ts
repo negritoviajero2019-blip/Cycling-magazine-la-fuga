@@ -16,6 +16,7 @@ import {
   publishWorldsTTEveArticle,
   publishWorldsScheduleByCountryArticle,
   publishLuxembourgFinalStageArticle,
+  publishEvenepoelFourthTTTitleArticle,
 } from '@/lib/content/daily-news'
 
 /**
@@ -45,6 +46,7 @@ export async function POST() {
       publishWorldsTTEveArticle(),
       publishWorldsScheduleByCountryArticle(),
       publishLuxembourgFinalStageArticle(),
+      publishEvenepoelFourthTTTitleArticle(),
     ])
     return NextResponse.json({ ok: true, articles: results })
   } catch (error) {
