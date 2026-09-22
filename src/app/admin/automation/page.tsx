@@ -67,6 +67,12 @@ export default async function AutomationPage() {
         description="Publica un artículo real en cada sección que todavía no tenía uno: caída de Ayuso en Quebec (Última hora), previa del Mundial femenino (Ciclismo femenino), temporada de Richard Carapaz (Latinos), nuevas reglas técnicas UCI (Tecnología) y resultados del Mundial de MTB en Val di Sole (MTB y Gravel). Seguro de correr más de una vez."
         resultKind="generic"
       />
+      <PublishActionButton
+        endpoint="/api/admin/backfill-rider-profiles"
+        label="Cargar perfiles de corredores verificados"
+        description="Aplica edad, peso, logros y estudios verificados a los corredores que ya cubrimos (Del Toro, Hinojosa, Roel, Ramírez Fregoso, Andrade). Seguro de correr más de una vez."
+        resultKind="generic"
+      />
 
       <AutomationPanel isPaused={isPaused} aiConfigured={aiConfigured} />
 
