@@ -1989,3 +1989,124 @@ export async function publishOmarAndradeArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Sigue la participación mexicana en el Mundial de Montreal: horarios,
+// nombres y categorías de quién compite en los próximos días.
+// Fuentes: Wikipedia (2026 UCI Road World Championships), El Imparcial,
+// cyclinguptodate.com (ver sourceUrls). Nota: al cierre de esta
+// edición no hay resultados publicados aún para la crono mixta por
+// equipos ni para las cronos junior de este martes — se actualizará
+// en cuanto haya datos oficiales.
+// ————————————————————————————————————————————————————————————
+
+const mexicoScheduleContent = `
+<p>El Mundial de Ciclismo en Ruta de Montreal 2026 sigue su curso y la delegación mexicana —27 corredores en total, entre élite, Sub-23 y junior— tiene actividad prácticamente todos los días hasta el cierre del domingo 27 de septiembre. Después del sexto lugar de Isaac del Toro y las actuaciones de Romina Hinojosa y Sara Roel en la contrarreloj élite del sábado 20, este martes 22 México vuelve a estar en pista en tres pruebas distintas, todavía sin resultados publicados al momento de esta nota.</p>
+
+<p>Estas son las tres competencias de hoy martes:</p>
+
+<ul>
+<li><strong>Contrarreloj mixta por equipos (40.6 km), 8:30 am hora Montreal.</strong> Selección mexicana: Romina Hinojosa, Andrea Ramírez Fregoso y Yareli Salazar por el lado femenil; Édgar Cadena, Sebastián Ruiz y Tomás Aguirre por el varonil. Quince selecciones nacionales toman parte; México sale tres minutos después de Japón. El formato es un relevo por equipos mixtos de seis corredores: los tres hombres cubren la primera mitad del recorrido y, tras el relevo, las tres mujeres completan la segunda mitad, con el tiempo del equipo tomado en el momento en que cruza la meta el tercer integrante de cada tramo.</li>
+<li><strong>Contrarreloj junior masculina (20.3 km), 12:15–14:25 hora Montreal.</strong> Representan a México Omar Andrade Fernández, José Emilio Rodríguez Delgado y Daniel Santiago Moreno García.</li>
+<li><strong>Contrarreloj junior femenina (10.7 km), 15:15–16:45 hora Montreal.</strong> Categoría en disputa el mismo día; no hay confirmación pública de que la delegación mexicana junior femenil —integrada por Nabyenka Bareño, Natalia Pineda Soto y Gaetana Alhach Sjogren— participe en esta prueba contrarreloj específica, ya que su convocatoria confirmada hasta ahora es para la prueba en ruta del viernes 25.</li>
+</ul>
+
+<p>El lunes 21, un día antes, ya había corrido la contrarreloj individual Sub-23, con Mayte Zamudio, Fernanda Zárate, Gissel Borrón y Atzi Paola por México en la rama femenil (20.3 km) y Sebastián Ruiz, Said Cisneros, Leo Cisneros, José Juan Prieto, José Antonio Prieto y Michael Zárate en la varonil (31.3 km). Tampoco de esa prueba hay resultados confirmados con corredores mexicanos en las fuentes consultadas hasta el momento.</p>
+
+<p>Lo que sí quedó confirmado, y ya lo reportamos en su momento, es el resultado de la contrarreloj élite del sábado 20 de septiembre: Isaac del Toro terminó sexto en la rama varonil, con un tiempo de 46:31.96, a 1:38.83 del campeón Remco Evenepoel. En la rama femenil, Romina Hinojosa fue 28ª (56:06.46) y Sara Roel, campeona nacional de la especialidad, 33ª (57:53.48).</p>
+
+<p>Vale la pena poner esta agenda en contexto. En Kigali 2025, la delegación mexicana en el Mundial de ruta fue considerablemente más reducida, y en varias categorías —particularmente junior y Sub-23 femenil— México no llegó a tener representación en todas las pruebas del programa. La lista de 27 corredores convocados para Montreal 2026, cubriendo las seis categorías del calendario (élite, Sub-23 y junior, en ambas ramas), es la delegación más numerosa y completa que el país ha llevado a una cita mundialista de ruta en años recientes. No es casualidad: coincide con el momento de mayor visibilidad internacional que ha tenido el ciclismo mexicano, con Isaac del Toro instalado como tercer lugar del Ranking Mundial UCI, solo detrás de Remco Evenepoel y Tadej Pogačar, y corriendo para el UAE Team Emirates-XRG, uno de los equipos WorldTour más fuertes del pelotón.</p>
+
+<p>Ese crecimiento en el número de convocados no se traduce automáticamente en resultados —eso todavía está por verse conforme avance la semana—, pero sí es un indicador de que el trabajo de las federaciones y los programas de desarrollo nacionales, como el de A.R. Monex Pro Cycling Team en la rama junior, está identificando y llevando a competir internacionalmente a más corredores mexicanos que antes, y no solo en la categoría élite masculina donde tradicionalmente se ha concentrado la atención.</p>
+
+<p>De cara al fin de semana, el calendario de pruebas en ruta —la parte más vistosa del Mundial, donde se define el maillot arcoíris en cada categoría— es el siguiente:</p>
+
+<ul>
+<li><strong>Jueves 24 de septiembre:</strong> ruta Sub-23 femenil (134 km) y ruta junior varonil, ambas con representación mexicana confirmada.</li>
+<li><strong>Viernes 25 de septiembre:</strong> ruta Sub-23 varonil (174.2 km) y ruta junior femenil (80.4 km).</li>
+<li><strong>Sábado 26 de septiembre:</strong> ruta élite femenil (180.1 km), con Hinojosa, Roel, Salazar y Ramírez Fregoso como abanderadas mexicanas.</li>
+<li><strong>Domingo 27 de septiembre:</strong> ruta élite varonil (273.4 km), la prueba reina del Mundial, con Isaac del Toro como principal carta mexicana junto con Eder Frayre, Édgar Cadena, Ulises Castillo, José Antonio Escárcega, Carlos García y Tomás Aguirre.</li>
+</ul>
+
+<p>Es, en conjunto, la agenda más cargada que México ha tenido en un Mundial de ciclismo de ruta en años recientes: prácticamente ninguna categoría —élite, Sub-23 o junior, en ruta o contrarreloj— se queda sin representación azteca. Entre los nombres a seguir de cerca en las próximas pruebas en ruta, además de Del Toro, está el propio Omar Andrade, quien de terminar su participación en la crono junior de hoy, todavía tendría por delante la prueba en ruta del jueves 24, la misma en la que México también estará representado por José Emilio Rodríguez Delgado y Daniel Santiago Moreno García.</p>
+
+<p>La cobertura televisiva en México corre a cargo de Claro Sports, que ha transmitido en vivo las 14 competencias programadas para Montreal 2026. En cuanto haya resultados oficiales de la crono mixta y de las cronos junior de hoy —ninguna de las páginas de resultados oficiales que consultamos, incluido ProCyclingStats, los tenía publicados al cierre de esta nota—, actualizaremos la cobertura con el detalle de cómo le fue a cada corredor mexicano.</p>
+`.trim()
+
+export async function publishMexicoScheduleUpdateArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const [delToro, hinojosa, roel, andrade, ramirezFregoso, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'romina-hinojosa' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'sara-roel' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'omar-andrade' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'andrea-ramirez-fregoso' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [delToro?.id, hinojosa?.id, roel?.id, andrade?.id, ramirezFregoso?.id].filter(
+    (id): id is number => id !== undefined,
+  )
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+
+  const heroImageId = await ensureCustomHeroImage('mexico-agenda-mundial-montreal-2026', {
+    url: '/images/headers/mexico-worlds-cover.jpg',
+    altText: 'La participación de México continúa en el Mundial de ciclismo de Montreal 2026',
+    credit: 'Ilustración: La Fuga',
+    width: 1600,
+    height: 900,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title: 'Sigue la participación de México en el Mundial de Montreal: horarios, nombres y categorías',
+    subtitle: 'Este martes corren la crono mixta por equipos y las cronos junior; el fin de semana llegan las pruebas en ruta con Isaac del Toro a la cabeza',
+    excerpt:
+      'Guía completa de la agenda mexicana en el Mundial de ciclismo de Montreal 2026: quién compite, en qué categoría y a qué hora, desde la crono mixta y las cronos junior de este martes hasta las pruebas en ruta del fin de semana.',
+    content: mexicoScheduleContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://en.wikipedia.org/wiki/2026_UCI_Road_World_Championships',
+      'https://www.elimparcial.com/deporte/2026/09/19/equipo-de-mexico-en-el-mundial-de-ciclismo-2026-quienes-son-los-27-mexicanos-que-competiran-con-isaac-del-toro/',
+      'https://cyclinguptodate.com/cycling/world-championships-2026-continue-tuesday-with-mixed-ttt-and-junior-mens-and-womens-time-trials-start-times-and-how-to-watch',
+      'https://cyclinguptodate.com/cycling/start-times-order-world-championships-2026-montreal-team-time-trial-mixed-relay-switzerland-australia-france-italy-and-germany-battle-for-rainbow-jersey',
+      'https://www.procyclingstats.com/race/uci-world-championships-itt-mj/2026/result',
+    ]),
+    sourceNames: toJsonField(['Wikipedia', 'El Imparcial', 'CyclingUpToDate', 'ProCyclingStats']),
+    seoTitle: 'Agenda de México en el Mundial de ciclismo de Montreal 2026: horarios y corredores',
+    seoDescription:
+      'Horarios, nombres y categorías de todos los mexicanos que compiten en el Mundial de ciclismo de Montreal 2026, de la crono mixta de hoy a las pruebas en ruta del fin de semana.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'mexico-agenda-mundial-montreal-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: [{ id: ultimaHoraTag.id }] },
+    },
+    create: {
+      slug: 'mexico-agenda-mundial-montreal-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: [{ id: ultimaHoraTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
