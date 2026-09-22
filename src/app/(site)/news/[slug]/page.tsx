@@ -14,6 +14,7 @@ import { NewsletterForm } from '@/components/editorial/NewsletterForm'
 import { getArticleBySlug, getRelatedArticles, incrementArticleView } from '@/lib/content/queries'
 import { formatDate, formatDateTime } from '@/lib/content/format-date'
 import { fromJsonField } from '@/lib/content/json-field'
+import { linkifyRiderNames } from '@/lib/content/rider-links'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { newsArticleJsonLd } from '@/lib/seo/structured-data'
 import { branding } from '@/lib/config/branding'
@@ -123,7 +124,10 @@ export default async function ArticlePage({ params }: Props) {
             )}
           </div>
 
-          <div className="prose-article" dangerouslySetInnerHTML={{ __html: article.content }} />
+          <div
+            className="prose-article"
+            dangerouslySetInnerHTML={{ __html: linkifyRiderNames(article.content, article.riders) }}
+          />
 
           <AdInArticle />
 

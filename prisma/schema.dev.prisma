@@ -176,8 +176,14 @@ model Rider {
   currentTeamId Int?
   currentTeam  Team?     @relation(fields: [currentTeamId], references: [id])
   specialty    String?
-  bio          String?  
-  stats        String?  
+  bio          String?
+  stats        String?
+  weightKg     Float?
+  education    String?
+  achievements String?
+  photoCredit  String?
+  photoSourceUrl String?
+  profileVerifiedAt DateTime?
 
   results   Result[]
   transfers Transfer[] @relation("RiderTransfers")

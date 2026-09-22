@@ -177,6 +177,12 @@ model Rider {
   specialty    String?
   bio          String?   @db.Text
   stats        String?   @db.Text
+  weightKg     Float?
+  education    String?   @db.Text
+  achievements String?   @db.Text
+  photoCredit  String?
+  photoSourceUrl String?
+  profileVerifiedAt DateTime?
 
   results   Result[]
   transfers Transfer[] @relation("RiderTransfers")

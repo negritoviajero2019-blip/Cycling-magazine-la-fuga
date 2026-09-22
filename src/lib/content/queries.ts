@@ -242,6 +242,14 @@ export async function getRiderBySlug(slug: string) {
         include: {
           currentTeam: true,
           articles: { where: { status: { in: PUBLIC_STATUSES } }, select: summarySelect, take: 12 },
+          results: {
+            orderBy: { date: 'desc' },
+            take: 15,
+            include: {
+              race: { select: { name: true, slug: true } },
+              stage: { select: { number: true, startCity: true, endCity: true } },
+            },
+          },
         },
       }),
     null,

@@ -51,6 +51,17 @@ export function formatRelativeTime(date: Date): string {
   return formatDate(date)
 }
 
+/** Edad en años cumplidos a partir de la fecha de nacimiento. */
+export function calculateAge(birthDate: Date): number {
+  const now = new Date()
+  let age = now.getFullYear() - birthDate.getFullYear()
+  const hasHadBirthdayThisYear =
+    now.getMonth() > birthDate.getMonth() ||
+    (now.getMonth() === birthDate.getMonth() && now.getDate() >= birthDate.getDate())
+  if (!hasHadBirthdayThisYear) age -= 1
+  return age
+}
+
 /** "Hoy", "Mañana", "En 3 días" — para la franja de próxima carrera. */
 export function formatDaysUntil(date: Date): string {
   const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate())
