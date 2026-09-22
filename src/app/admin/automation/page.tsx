@@ -73,6 +73,12 @@ export default async function AutomationPage() {
         description="Aplica edad, peso, logros y estudios verificados a los corredores que ya cubrimos (Del Toro, Hinojosa, Roel, Ramírez Fregoso, Andrade). Seguro de correr más de una vez."
         resultKind="generic"
       />
+      <PublishActionButton
+        endpoint="/api/admin/backfill-rider-rankings"
+        label="Cargar ranking UCI (Top 30) y marcar retirados"
+        description="Aplica el Top 30 del ranking UCI masculino verificado en ProCyclingStats y marca como retirados a Contador, Schleck y Van Vleuten. Seguro de correr más de una vez."
+        resultKind="generic"
+      />
 
       <AutomationPanel isPaused={isPaused} aiConfigured={aiConfigured} />
 

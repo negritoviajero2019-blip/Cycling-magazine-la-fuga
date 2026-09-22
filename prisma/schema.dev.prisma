@@ -184,6 +184,8 @@ model Rider {
   photoCredit  String?
   photoSourceUrl String?
   profileVerifiedAt DateTime?
+  uciRanking   Int?
+  isRetired    Boolean   @default(false)
 
   results   Result[]
   transfers Transfer[] @relation("RiderTransfers")
