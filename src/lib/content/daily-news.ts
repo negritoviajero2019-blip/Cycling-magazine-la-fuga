@@ -2056,7 +2056,7 @@ export async function publishMexicoScheduleUpdateArticle() {
   })
 
   const heroImageId = await ensureCustomHeroImage('mexico-agenda-mundial-montreal-2026', {
-    url: '/images/headers/mexico-worlds-cover.jpg',
+    url: '/images/headers/mexico-schedule-update-cover.jpg',
     altText: 'La participación de México continúa en el Mundial de ciclismo de Montreal 2026',
     credit: 'Ilustración: La Fuga',
     width: 1600,
