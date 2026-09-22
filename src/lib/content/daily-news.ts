@@ -1889,6 +1889,11 @@ export async function publishMexicoAtWorldsArticle() {
 const omarAndradeContent = `
 <p>Mientras la atención en Montreal se concentra en Isaac del Toro y su sexto puesto en la contrarreloj élite, otro mexicano se prepara para debutar en un Mundial siguiendo casi al pie de la letra el mismo camino que llevó a Del Toro hasta el podio del Tour de Francia. Omar Andrade Fernández, de 18 años, correrá este martes 22 de septiembre la contrarreloj individual junior masculina — 20,3&nbsp;km con salida a las 12:15 hora de Montreal—, su segunda participación en un Campeonato Mundial de ruta.</p>
 
+<figure class="inline-photo">
+<img src="/images/headers/omar-andrade-cover.jpg" alt="Un futuro muy presente en el ciclismo mexicano" width="1672" height="941" />
+<figcaption>Ilustración: La Fuga</figcaption>
+</figure>
+
 <p>Andrade nació el 26 de febrero de 2008 y forma parte del equipo Sub-19 varonil de A.R. Monex Pro Cycling Team para la temporada 2026. En su palmarés nacional destacan el título de campeón mexicano juvenil A de contrarreloj en 2023 y el campeonato nacional de ruta en la categoría juvenil B — resultados que lo consolidaron como una de las piezas centrales de la cantera del equipo antes de dar el salto a competir en Europa bajo sus colores.</p>
 
 <p>No es la primera vez que Andrade viste los colores de México en una cita mundialista: en la edición de 2025, disputada en Kigali, Ruanda, ya había debutado en la contrarreloj junior, donde terminó en el puesto 45. Llega a Montreal, por tanto, con la experiencia de un primer Mundial ya digerida y el objetivo lógico de mejorar esa posición en un trazado más corto que el de Ruanda y sobre un circuito que, en la categoría élite, ya dejó esta semana a Remco Evenepoel por debajo de los 45 minutos en un recorrido de doble longitud.</p>
@@ -1936,10 +1941,10 @@ export async function publishOmarAndradeArticle() {
 
   const heroImageId = await ensureCustomHeroImage('omar-andrade-crono-junior-mundial-2026', {
     url: '/images/headers/omar-andrade-cover.jpg',
-    altText: 'El futuro de México: mexicano junior en el Mundial de ciclismo de Montreal 2026',
+    altText: 'Un futuro muy presente en el ciclismo mexicano',
     credit: 'Ilustración: La Fuga',
-    width: 1600,
-    height: 900,
+    width: 1672,
+    height: 941,
     source: 'cover-composited',
   })
 
