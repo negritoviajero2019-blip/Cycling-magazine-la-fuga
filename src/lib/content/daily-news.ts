@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -2179,10 +2179,13 @@ export async function publishNabyenkaBarenoArticle() {
     create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
   })
 
-  const heroImageId = await ensureHeroImage('nabyenka-bareno-crono-junior-mundial-2026', {
-    title: 'Nabyenka Bareño, mejor latinoamericana en la crono junior',
-    label: 'Latinos',
-    riders: [{ name: 'Nabyenka Bareño' }],
+  const heroImageId = await ensureCustomHeroImage('nabyenka-bareno-crono-junior-mundial-2026', {
+    url: '/images/headers/nabyenka-bareno-cover.jpg',
+    altText: 'Crono junior femenina mexicana: Nabyenka Bareño fue 13ª, la mejor latinoamericana de la prueba',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
   })
 
   const baseFields = {
