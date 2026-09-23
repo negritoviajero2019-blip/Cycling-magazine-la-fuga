@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -2100,6 +2100,127 @@ export async function publishMexicoScheduleUpdateArticle() {
     },
     create: {
       slug: 'mexico-agenda-mundial-montreal-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: [{ id: ultimaHoraTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Nabyenka Bareño, mejor latinoamericana en la crono junior
+// femenina del Mundial de Montreal (13ª, martes 22 de septiembre).
+// Fuentes: Infobae, La Crónica de Hoy, Cyclingnews, CyclingUpToDate
+// (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const nabyenkaBarenoContent = `
+<p>De las tres pruebas mexicanas del martes en el Mundial de Montreal, la más alentadora terminó siendo la que menos reflectores tenía encima. En la contrarreloj junior femenina, Nabyenka Bareño, originaria de Baja California Sur, terminó 13ª entre las mejores juveniles del mundo — y con ese resultado se convirtió en la mejor representante mexicana y también la mejor de toda Latinoamérica en la prueba.</p>
+
+<p>Bareño completó los 10,7&nbsp;km del trazado montrealense en 16:18.15 minutos, a una velocidad promedio de 39.380 km/h, a 1:00.64 minutos de la ganadora, en un pelotón de 58 corredoras de 35 países. No es un margen pequeño frente a la campeona, pero sí lo es frente al resto de Latinoamérica: la siguiente mejor sudamericana en la general, la colombiana Zara Sofía Lamprea —de 17 años, originaria de Bogotá—, terminó apenas un lugar por detrás, en el 14º puesto, con un tiempo prácticamente idéntico (16:18, promedio 39.375 km/h). Bareño le sacó la diferencia mínima que separa a la mejor del continente de la segunda mejor: unas décimas de segundo.</p>
+
+<p>La otra representante mexicana en la prueba, Gaetana Alhach, completó el recorrido en el puesto 37, con un tiempo de 17:08.37 minutos. Entre las dos, México sostuvo una presencia real en una categoría —la contrarreloj junior femenina— donde históricamente el país apenas había figurado.</p>
+
+<p>La corona se la llevó la polaca Maria Okrucińska, de apenas 18 años y radicada en los Países Bajos, con un crono contundente de 15:17.51 —más de 42&nbsp;km/h de promedio— que superó por 12.25 segundos a la belga Yana Decruyenaere (plata, 15:29.76) y por 24.51 segundos a la británica Aalia Clay (bronce, 15:42.02). Para Polonia fue su primer título mundial en ciclismo de ruta en 12 años, desde el oro de Michał Kwiatkowski en Ponferrada 2014, y el esfuerzo de Okrucińska fue tan extremo que, según reportó Cyclingnews, la corredora llegó a desplomarse brevemente al cruzar la meta antes de recuperarse para subir al podio.</p>
+
+<p>El margen entre Bareño y Lamprea —un solo lugar, y unas décimas de segundo en el crono— ilustra algo que se repite en el ciclismo femenino juvenil latinoamericano: el nivel entre las mejores corredoras de la región es cada vez más parejo, lo que en la práctica significa que cualquier detalle de preparación, material o experiencia de carrera puede decidir quién termina siendo "la mejor de Latinoamérica" en una prueba determinada. Que México y Colombia se hayan repartido esas dos primeras posiciones latinoamericanas, y no una sola potencia regional histórica, también dice algo sobre cómo se ha ampliado el mapa de dónde salen las ciclistas jóvenes competitivas del continente. La Federación Colombiana de Ciclismo, de hecho, celebró el resultado de Lamprea como confirmación de su proyección internacional — la misma lectura que cabe hacer del de Bareño para México.</p>
+
+<p>El resultado de Bareño se suma a una semana que, en conjunto, ha sido la más sólida que México ha tenido en un Mundial de ciclismo de ruta en años recientes. El sábado 20, Isaac del Toro fue sexto en la contrarreloj élite masculina (46:31.96, a 1:38.83 del campeón Remco Evenepoel) y Romina Hinojosa (28ª, 56:06.46) y Sara Roel (33ª, 57:53.48) firmaron sus propias actuaciones destacadas en la femenina. El martes 22, además de la prueba de Bareño, México debutó en el relevo mixto por equipos —terminando 14º de 15 selecciones, con Italia llevándose el oro (51:32.28) por delante de Francia (+9s) y Suiza (+20s)— y corrió la contrarreloj junior varonil, donde José Emilio Rodríguez Delgado fue el mejor mexicano en el puesto 22 (26:32.31) y Omar Andrade Fernández terminó 54º (28:12.28), en una prueba que ganó el español Benjamín Noval con 25:17.</p>
+
+<p>Tomadas en conjunto, estas actuaciones —ninguna de ellas una medalla, pero casi todas dentro o cerca del tercio superior de sus respectivas pruebas— dibujan algo más significativo que un resultado aislado: una generación de corredores y corredoras mexicanas jóvenes que, categoría por categoría, ya no llegan a un Mundial solo a completar el recorrido, sino a medirse de tú a tú con las principales potencias del ciclismo europeo. La delegación mexicana en Montreal, de 27 corredores en total entre las categorías élite, Sub-23 y junior, todavía tiene por delante las pruebas en ruta del fin de semana: la junior varonil y la Sub-23 femenil el jueves 24, la Sub-23 varonil y la junior femenil —donde Bareño y Alhach tendrán otra oportunidad— el viernes 25, la élite femenil el sábado 26 y, para cerrar el Mundial, la élite varonil el domingo 27 con Isaac del Toro como principal carta mexicana.</p>
+`.trim()
+
+export async function publishNabyenkaBarenoArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const bareno = await prisma.rider.upsert({
+    where: { slug: 'nabyenka-bareno' },
+    update: {},
+    create: {
+      slug: 'nabyenka-bareno',
+      name: 'Nabyenka Bareño',
+      nationality: 'México',
+      specialty: 'Contrarreloj',
+      bio: 'Ciclista mexicana originaria de Baja California Sur. En septiembre de 2026 fue 13ª en la contrarreloj junior femenina del Mundial de ciclismo de Montreal, la mejor actuación de una mexicana y de una latinoamericana en la prueba.',
+    },
+  })
+
+  const alhach = await prisma.rider.upsert({
+    where: { slug: 'gaetana-alhach-sjogren' },
+    update: {},
+    create: {
+      slug: 'gaetana-alhach-sjogren',
+      name: 'Gaetana Alhach',
+      nationality: 'México',
+      specialty: 'Contrarreloj',
+      bio: 'Ciclista mexicana junior. Compitió en la contrarreloj junior femenina del Mundial de ciclismo de Montreal 2026, donde terminó en el puesto 37.',
+    },
+  })
+
+  const [delToro, hinojosa, roel, andrade, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'romina-hinojosa' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'sara-roel' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'omar-andrade' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [bareno.id, alhach.id, delToro?.id, hinojosa?.id, roel?.id, andrade?.id].filter(
+    (id): id is number => id !== undefined,
+  )
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+
+  const heroImageId = await ensureHeroImage('nabyenka-bareno-crono-junior-mundial-2026', {
+    title: 'Nabyenka Bareño, mejor latinoamericana en la crono junior',
+    label: 'Latinos',
+    riders: [{ name: 'Nabyenka Bareño' }],
+  })
+
+  const baseFields = {
+    title: 'Nabyenka Bareño, la mejor latinoamericana en la crono junior femenina del Mundial de Montreal',
+    subtitle: 'La mexicana terminó 13ª en la contrarreloj junior, por delante de toda Sudamérica, en una jornada en la que Polonia y Maria Okrucińska se coronaron campeonas',
+    excerpt:
+      'Nabyenka Bareño fue 13ª en la contrarreloj junior femenina del Mundial de Montreal 2026, la mejor actuación mexicana y latinoamericana de la prueba, que ganó la polaca Maria Okrucińska.',
+    content: nabyenkaBarenoContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.infobae.com/mexico/deportes/2026/09/23/nabyenka-bareno-pone-a-mexico-y-latinoamerica-entre-las-mejores-ciclistas-de-la-prueba-contrarreloj-junior-en-montreal-2026/',
+      'https://www.cronica.com.mx/deportes/2026/09/22/nabyenka-bareno-brilla-en-montreal-2026-firma-la-mejor-actuacion-mexicana-en-la-contrarreloj-junior/',
+      'https://www.cyclingnews.com/pro-cycling/womens-cycling/road-world-championships-maria-okrucinska-smashes-junior-womens-time-trial-to-take-gold-for-poland-in-montreal/',
+      'https://cyclinguptodate.com/cycling/results-world-championships-junior-womens-time-trial-maria-okrucinska-crowned-world-champion-in-montreal-as-britains-aalia-clay-takes-third',
+      'https://federacioncolombianadeciclismo.com/zara-lamprea-firma-un-destacado-decimocuarto-lugar-en-la-cri-junior-del-mundial-de-montreal/',
+    ]),
+    sourceNames: toJsonField(['Infobae', 'La Crónica de Hoy', 'Cyclingnews', 'CyclingUpToDate', 'Federación Colombiana de Ciclismo']),
+    seoTitle: 'Nabyenka Bareño, 13ª y mejor latinoamericana en la crono junior del Mundial 2026',
+    seoDescription:
+      'Nabyenka Bareño terminó 13ª en la contrarreloj junior femenina del Mundial de Montreal 2026, la mejor actuación mexicana y latinoamericana de la prueba, ganada por la polaca Maria Okrucińska.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'nabyenka-bareno-crono-junior-mundial-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: [{ id: ultimaHoraTag.id }] },
+    },
+    create: {
+      slug: 'nabyenka-bareno-crono-junior-mundial-2026',
       ...baseFields,
       publishedAt: new Date(),
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
