@@ -2234,3 +2234,98 @@ export async function publishNabyenkaBarenoArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Richard Carapaz se retira del Mundial de Montreal 2026 por
+// complicaciones de salud (anunciado el 19 de septiembre).
+// Fuentes: El Comercio, GolCaracol/Noticias Caracol, El Telégrafo,
+// esciclismo.com (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const carapazWithdrawalContent = `
+<p>Richard Carapaz no estará en la línea de salida de la prueba en ruta élite del Mundial de ciclismo de Montreal 2026, programada para el domingo 27 de septiembre. El ecuatoriano confirmó su baja el 19 de septiembre por "complicaciones de salud" que no detalló públicamente, apenas seis días después de haber completado la Vuelta a España.</p>
+
+<p>"Lo más responsable es priorizar mi salud y enfocarme en una pronta recuperación", declaró Carapaz al anunciar la decisión, tomada de manera conjunta con su equipo de rendimiento tras una evaluación médica. El corredor de Carchi notificó formalmente su ausencia a la Federación Ecuatoriana de Ciclismo (FEC) y aseguró que continuará su tratamiento con el objetivo de "regresar lo antes posible a los entrenamientos". También dedicó un mensaje a sus compañeros de selección: "Deseo el mayor de los éxitos a toda la delegación tricolor que nos representará".</p>
+
+<p>La baja llega en el cierre de la que ha sido, por resultados, una de las mejores temporadas de la carrera de Carapaz. En 2026 terminó 4º en la clasificación general de la Vuelta a España, a 6:54 del campeón Enric Mas; fue 8º en el Tour de Francia, donde ganó dos etapas y se llevó la clasificación de la montaña; y sumó podios de segundo lugar tanto en el Tour de Suiza como en la Clásica de San Sebastián. Es, en conjunto, el nivel que ya había llevado a este medio a describirlo como uno de los latinoamericanos más completos del año, capaz de competir de igual a igual en montaña, clasicomanía y regularidad general en las tres semanas de una gran vuelta.</p>
+
+<p>Precisamente por eso su ausencia en Montreal se siente como una baja sensible para las aspiraciones de Ecuador y, en términos generales, para la representación latinoamericana en la prueba reina del Mundial. Carapaz ya tiene un antecedente propio en la ruta élite: ganó el Giro de Italia 2019 —el primer ecuatoriano en lograrlo— y el oro olímpico en ruta en Tokio 2020, convirtiéndose en el primer corredor de la historia en combinar un oro olímpico en ruta con podios de general en las tres grandes vueltas. Ese palmarés lo situaba entre los nombres a vigilar en un recorrido de 273,7&nbsp;km, uno de los más exigentes que ha tenido un Mundial de ruta en años recientes.</p>
+
+<p>No es la primera vez que una baja de última hora aparta a Carapaz de un Mundial: en 2024 tuvo que ausentarse por un problema familiar. En esta ocasión, ni él ni su entorno han detallado la naturaleza exacta de las "complicaciones de salud" que motivaron la decisión, y hasta el cierre de esta nota tampoco se ha emitido un comunicado público por parte de EF Education-EasyPost, su equipo de trabajo, sobre el estado del corredor.</p>
+
+<p>La baja de Carapaz no deja a Ecuador sin bandera en Montreal. Jhonatan Narváez, que llega de una temporada 2026 con tres victorias de etapa en el Giro de Italia y el segundo puesto en la general del Tour Down Under, seguirá encabezando a la delegación ecuatoriana en la prueba élite junto con Jefferson Cepeda y Alexander Cepeda, mientras que en la categoría Sub-23 el país estará representado el viernes 25 por Mateo Ramírez y Anthony Coque. Es, con todo, una selección que pierde a su corredor más laureado justo antes de la prueba que corona al campeón del mundo.</p>
+
+<p>La prueba en ruta élite masculina del domingo 27 seguirá adelante con el resto del pelotón, encabezado por nombres como Tadej Pogačar, Remco Evenepoel e Isaac del Toro, mientras Ecuador deberá reconfigurar su estrategia de cara a una cita que, sin su corredor más laureado de la última década, pierde a uno de sus principales aspirantes al podio.</p>
+`.trim()
+
+export async function publishCarapazWithdrawalArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const [carapaz, delToro, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'richard-carapaz' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [carapaz?.id, delToro?.id].filter((id): id is number => id !== undefined)
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+
+  const heroImageId = await ensureCustomHeroImage('richard-carapaz-baja-mundial-montreal-2026', {
+    url: '/images/headers/richard-carapaz-baja-cover.jpg',
+    altText: 'Richard es baja del Mundial: problemas de salud complican su participación y decide no ir',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title: 'Richard Carapaz se baja del Mundial de Montreal 2026 por complicaciones de salud',
+    subtitle: 'El ecuatoriano, 4º en la Vuelta a España y con dos etapas en el Tour de Francia este año, no correrá la prueba en ruta élite del domingo 27',
+    excerpt:
+      'Richard Carapaz confirmó su baja del Mundial de ciclismo de Montreal 2026 por complicaciones de salud, seis días después de terminar 4º en la Vuelta a España. No correrá la prueba en ruta élite del 27 de septiembre.',
+    content: carapazWithdrawalContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.elcomercio.com/deportes/ciclismo/richard-carapaz-mundial-ciclismo-2026-salud-ecuador/',
+      'https://www.noticiascaracol.com/golcaracol/ciclismo/baja-sensible-en-el-mundial-de-ciclismo-2026-he-presentado-complicaciones-de-salud-cb20',
+      'https://www.eltelegrafo.com.ec/noticias/deportes/212/ecuador-pierde-a-richard-carapaz-para-el-mundial-de-ciclismo-2026',
+      'https://www.esciclismo.com/actualidad/carretera/93138.html',
+    ]),
+    sourceNames: toJsonField(['El Comercio', 'Noticias Caracol', 'El Telégrafo', 'esciclismo.com']),
+    seoTitle: 'Richard Carapaz se retira del Mundial de ciclismo de Montreal 2026',
+    seoDescription:
+      'Richard Carapaz confirmó su baja del Mundial de Montreal 2026 por complicaciones de salud, tras terminar 4º en la Vuelta a España. No correrá la ruta élite del 27 de septiembre.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'richard-carapaz-baja-mundial-montreal-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: [{ id: ultimaHoraTag.id }] },
+    },
+    create: {
+      slug: 'richard-carapaz-baja-mundial-montreal-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: [{ id: ultimaHoraTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
