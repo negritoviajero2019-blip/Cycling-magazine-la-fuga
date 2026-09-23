@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -2384,10 +2384,13 @@ export async function publishLanceArmstrongLegendArticle() {
     create: { slug: 'leyendas', name: 'Leyendas', type: 'topic' },
   })
 
-  const heroImageId = await ensureHeroImage('lance-armstrong-leyenda-dopaje-2026', {
-    title: 'Lance Armstrong: la leyenda que se desmoronó',
-    label: 'Leyendas',
-    riders: [{ name: 'Lance Armstrong' }],
+  const heroImageId = await ensureCustomHeroImage('lance-armstrong-leyenda-dopaje-2026', {
+    url: '/images/headers/lance-armstrong-cover.jpg',
+    altText: 'Uno de los más grandes, manchado por el doping: el ascenso y la caída de un héroe',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
   })
 
   const baseFields = {
