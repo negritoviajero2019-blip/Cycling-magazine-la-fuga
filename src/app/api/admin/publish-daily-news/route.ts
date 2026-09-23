@@ -22,6 +22,7 @@ import {
   publishMexicoScheduleUpdateArticle,
   publishNabyenkaBarenoArticle,
   publishCarapazWithdrawalArticle,
+  publishLanceArmstrongLegendArticle,
 } from '@/lib/content/daily-news'
 
 /**
@@ -57,6 +58,7 @@ export async function POST() {
       publishMexicoScheduleUpdateArticle(),
       publishNabyenkaBarenoArticle(),
       publishCarapazWithdrawalArticle(),
+      publishLanceArmstrongLegendArticle(),
     ])
     return NextResponse.json({ ok: true, articles: results })
   } catch (error) {

@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -2324,6 +2324,113 @@ export async function publishCarapazWithdrawalArticle() {
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
       races: race ? { connect: [{ id: race.id }] } : undefined,
       tags: { connect: [{ id: ultimaHoraTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Lance Armstrong: la leyenda que se desmoronó — siete Tours de
+// Francia, un escándalo de dopaje histórico y una segunda vida en
+// los medios del ciclismo. Pieza de Leyendas, no ligada a
+// actualidad del día. Fuentes: USADA Reasoned Decision (oct. 2012),
+// Wikipedia, NBC Sports, ESPN, CNBC, Velo/Outside (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const lanceArmstrongContent = `
+<p>Pocas historias en el deporte moderno combinan una hazaña tan extraordinaria con una caída tan estrepitosa como la de Lance Armstrong. Entre 1999 y 2005 ganó siete Tours de Francia consecutivos, una racha sin precedentes en la historia de la carrera. Una década después, la UCI le retiró los siete títulos, la Agencia Antidopaje de Estados Unidos (USADA) lo sancionó de por vida y su nombre pasó a ser sinónimo, para buena parte del público, de la mentira más elaborada que ha conocido el ciclismo profesional.</p>
+
+<p>La historia empieza, sin embargo, con una hazaña real y verificable que no depende de ninguna sustancia: en 1996, a los 25 años, a Armstrong le diagnosticaron un cáncer testicular en estadio avanzado, ya extendido a los pulmones y al cerebro. Superó la enfermedad con quimioterapia y cirugía, y en 1997 fue declarado libre de cáncer. Ese mismo año fundó la Fundación Lance Armstrong, hoy conocida como Livestrong, que con el tiempo recaudó cerca de 400 millones de dólares para el apoyo a pacientes con cáncer, en buena medida a través de la venta de las pulseras amarillas que llegaron a ser uno de los símbolos benéficos más reconocibles del deporte mundial. Fue sobre esa base —la del superviviente que regresa para dominar el ciclismo más exigente del calendario— que se construyó el mito.</p>
+
+<p>El mito empezó a resquebrajarse mucho antes de su caída oficial. Durante años, Armstrong enfrentó acusaciones de dopaje de excompañeros, periodistas y rivales, y respondió cada vez con negaciones categóricas, demandas legales contra sus acusadores y una defensa pública férrea que incluía el argumento de que nunca había dado positivo en un control antidopaje. La Agencia Antidopaje de Estados Unidos abrió una investigación formal en 2010 y, en junio de 2012, formuló cargos contra él por infracciones de dopaje que, según la agencia, se remontaban a 1998. El 23 de agosto de ese año, Armstrong decidió no llevar el caso a arbitraje, aceptando de manera tácita una sanción de por vida bajo el código de la Agencia Mundial Antidopaje y la descalificación de todos sus resultados desde agosto de 1998.</p>
+
+<p>El 10 de octubre de 2012, la USADA publicó su "Reasoned Decision" ("decisión razonada"), un documento de cientos de páginas con testimonios jurados de 26 testigos —11 de ellos excompañeros de equipo—, además de correos electrónicos, documentos financieros y resultados de laboratorio. El reporte concluyó que Armstrong y el equipo US Postal Service habían operado "el programa de dopaje más sofisticado, profesionalizado y exitoso que el deporte haya visto jamás". Doce días después, el 22 de octubre de 2012, la UCI ratificó la decisión: le retiró los siete títulos del Tour de Francia (1999-2005), 25 victorias de etapa en esa misma carrera, y triunfos en el Dauphiné Libéré de 2002 y 2003 y en el Tour de Suiza de 2001. En enero de 2013, en una entrevista televisada con Oprah Winfrey, Armstrong admitió públicamente por primera vez haber usado sustancias prohibidas —incluyendo EPO y hormona de crecimiento— y haberse sometido a transfusiones de sangre y aplicaciones de testosterona a lo largo de gran parte de su carrera.</p>
+
+<p>Conviene precisar algo que suele perderse en la narrativa simplificada: Armstrong no fue el único gran corredor de su generación señalado por dopaje —el caso Puerto, destapado en 2006, implicó también a Jan Ullrich, campeón del Tour de 1997, entre otros—, pero fue el único al que se le retiraron todos sus títulos de Grand Tour. La diferencia, según ha explicado el análisis especializado del caso, no fue de inocencia sino de procedimiento: el Tribunal de Arbitraje Deportivo solo pudo anular los resultados de Ullrich a partir de mayo de 2005, cuando el plazo de prescripción de ocho años sobre su título de 1997 ya había expirado y ningún organismo había construido un caso con testigos para llegar tan atrás en el tiempo. La USADA, en cambio, argumentó que el encubrimiento activo de Armstrong —sostenido durante su regreso a la competición en 2009 y 2010— constituía una ocultación fraudulenta que mantenía abierto el caso pese a los años transcurridos.</p>
+
+<p>Las consecuencias legales se extendieron varios años más. En 2018, Armstrong llegó a un acuerdo extrajudicial de 5 millones de dólares para cerrar una demanda federal por fraude presentada originalmente por su expcompañero Floyd Landis —quien había confesado su propio dopaje en 2010 y actuó como denunciante (whistleblower) bajo la ley estadounidense—, muy por debajo de los cerca de 100 millones que el gobierno había buscado reclamar.</p>
+
+<p>Más de una década después del escándalo, Armstrong ha encontrado un lugar, todavía debatido pero real, dentro del ciclismo mediático. Desde 2024 forma parte de la cobertura del Tour de Francia de la cadena estadounidense NBC, con su pódcast "The Move" disponible en Peacock tras cada etapa, junto a un elenco rotativo que incluye a Johan Bruyneel, Bradley Wiggins, Spencer Martin y, con una ironía que no pasa desapercibida para quien conoce la historia completa, George Hincapie —el gregario más leal de Armstrong en sus siete Tours, a quien llegó a describir como "un hermano", y uno de los 11 excompañeros cuyo testimonio ante la USADA en 2012 resultó decisivo para destapar el dopaje sistemático del equipo—. NBC ya confirmó su regreso para la cobertura de 2026, y según reportó Bloomberg Businessweek, el programa ha generado alrededor de un millón de dólares de ingresos en cada una de las últimas ediciones del Tour. Es, en cierto sentido, la última vuelta de tuerca de una historia que nunca ha tenido una lectura simple: la de un hombre que fue, a la vez, una inspiración real para millones de pacientes con cáncer y el protagonista de uno de los mayores fraudes deportivos de la historia moderna.</p>
+`.trim()
+
+export async function publishLanceArmstrongLegendArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'leyendas' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const armstrong = await prisma.rider.upsert({
+    where: { slug: 'lance-armstrong' },
+    update: {},
+    create: {
+      slug: 'lance-armstrong',
+      name: 'Lance Armstrong',
+      nationality: 'Estados Unidos',
+      specialty: 'Grandes vueltas',
+      birthDate: new Date('1971-09-18'),
+      bio: 'Ciclista estadounidense, ganador de siete Tours de Francia consecutivos (1999-2005), todos ellos retirados en 2012 tras la investigación de la USADA sobre dopaje sistemático en el equipo US Postal Service. Sancionado de por vida por la USADA, admitió públicamente el dopaje en enero de 2013. Sobreviviente de cáncer testicular (1996) y fundador de la Fundación Livestrong.',
+      achievements: toJsonField([
+        'Siete títulos del Tour de Francia (1999-2005) — retirados en 2012 por la UCI',
+        '25 victorias de etapa en el Tour de Francia — anuladas en 2012',
+        'Sanción de por vida de la USADA (2012) tras una investigación por dopaje sistemático',
+        'Fundador de la Fundación Lance Armstrong / Livestrong (1997), que recaudó cerca de 400 millones de dólares para pacientes con cáncer',
+      ]),
+      profileVerifiedAt: new Date(),
+    },
+  })
+
+  const leyendasTag = await prisma.tag.upsert({
+    where: { slug: 'leyendas' },
+    update: {},
+    create: { slug: 'leyendas', name: 'Leyendas', type: 'topic' },
+  })
+
+  const heroImageId = await ensureHeroImage('lance-armstrong-leyenda-dopaje-2026', {
+    title: 'Lance Armstrong: la leyenda que se desmoronó',
+    label: 'Leyendas',
+    riders: [{ name: 'Lance Armstrong' }],
+  })
+
+  const baseFields = {
+    title: 'Lance Armstrong: la leyenda que se desmoronó',
+    subtitle: 'Siete Tours de Francia, un escándalo de dopaje histórico y una segunda vida en los medios del ciclismo',
+    excerpt:
+      'De sobreviviente de cáncer a heptacampeón del Tour de Francia, y de ahí al mayor escándalo de dopaje en la historia del ciclismo: la historia completa de Lance Armstrong, sin atajos.',
+    content: lanceArmstrongContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://en.wikipedia.org/wiki/Lance_Armstrong_doping_case',
+      'https://www.espn.com/olympics/cycling/story/_/id/29177227/line-lance-armstrong-career-successes-doping-allegations-final-collapse',
+      'https://www.cnbc.com/2018/04/20/lance-armstrong-agrees-to-5-million-settlement-of-government-lawsuit.html',
+      'https://www.nbcsports.com/olympics/news/lance-armstrong-timeline-cancer-tour-de-france-doping-admission',
+      'https://cyclinguptodate.com/cycling/lance-armstrongs-tour-de-france-tv-return-confirmed-nbc-brings-cyclings-most-controversial-figure-back-to-peacock-for-2026',
+      'https://roadmancycling.com/blog/armstrong-ullrich-doping-why-one-was-stripped',
+      'https://www.outsideonline.com/outdoor-adventure/biking/lance-armstrongs-most-trusted-teammate/',
+    ]),
+    sourceNames: toJsonField(['Wikipedia', 'ESPN', 'CNBC', 'NBC Sports', 'CyclingUpToDate', 'Roadman Cycling', 'Outside Online']),
+    seoTitle: 'Lance Armstrong: siete Tours de Francia y el mayor escándalo de dopaje del ciclismo',
+    seoDescription:
+      'La historia completa de Lance Armstrong: sus siete Tours de Francia, el escándalo de dopaje que se los quitó, la sanción de por vida de la USADA y su regreso a los medios del ciclismo.',
+    readingTime: 7,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'lance-armstrong-leyenda-dopaje-2026' },
+    update: {
+      ...baseFields,
+      riders: { set: [{ id: armstrong.id }] },
+      tags: { set: [{ id: leyendasTag.id }] },
+    },
+    create: {
+      slug: 'lance-armstrong-leyenda-dopaje-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: { connect: [{ id: armstrong.id }] },
+      tags: { connect: [{ id: leyendasTag.id }] },
     },
   })
 
