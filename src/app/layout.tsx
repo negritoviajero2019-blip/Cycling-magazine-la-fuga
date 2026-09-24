@@ -46,6 +46,7 @@ export const metadata: Metadata = {
   description: branding.tagline,
   icons: { icon: branding.favicon },
   alternates: { types: { 'application/rss+xml': `${branding.url}/feed.xml` } },
+  verification: { google: 'TFE-Mx6bMSY6UC-CdXgwTshl2LPvJjZZIb_j_Kq-_wU' },
 }
 
 const ADSENSE_PUBLISHER_ID = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID
