@@ -2606,10 +2606,13 @@ export async function publishPueblaMtbWorldsArticle() {
     }),
   ])
 
-  const heroImageId = await ensureHeroImage('puebla-mundial-mtb-maraton-2029', {
-    title: 'México será sede del Mundial de MTB Maratón 2029',
-    label: 'MTB y Gravel',
-    riders: [],
+  const heroImageId = await ensureCustomHeroImage('puebla-mundial-mtb-maraton-2029', {
+    url: '/images/headers/puebla-mtb-worlds-cover.jpg',
+    altText: 'México será sede del Mundial de ciclismo MTB en 2029',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
   })
 
   const baseFields = {
