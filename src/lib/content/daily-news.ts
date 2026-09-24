@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -2434,6 +2434,129 @@ export async function publishLanceArmstrongLegendArticle() {
       publishedAt: new Date(),
       riders: { connect: [{ id: armstrong.id }] },
       tags: { connect: [{ id: leyendasTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// México, primer país latinoamericano en debutar en el relevo mixto
+// por equipos de un Mundial de ciclismo de ruta (Montreal, 22 sept
+// 2026): 14º lugar pese a una cadena suelta y una ponchadura.
+// Fuentes: ABC Noticias, La Lista, El Tiempo Monclova, Publimetro
+// (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const mexicoMixedRelayContent = `
+<p>Entre todas las actuaciones mexicanas de esta semana en el Mundial de ciclismo de Montreal, hay una que no se mide solo en el resultado final: el martes 22 de septiembre, México se convirtió en el primer país latinoamericano en la historia en competir en la contrarreloj por relevos mixtos de un Campeonato Mundial de Ciclismo en Ruta. Terminó 14º de 15 selecciones, pero llegó ahí después de superar, literalmente sobre la bicicleta, dos contratiempos mecánicos en los primeros minutos de carrera.</p>
+
+<p>El equipo mexicano estuvo integrado por Sebastián Ruiz, Tomás Aguirre e Ignacio Prado en el tramo varonil, y por Romina Hinojosa, Andrea Ramírez y Yareli Salazar en el tramo femenil, sobre un recorrido de 40,6&nbsp;km. Apenas tres minutos después de la salida, a Ignacio Prado se le salió la cadena de la bicicleta. En vez de detenerse por completo, Prado logró acomodarla de nuevo sin bajarse —una maniobra arriesgada y técnicamente exigente que quedó registrada en video y circuló ampliamente en medios mexicanos—. Poco después, Tomás Aguirre sufrió una ponchadura que también le hizo perder tiempo. Pese a ambos incidentes, el equipo completó el recorrido y realizó el relevo hacia el tramo femenil sin más contratiempos.</p>
+
+<p>México cruzó la meta con un tiempo de 57:41.84, a 6:09.56 minutos del oro conseguido por Italia —con Filippo Ganna y Elisa Longo Borghini entre sus seis integrantes—, que se impuso por apenas nueve segundos sobre Francia, con Suiza completando el podio. Considerando que la prueba reunió a selecciones con estructuras de relevos mixtos ya consolidadas desde ediciones anteriores, y que esta fue, para México, una participación debutante con dos incidentes mecánicos de por medio, el resultado se lee menos como una decepción y más como el costo lógico de abrir un camino nuevo.</p>
+
+<p>Y es que, más allá del 14º lugar, lo relevante es el precedente: ningún otro país latinoamericano había inscrito equipo en esta prueba en un Mundial de ruta. La contrarreloj mixta por relevos —tres hombres cubriendo la primera mitad del recorrido, tres mujeres completando la segunda, con el relevo ocurriendo apenas el segundo corredor varonil cruza la meta— es, además, un formato relativamente joven dentro del calendario mundialista: se corre en este esquema de selecciones nacionales mixtas desde 2019, cuando sustituyó a una contrarreloj por equipos profesionales que se había disputado entre 2012 y 2018, y que a su vez había reemplazado a una versión amateur de selecciones nacionales vigente entre 1987 y 1994. Está pensado explícitamente para premiar la profundidad de una federación en ambas ramas al mismo tiempo, no solo en la masculina. Que México haya podido inscribir y completar un equipo de seis corredores capaces de correr a ese nivel es, en sí mismo, una señal de la misma profundidad de cantera que ya se ha visto esta semana en las pruebas individuales: Isaac del Toro sexto en la crono élite, Nabyenka Bareño 13ª y mejor latinoamericana en la crono junior femenina, y presencia mexicana en prácticamente todas las categorías del programa.</p>
+
+<p>El video del momento de Ignacio Prado —reacomodando la cadena con una mano mientras mantenía el resto del cuerpo sobre la bicicleta en movimiento, sin perder el equilibrio ni detenerse del todo— circuló en medios deportivos mexicanos casi tan rápido como el resultado oficial, y terminó siendo, para buena parte del público que siguió la prueba, la imagen que define el debut: no la posición 14, sino la resolución de un problema técnico en tiempo real, a mitad de una contrarreloj mundialista, sin apoyo del vehículo del equipo. Es, en ese sentido, un debut que se cuenta tanto por lo que salió mal como por cómo se resolvió sobre la marcha.</p>
+
+<p>La delegación mexicana —27 corredores en total— vuelve a competir este jueves 24 de septiembre, con la ruta Sub-23 femenil y la ruta junior varonil, esta última con Omar Andrade Fernández, José Emilio Rodríguez Delgado y Daniel Santiago Moreno García. El fin de semana cierran las pruebas en ruta élite, con Isaac del Toro como principal carta mexicana el domingo 27.</p>
+`.trim()
+
+export async function publishMexicoMixedRelayArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const [ruiz, aguirre, prado, hinojosa, ramirezFregoso, salazar, delToro, bareno, race] = await Promise.all([
+    prisma.rider.upsert({
+      where: { slug: 'sebastian-ruiz' },
+      update: {},
+      create: { slug: 'sebastian-ruiz', name: 'Sebastián Ruiz', nationality: 'México', specialty: 'Contrarreloj' },
+    }),
+    prisma.rider.upsert({
+      where: { slug: 'tomas-aguirre' },
+      update: {},
+      create: { slug: 'tomas-aguirre', name: 'Tomás Aguirre', nationality: 'México', specialty: 'Contrarreloj' },
+    }),
+    prisma.rider.upsert({
+      where: { slug: 'ignacio-prado' },
+      update: {},
+      create: {
+        slug: 'ignacio-prado',
+        name: 'Ignacio Prado',
+        nationality: 'México',
+        specialty: 'Contrarreloj',
+        bio: 'Ciclista mexicano. En el relevo mixto por equipos del Mundial de ciclismo de Montreal 2026, a tres minutos de la salida, logró reacomodar la cadena de su bicicleta sin bajarse de ella tras un desprendimiento, una maniobra que se hizo viral en medios mexicanos.',
+      },
+    }),
+    prisma.rider.findUnique({ where: { slug: 'romina-hinojosa' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'andrea-ramirez-fregoso' }, select: { id: true } }),
+    prisma.rider.upsert({
+      where: { slug: 'yareli-salazar' },
+      update: {},
+      create: { slug: 'yareli-salazar', name: 'Yareli Salazar', nationality: 'México', specialty: 'Ruta' },
+    }),
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'nabyenka-bareno' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+
+  const riderIds = [ruiz.id, aguirre.id, prado.id, hinojosa?.id, ramirezFregoso?.id, salazar.id, delToro?.id, bareno?.id].filter(
+    (id): id is number => id !== undefined,
+  )
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+
+  const heroImageId = await ensureHeroImage('mexico-relevo-mixto-mundial-montreal-2026', {
+    title: 'México hace historia en el relevo mixto',
+    label: 'Latinos',
+    riders: [{ name: 'Selección Mexicana' }],
+  })
+
+  const baseFields = {
+    title: 'México hace historia: primer país latinoamericano en el relevo mixto de un Mundial de ciclismo',
+    subtitle: 'Con una cadena suelta y una ponchadura de por medio, la selección mexicana terminó 14ª en su debut en la contrarreloj por equipos de Montreal 2026',
+    excerpt:
+      'México se convirtió en el primer país latinoamericano en competir en el relevo mixto por equipos de un Mundial de ciclismo de ruta, terminando 14º pese a una cadena suelta y una ponchadura en los primeros minutos.',
+    content: mexicoMixedRelayContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://abcnoticias.mx/deportes/2026/9/22/mexico-debuta-en-el-relevo-mixto-del-mundial-de-ciclismo-y-termina-14-290298.html',
+      'https://la-lista.com/deportes/es-mexicano-ignacio-prado-arregla-su-cadena-sin-bajarse-de-su-bici-y-en-plena-carrera-del-mundial-de-ciclismo-video',
+      'https://eltiempomx.com/noticia/2026/mexico-debuta-en-la-contrarreloj-por-relevos-mixtos-del-mundial-de-ciclismo.html',
+      'https://www.publimetro.com.mx/deportes/2026/09/22/debut-historico-para-mexico-en-el-mundial-de-ciclismo-en-relevos-mixtos/',
+      'https://es.wikipedia.org/wiki/Contrarreloj_por_equipos_mixtos_en_el_Campeonato_Mundial_de_Ruta',
+    ]),
+    sourceNames: toJsonField(['ABC Noticias', 'La Lista', 'El Tiempo Monclova', 'Publimetro México', 'Wikipedia']),
+    seoTitle: 'México, primer país latinoamericano en el relevo mixto del Mundial de ciclismo 2026',
+    seoDescription:
+      'México se convirtió en el primer país latinoamericano en competir en el relevo mixto de un Mundial de ciclismo, terminando 14º pese a una cadena suelta y una ponchadura.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'mexico-relevo-mixto-mundial-montreal-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: [{ id: ultimaHoraTag.id }] },
+    },
+    create: {
+      slug: 'mexico-relevo-mixto-mundial-montreal-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: [{ id: ultimaHoraTag.id }] },
     },
   })
 
