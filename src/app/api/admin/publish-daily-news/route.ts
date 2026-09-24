@@ -24,6 +24,7 @@ import {
   publishCarapazWithdrawalArticle,
   publishLanceArmstrongLegendArticle,
   publishMexicoMixedRelayArticle,
+  publishPueblaMtbWorldsArticle,
 } from '@/lib/content/daily-news'
 
 /**
@@ -61,6 +62,7 @@ export async function POST() {
       publishCarapazWithdrawalArticle(),
       publishLanceArmstrongLegendArticle(),
       publishMexicoMixedRelayArticle(),
+      publishPueblaMtbWorldsArticle(),
     ])
     return NextResponse.json({ ok: true, articles: results })
   } catch (error) {

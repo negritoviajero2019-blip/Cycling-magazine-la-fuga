@@ -2562,3 +2562,97 @@ export async function publishMexicoMixedRelayArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// México será sede por primera vez en su historia de un Mundial UCI
+// absoluto: el Mundial de MTB Maratón (XCM) 2029, en Puebla. Anunciado
+// el 23 de septiembre de 2026 durante el Congreso de la UCI en
+// Montreal. Fuentes: Vanguardia, La Lista, La Jornada (ver
+// sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const pueblaMtbWorldsContent = `
+<p>Mientras la atención del ciclismo mundial sigue puesta en las pruebas en ruta del Mundial de Montreal 2026, la Unión Ciclista Internacional (UCI) confirmó el miércoles 23 de septiembre, durante su Congreso anual celebrado en paralelo a esa misma cita, una noticia que no tiene que ver con esta edición sino con el futuro: México será, por primera vez en su historia, sede de un Campeonato Mundial UCI absoluto. El estado de Puebla albergará el Mundial de Ciclismo de Montaña Maratón (MTB XCM) en 2029.</p>
+
+<p>El anuncio lo hizo la Unión Ciclista de México (UCMex), presidida por Bernardo de la Garza, después de que la UCI otorgara formalmente la sede dentro del paquete de anfitriones de sus distintos campeonatos mundiales para los próximos años —el mismo proceso en el que, días antes, ya se habían confirmado Francia (2027), Abu Dabi (2028) y Dinamarca (2029) como sedes del Mundial de ruta en años sucesivos—. La de Puebla es una disciplina distinta: el MTB Maratón es una modalidad de cross-country de larga distancia, con recorridos que la UCI contempla entre 60 y 160&nbsp;kilómetros y miles de metros de desnivel acumulado, que exige tanto resistencia como técnica y estrategia de carrera. El ganador o ganadora, como en cualquier Mundial UCI, se lleva el maillot arcoíris.</p>
+
+<p>El epicentro de la organización estaría en la región de Atlixco, que ya cuenta con trayectoria organizando la Maratón Popobike Internacional, una prueba que en su edición de 2025 convocó a más de 2,000 ciclistas, incluyendo competidores internacionales de MTB. Aun así, según las fuentes consultadas, todavía no se ha confirmado de manera oficial si Atlixco será la sede puntual dentro del estado, ni las fechas exactas ni el trazado definitivo de la prueba — detalles que la UCI y UCMex deberán precisar en los próximos meses.</p>
+
+<p>Vale la pena notar, además, una novedad de formato que acompaña a esta edición: la UCI unificará de manera permanente las categorías Élite y Máster dentro del Mundial de MTB Maratón a partir de 2029, lo que en la práctica significa que corredores de distintas edades competirán bajo el mismo campeonato absoluto, con el mismo título en juego.</p>
+
+<p>El contexto en el que llega esta sede no es casual. La designación se da apenas unos días después de que Isaac del Toro —hoy 3º en el Ranking Mundial UCI y podio del Tour de Francia 2026— haya vuelto a poner al ciclismo mexicano en el mapa internacional, y en la misma semana en que Nabyenka Bareño, Omar Andrade y el propio equipo del relevo mixto debutaron con actuaciones notables en Montreal. El propio anuncio ha sido leído por medios mexicanos como parte de ese mismo impulso: el reconocimiento de un país cuyo ciclismo, en años recientes, ha pasado de tener presencia ocasional en el circuito internacional a sostener candidaturas serias para organizar competencia de la máxima categoría.</p>
+
+<p>El MTB mexicano específicamente también ha tenido un año fuerte en 2026. En los XXV Juegos Centroamericanos y del Caribe de Santo Domingo, México dominó ambas ramas de la prueba de montaña: Carolina Flores se colgó el oro en la femenil, completando las seis vueltas de un trazado de 4.1&nbsp;km en 1:24:42, mientras que en la varonil Gerardo Ulloa encabezó un contundente uno-dos mexicano en las siete vueltas del mismo circuito, con un tiempo de 1:23:17. A esto se suma un cambio institucional relevante: 2026 fue el primer año en que la Unión Ciclista de México presentó un calendario oficial del Serial Nacional de Ciclismo de Montaña —nueve fechas a lo largo del año, con aval de la propia UCI—, tras la creación formal de ese organismo. Es, en conjunto, la base doméstica sobre la que se construye la candidatura que hoy le da a Puebla la sede de 2029.</p>
+
+<p>Puebla llega, sin embargo, a un calendario ya trazado por la UCI para el MTB Maratón: la edición previa a la mexicana, la de 2027, se disputará en Samoëns, Francia, dentro del mismo paquete de Mundiales que Haute-Savoie organizará ese año. Será, entonces, hasta 2029 cuando le toque el turno a México de recibir por primera vez, en cualquier disciplina del ciclismo, una prueba con el título de Campeonato Mundial UCI en su propio territorio — un hito que, aunque todavía a tres años de distancia, ya empieza a construir expectativa entre la comunidad ciclista mexicana.</p>
+`.trim()
+
+export async function publishPueblaMtbWorldsArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'mtb-gravel' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const delToro = await prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } })
+
+  const [mtbTag, latinosTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'mtb-gravel' },
+      update: {},
+      create: { slug: 'mtb-gravel', name: 'MTB y Gravel', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'latinos' },
+      update: {},
+      create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+    }),
+  ])
+
+  const heroImageId = await ensureHeroImage('puebla-mundial-mtb-maraton-2029', {
+    title: 'México será sede del Mundial de MTB Maratón 2029',
+    label: 'MTB y Gravel',
+    riders: [],
+  })
+
+  const baseFields = {
+    title: 'México hará historia: Puebla será sede del Mundial de MTB Maratón 2029',
+    subtitle: 'Confirmado por la UCI durante su Congreso en Montreal, es la primera vez que el país organiza un Campeonato Mundial UCI absoluto de cualquier disciplina',
+    excerpt:
+      'La UCI confirmó a Puebla como sede del Mundial de MTB Maratón (XCM) 2029 — la primera vez en la historia que México organiza un Campeonato Mundial UCI absoluto, anunciado durante el Congreso de la UCI en paralelo al Mundial de Montreal.',
+    content: pueblaMtbWorldsContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://vanguardia.com.mx/deportes/puebla-hara-historia-albergara-el-mundial-uci-de-mtb-xcm-en-2029-HP23685354',
+      'https://la-lista.com/deportes/mexico-se-prepara-para-recibir-el-campeonato-mundial-de-ciclismo-2029-fechas-sede-pruebas-y-todo-lo-que-debes-saber',
+      'https://www.tvazteca.com/aztecadeportes/confirmado-mexico-sera-sede-de-otro-mundial-sera-en-un-municipio-de-menos-de-150-mil-habitantes',
+      'https://www.e-consulta.com/sin-categoria/atlixco-hara-historia-puebla-albergara-el-mundial-uci-de-mtb-maraton-en-2029',
+      'https://www.carteldeportivo.com/mexico-domino-las-dos-ramas-del-ciclismo-mtb-de-los-jcc-santo-domingo-2026/',
+    ]),
+    sourceNames: toJsonField(['Vanguardia', 'La Lista', 'TV Azteca Deportes', 'e-consulta', 'Cartel Deportivo']),
+    seoTitle: 'Puebla será sede del Mundial de MTB Maratón UCI 2029: primer Mundial de México',
+    seoDescription:
+      'La UCI confirmó a Puebla, México, como sede del Mundial de MTB Maratón (XCM) 2029 — el primer Campeonato Mundial UCI absoluto organizado por el país en su historia.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'puebla-mundial-mtb-maraton-2029' },
+    update: {
+      ...baseFields,
+      riders: delToro ? { set: [{ id: delToro.id }] } : undefined,
+      tags: { set: [{ id: mtbTag.id }, { id: latinosTag.id }] },
+    },
+    create: {
+      slug: 'puebla-mundial-mtb-maraton-2029',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: delToro ? { connect: [{ id: delToro.id }] } : undefined,
+      tags: { connect: [{ id: mtbTag.id }, { id: latinosTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
