@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -2510,10 +2510,13 @@ export async function publishMexicoMixedRelayArticle() {
     create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
   })
 
-  const heroImageId = await ensureHeroImage('mexico-relevo-mixto-mundial-montreal-2026', {
-    title: 'México hace historia en el relevo mixto',
-    label: 'Latinos',
-    riders: [{ name: 'Selección Mexicana' }],
+  const heroImageId = await ensureCustomHeroImage('mexico-relevo-mixto-mundial-montreal-2026', {
+    url: '/images/headers/mexico-relevo-mixto-cover.jpg',
+    altText: 'México hace historia: primer país latinoamericano en el relevo mixto de un Mundial de ciclismo',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
   })
 
   const baseFields = {
