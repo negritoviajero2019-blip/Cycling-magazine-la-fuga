@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -2657,6 +2657,119 @@ export async function publishPueblaMtbWorldsArticle() {
       publishedAt: new Date(),
       riders: delToro ? { connect: [{ id: delToro.id }] } : undefined,
       tags: { connect: [{ id: mtbTag.id }, { id: latinosTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Benjamín Noval logra el doblete crono+ruta junior en Montreal 2026
+// — solo el segundo corredor junior varonil en la historia en
+// lograrlo en un mismo Mundial, después de Remco Evenepoel en 2018.
+// Fuentes: Cyclingnews-style (Escape Collective), Brujulabike,
+// CyclingUpToDate, Ciclismo Internacional (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const benjaminNovalDoubleContent = `
+<p>Benjamín Noval cerró su Mundial de Montreal 2026 de la manera más contundente posible: atacando en solitario a falta de dos vueltas y aguantando hasta la meta para ganar la prueba en ruta junior masculina, tres días después de haberse colgado el oro en la contrarreloj de la misma categoría. Con ello, el español de 17 años se convirtió en el segundo corredor junior varonil en la historia en lograr el doblete crono-ruta en un mismo Campeonato Mundial — la única otra vez que ha ocurrido fue en 2018, con un entonces junior llamado Remco Evenepoel.</p>
+
+<p>La prueba en ruta se disputó sobre un circuito de 13,4&nbsp;km repetido diez veces, hasta completar 134&nbsp;km, con la exigente subida del Voie Camillien-Houde (1,6&nbsp;km al 7,6% de pendiente media) como principal obstáculo en cada vuelta. Noval atacó en la novena ascensión, a unos 27&nbsp;km de la meta, y nadie en el grupo perseguidor pudo darle alcance. Cruzó la línea con un tiempo de 3:23:35, 42 segundos por delante del francés Simon Defrance, medalla de plata, mientras el sueco Elias Wändel se impuso al resto del grupo perseguidor para llevarse el bronce a 2:12 del ganador.</p>
+
+<p>"Desde el principio me sentí muy bien, tuve muy buenas sensaciones. Una vez que vi que la carrera avanzaba y se acercaba el momento de atacar, no miré atrás hasta la línea de meta", declaró Noval tras la carrera, según reportó Ciclismo Internacional.</p>
+
+<p>El triunfo tiene, además, un componente de revancha personal. En el Mundial de Kigali 2025, Noval llegó a pelear por el oro en la prueba junior, pero una caída le arrebató la oportunidad de completar la carrera en condiciones de disputarlo. Un año después, en Montreal, no solo se resarció: se llevó los dos títulos en disputa en su categoría, algo que ni siquiera él mismo había conseguido en Kigali.</p>
+
+<p>Hay, incluso, un hilo familiar en la historia: según reportó Canadian Cycling Magazine, el padre de Noval, Benjamín Noval padre, fue ciclista profesional y corrió para el US Postal Service y su sucesor, Discovery Channel — el mismo equipo, ya retirado del pelotón desde hace años, cuyo mayor protagonista fue Lance Armstrong. Es una coincidencia de nombre de equipo más que una conexión directa entre ambas historias, pero sirve para recordar cuánto ha cambiado el ciclismo de una generación a la siguiente: el hijo de un corredor de aquel US Postal de finales de los noventa y principios de los 2000 hoy suma dos maillots arcoíris junior limpio, en una era del deporte mucho más escrutada que la de su padre.</p>
+
+<p>El precedente de Evenepoel no es un dato menor para ponderar lo que acaba de lograr Noval. El belga ganó ambos títulos junior en el Mundial de Innsbruck 2018 antes de convertirse, ya en categoría élite, en uno de los ciclistas más dominantes de su generación — este mismo Mundial de Montreal 2026 lo vio conquistar su cuarto título consecutivo de contrarreloj élite, un registro sin precedentes en la historia de la disciplina. La comparación no garantiza que la carrera de Noval vaya a seguir una trayectoria similar, pero sí certifica el nivel de la hazaña: según coinciden las fuentes especializadas que cubrieron la carrera, es la primera vez que un corredor junior varonil repite el doblete crono-ruta desde que Evenepoel lo logró en 2018.</p>
+
+<p>Con este resultado, España se lleva dos maillots arcoíris de la categoría junior masculina en Montreal 2026, sumados a los que ya había logrado también en la rama femenina junior a través de Alejandra Neira, novena en la contrarreloj. El Mundial de Montreal continúa este fin de semana con las pruebas en ruta Sub-23 y, el domingo 27, la prueba reina: la ruta élite masculina, donde Isaac del Toro encabeza las aspiraciones mexicanas y Tadej Pogačar y Remco Evenepoel llegan como principales favoritos.</p>
+`.trim()
+
+export async function publishBenjaminNovalDoubleArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const noval = await prisma.rider.upsert({
+    where: { slug: 'benjamin-noval' },
+    update: {},
+    create: {
+      slug: 'benjamin-noval',
+      name: 'Benjamín Noval',
+      nationality: 'España',
+      specialty: 'Ruta y contrarreloj',
+      bio: 'Ciclista español, campeón mundial junior de contrarreloj y en ruta en Montreal 2026 en la misma edición — solo el segundo corredor junior varonil en la historia en lograr ese doblete, después de Remco Evenepoel en 2018. En 2025, en Kigali, una caída le impidió pelear por el oro en la prueba en ruta.',
+      achievements: toJsonField([
+        'Campeón del mundo junior de contrarreloj, Montreal 2026 (25:17)',
+        'Campeón del mundo junior en ruta, Montreal 2026 (3:23:35, ataque en solitario)',
+        'Segundo corredor junior varonil en la historia en lograr el doblete crono-ruta en un mismo Mundial, después de Remco Evenepoel (2018)',
+      ]),
+      profileVerifiedAt: new Date(),
+    },
+  })
+
+  const [delToro, evenepoel, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'remco-evenepoel' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [noval.id, delToro?.id, evenepoel?.id].filter((id): id is number => id !== undefined)
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+
+  const heroImageId = await ensureHeroImage('benjamin-noval-doblete-junior-mundial-2026', {
+    title: 'Benjamín Noval logra el doblete junior',
+    label: 'Última Hora',
+    riders: [{ name: 'Benjamín Noval' }],
+  })
+
+  const baseFields = {
+    title: 'Benjamín Noval logra el doblete histórico crono-ruta en el Mundial junior de Montreal',
+    subtitle: 'El español, de 17 años, es solo el segundo corredor en la historia en ganar ambos títulos junior en el mismo Mundial, después de Remco Evenepoel en 2018',
+    excerpt:
+      'Benjamín Noval ganó la ruta junior masculina del Mundial de Montreal 2026 tres días después de su oro en la contrarreloj, logrando el doblete que solo Remco Evenepoel había conseguido antes, en 2018.',
+    content: benjaminNovalDoubleContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://escapecollective.com/noval-doubles-up-on-junior-world-titles-with-road-race-triumph/',
+      'https://en.brujulabike.com/benjamin-noval-wins-the-junior-road-world-championship-and-caps-a-historic-worlds-with-two-gold-medals/',
+      'https://cyclinguptodate.com/cycling/results-mens-junior-road-race-world-championships-2026-benjamin-noval-jr-dominates-and-doubles-up-gold-medal',
+      'https://ciclismointernacional.com/benjamin-noval-logra-el-doblete-mundial-junior-montreal-2026-ruta',
+      'https://cyclingmagazine.ca/sections/feature/spaniard-benjamin-noval-wins-his-second-rainbow-jersey-of-montreal-2026/',
+      'https://www.procyclingstats.com/race/uci-world-championships-mj/2026/result',
+    ]),
+    sourceNames: toJsonField(['Escape Collective', 'Brujulabike', 'CyclingUpToDate', 'Ciclismo Internacional', 'Canadian Cycling Magazine', 'ProCyclingStats']),
+    seoTitle: 'Benjamín Noval logra el doblete crono-ruta en el Mundial junior de Montreal 2026',
+    seoDescription:
+      'Benjamín Noval ganó la ruta junior masculina del Mundial de Montreal 2026, completando el doblete crono-ruta que solo Remco Evenepoel había logrado antes, en 2018.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'benjamin-noval-doblete-junior-mundial-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: [{ id: ultimaHoraTag.id }] },
+    },
+    create: {
+      slug: 'benjamin-noval-doblete-junior-mundial-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: [{ id: ultimaHoraTag.id }] },
     },
   })
 
