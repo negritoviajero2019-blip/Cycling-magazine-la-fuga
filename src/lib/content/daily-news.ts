@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -2722,10 +2722,13 @@ export async function publishBenjaminNovalDoubleArticle() {
     create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
   })
 
-  const heroImageId = await ensureHeroImage('benjamin-noval-doblete-junior-mundial-2026', {
-    title: 'Benjamín Noval logra el doblete junior',
-    label: 'Última Hora',
-    riders: [{ name: 'Benjamín Noval' }],
+  const heroImageId = await ensureCustomHeroImage('benjamin-noval-doblete-junior-mundial-2026', {
+    url: '/images/headers/benjamin-noval-cover.jpg',
+    altText: 'Hay nuevo campeón junior y es español',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
   })
 
   const baseFields = {
