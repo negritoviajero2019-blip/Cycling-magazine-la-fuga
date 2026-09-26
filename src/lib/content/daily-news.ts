@@ -2778,3 +2778,123 @@ export async function publishBenjaminNovalDoubleArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Demi Vollering gana su primer título mundial de ruta élite
+// femenina en Montreal 2026, al sprint sobre Niewiadoma, cerrando una
+// temporada histórica (Giro, Tour de Francia Femmes, Tour de
+// Flandes y ahora el Mundial). Fuentes: Olympics.com, Infobae,
+// Revista Mundo Ciclístico, esciclismo.com (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const demiVolleringWorldsContent = `
+<p>Demi Vollering conquistó este sábado 26 de septiembre su primer título mundial de ruta en la categoría élite femenina, imponiéndose al sprint a la polaca Katarzyna Niewiadoma sobre los 180,1&nbsp;km entre Brossard y Montreal. La italiana Elisa Longo Borghini completó el podio a solo 4 segundos, mientras que la suiza Marlen Reusser —vigente campeona mundial de contrarreloj— fue cuarta a 8 segundos, y la francesa Juliette Berthet y la neerlandesa Puck Pieterse ocuparon el quinto y sexto lugar.</p>
+
+<p>La neerlandesa, de 29 años y corredora del FDJ-SUEZ, decidió la carrera con un ataque a 38,5&nbsp;km de la meta, después de neutralizar un intento de fuga de la francesa Maeva Squiban. En el tramo final, según reportó Olympics.com, Vollering utilizó tácticamente a Niewiadoma como referencia antes de lanzar el remate definitivo en el sprint, en una carrera que terminó resolviéndose en 4 horas, 45 minutos y 9 segundos, y que varios medios describieron como accidentada — la española Paula Blasi, una de las corredoras señaladas como posible sorpresa, tuvo que abandonar tras una caída. Sobre el duelo final con la polaca, Vollering fue tajante: "No pensaba dejarlo escapar. Desde ese momento pensé: no, no, es mío". Y sobre el trabajo detrás del título: "Trabajé muy duro para lograr esta meta y hace falta valentía para creerlo con todo el corazón y reunir a tu alrededor a un equipo de chicas tan fuertes que se sacrifican por ti".</p>
+
+<p>El título no fue producto de la improvisación. Según explicó el seleccionador neerlandés Laurens ten Dam, "después de las clásicas, el plan Demi Vollering realmente empezó a madurar" — una estrategia construida a largo plazo alrededor de su liderazgo, reforzada por la confianza que le dio ganar el Giro y el Tour de Francia Femmes este mismo año. El equipo neerlandés llegó a Montreal con Puck Pieterse como opción de respaldo y Femke de Vries, Amber Kraak, Riejanne Markus, Lieke Nooijen y Karijn Swinkels como escuderas, mientras que Marianne Vos y Anna van der Breggen —ambas convocables en cualquier otro año— se quedaron fuera por fatiga y enfermedad tras el Tour de Francia. Ten Dam remarcó, además, que el trazado de Montreal favorecía las cualidades de Vollering, a diferencia del Mundial de Zúrich 2024, donde la neerlandesa no rindió al nivel esperado.</p>
+
+<p>El título de Vollering también se inscribe en una racha que ya es, de por sí, un capítulo aparte en la historia del ciclismo femenino: de las últimas cinco campeonas del mundo en ruta, cuatro han sido neerlandesas. Antes de Vollering, el trono había pasado por Annemiek van Vleuten (Wollongong 2022), Anna van der Breggen (2018 y 2020) y Marianne Vos (2006, 2012 y 2013) — una hegemonía que convierte a los Países Bajos en la referencia obligada del ciclismo de ruta femenino de las últimas dos décadas, y a la que Vollering se suma ahora con su primer arcoíris en esta prueba específica.</p>
+
+<p>El maillot arcoíris corona lo que varios medios especializados han descrito como una temporada casi perfecta para Vollering en 2026: además del Mundial de Montreal, esta temporada ya había ganado el Giro de Italia femenino, el Tour de Francia Femmes y el Tour de Flandes —esta última en solitario, tras dejar atrás a Pauline Ferrand-Prévot y Puck Pieterse y completar los últimos kilómetros contrarreloj hasta Oudenaarde con 42 segundos de ventaja—. Es, en el palmarés de una sola temporada, una combinación de resultados que pocas corredoras de la historia del ciclismo femenino han logrado reunir en un mismo año.</p>
+
+<p>Para España, la mejor clasificada fue Mavi García, 26ª a 8:40 de Vollering, seguida de Mireia Benito en el puesto 31, a 8:48. Ninguna corredora latinoamericana figuró entre las primeras posiciones de esta prueba en particular, aunque la delegación mexicana sí había dejado ya su huella esta semana en las categorías junior y Sub-23, con actuaciones destacadas de Nabyenka Bareño y Romina Hinojosa, entre otras.</p>
+
+<p>La prueba reunió a 140 corredoras de 56 selecciones nacionales, además de una participante bajo la denominación de Atleta Individual Neutral. Con este resultado, se cierra la participación femenina de élite en Montreal 2026 — queda pendiente, para el domingo 27, la última prueba del Mundial: la ruta élite masculina, con Isaac del Toro entre los principales favoritos tras las bajas por lesión de Tadej Pogačar y la ausencia, por decisión propia, de Jonas Vingegaard.</p>
+`.trim()
+
+export async function publishDemiVolleringWorldsArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ciclismo-femenino' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const vollering = await prisma.rider.upsert({
+    where: { slug: 'demi-vollering' },
+    update: {},
+    create: {
+      slug: 'demi-vollering',
+      name: 'Demi Vollering',
+      nationality: 'Países Bajos',
+      specialty: 'Clásicas y grandes vueltas',
+      bio: 'Ciclista neerlandesa del FDJ-SUEZ. En 2026 completó una de las temporadas más completas del ciclismo femenino reciente: campeona del Giro de Italia, el Tour de Francia Femmes, el Tour de Flandes y, en septiembre, del Mundial de ruta élite en Montreal.',
+      achievements: toJsonField([
+        'Campeona del Mundo de ruta élite femenina, Montreal 2026',
+        'Campeona del Giro de Italia femenino 2026',
+        'Campeona del Tour de Francia Femmes 2026',
+        'Campeona del Tour de Flandes 2026 (en solitario)',
+      ]),
+      profileVerifiedAt: new Date(),
+    },
+  })
+
+  const [bareno, hinojosa, delToro, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'nabyenka-bareno' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'romina-hinojosa' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [vollering.id, bareno?.id, hinojosa?.id, delToro?.id].filter(
+    (id): id is number => id !== undefined,
+  )
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+
+  const heroImageId = await ensureCustomHeroImage('demi-vollering-campeona-mundial-2026', {
+    url: '/images/headers/demi-vollering-cover.jpg',
+    altText: 'Países Bajos ganó hoy su primer título mundial de ruta élite femenina',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title: 'Demi Vollering gana su primer título mundial de ruta al sprint sobre Niewiadoma',
+    subtitle: 'La neerlandesa se impuso en Montreal tras un ataque a 38,5 km de meta, coronando una temporada 2026 en la que ya había ganado el Giro, el Tour de Francia Femmes y el Tour de Flandes',
+    excerpt:
+      'Demi Vollering ganó el Mundial de ruta élite femenina en Montreal, al sprint sobre Katarzyna Niewiadoma, cerrando una temporada 2026 histórica que ya incluía el Giro de Italia, el Tour de Francia Femmes y el Tour de Flandes.',
+    content: demiVolleringWorldsContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.olympics.com/en/news/uci-road-world-championships-2026-demi-vollering-womens-title-montreal',
+      'https://www.infobae.com/america/agencias/2026/09/26/vollering-bate-al-sprint-a-niewiadoma-y-se-proclama-campeona-del-mundo-de-ciclismo-en-ruta/',
+      'https://www.revistamundociclistico.com/2026/demi-vollering-hace-historia-en-montreal-giro-tour-y-mundial-en-una-temporada-perfecta/',
+      'https://www.esciclismo.com/actualidad/carretera/93255.html',
+      'https://www.infobae.com/america/agencias/2026/09/26/la-neerlandesa-demi-vollering-se-saca-la-espinita-del-oro-en-una-accidentada-prueba-de-ruta/',
+      'https://ciclismoaldia.es/ciclismo/el-plan-de-paises-bajos-para-que-demi-vollering-sea-campeona-del-mundo-la-estrategia-empezo-a-madurar',
+    ]),
+    sourceNames: toJsonField(['Olympics.com', 'Infobae', 'Revista Mundo Ciclístico', 'esciclismo.com', 'Ciclismo Al Día']),
+    seoTitle: 'Demi Vollering, campeona mundial de ruta 2026 en Montreal',
+    seoDescription:
+      'Demi Vollering ganó el Mundial de ruta élite femenina 2026 en Montreal, al sprint sobre Katarzyna Niewiadoma, coronando una temporada histórica.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'demi-vollering-campeona-mundial-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: [{ id: ultimaHoraTag.id }] },
+    },
+    create: {
+      slug: 'demi-vollering-campeona-mundial-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: [{ id: ultimaHoraTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
