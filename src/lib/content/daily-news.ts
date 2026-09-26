@@ -2898,3 +2898,100 @@ export async function publishDemiVolleringWorldsArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Tadej Pogačar: primer día sobre la bicicleta tras su accidente en
+// la Vuelta, justo en la víspera del último día en que ostenta el
+// título de campeón del mundo (se corona a su sucesor el domingo 27
+// en Montreal). Fuentes: El Universal, Excélsior, ClaroSports,
+// esciclismo.com, Olympics.com (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const pogacarReturnContent = `
+<p>Mientras en Montreal el Mundial de ciclismo de ruta llega a su última jornada, a miles de kilómetros de distancia Tadej Pogačar vivió esta semana un hito propio, mucho más silencioso: volvió a subirse a una bicicleta por primera vez desde el accidente que lo sacó de la Vuelta a España el pasado 29 de agosto. La coincidencia de calendario no es menor — este domingo 27, cuando se corone al nuevo campeón del mundo en ruta, Pogačar dejará de ser, formalmente, el vigente titular del maillot arcoíris que no pudo defender.</p>
+
+<p>El accidente ocurrió en la octava etapa de la Vuelta, cuando el esloveno lideraba la clasificación general con una ventaja de 3:50 sobre Enric Mas y ya sumaba tres victorias de etapa en la carrera. La caída le provocó una conmoción cerebral, una fractura desplazada de clavícula izquierda y una fractura estable en la vértebra cervical C7. Fue operado el lunes siguiente a la caída por el doctor Xavier Mir en el Hospital Universitario Dexeus de Barcelona; según confirmó Adrian Rotunno, director médico del UAE Team Emirates-XRG, la lesión resultó más compleja de lo previsto inicialmente y requirió clavos y placas para reconstruir la clavícula. Recibió el alta médica dos días después, el miércoles 2 de septiembre, para continuar la rehabilitación ya en casa.</p>
+
+<p>Casi tres semanas después de la caída, y poco más de dos semanas después de la operación, Pogačar volvió a pedalear. Lo hizo en condiciones controladas, sobre un rodillo en su casa y bajo la supervisión de personal del UAE Team Emirates-XRG. El propio corredor compartió el momento en redes sociales: "Primera vez de vuelta. La clavícula está fuerte, la cabeza está fuerte, el ritmo cardiaco está alto. Súper feliz. ¡Vamos!". Son palabras que transmiten alivio más que euforia — la vuelta a un rodillo doméstico, no a la competencia, y sin ninguna prisa por acelerar una recuperación de este tipo.</p>
+
+<p>Pogačar ya había confirmado que no volverá a competir durante el resto de la temporada 2026, concentrando todos sus esfuerzos en la recuperación de cara a 2027 — año para el que, además, renovó contrato con UAE Team Emirates-XRG hasta 2032, atando su futuro a largo plazo al equipo con el que ha construido toda su carrera profesional.</p>
+
+<p>El maillot arcoíris que Pogačar no pudo defender esta semana en Montreal lo había ganado hace apenas un año, en Kigali 2025, con una de las actuaciones más recordadas de su carrera: un ataque en solitario a más de 100&nbsp;kilómetros de la meta, sobre un recorrido de 267,5&nbsp;km y 5.475 metros de desnivel acumulado, completado en 6 horas, 21 minutos y 20 segundos. De los 165 corredores que tomaron la salida aquel día, 135 no lograron terminar la carrera. Remco Evenepoel fue plata y Ben Healy, bronce. Con ese triunfo, Pogačar se convirtió en el primer corredor de la historia en ganar el Tour de Francia y el Mundial de ruta en años consecutivos — y esa misma victoria en Kigali fue, a su vez, la revalidación de un título que ya había ganado el año anterior.</p>
+
+<p>Ese es, entonces, el contraste que deja esta semana: mientras Isaac del Toro, Remco Evenepoel y el resto del pelotón élite se preparan para disputar este domingo el título que Pogačar defendió con autoridad absoluta hace apenas doce meses, el propio esloveno lo vive desde la distancia, celebrando en redes sociales el gesto más modesto posible dentro del ciclismo profesional: volver a dar pedaladas sin dolor. Del Toro, que llega a Montreal en su mejor momento de forma tras ganar el Gran Premio de la propia ciudad y situarse 3º en el Ranking Mundial UCI, ha preferido no asumir públicamente el rol de gran favorito pese a las ausencias de Pogačar y Vingegaard —esta última también relacionada con caídas recientes—, señalando que competir con una selección nacional es distinto a hacerlo con un equipo WorldTour. Es, en cualquier caso, tan significativo como cualquier resultado que se produzca en Montreal este fin de semana — la primera señal concreta de que el corredor más dominante del pelotón actual empieza, de verdad, el camino de regreso.</p>
+`.trim()
+
+export async function publishPogacarReturnArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const [pogacar, delToro, evenepoel, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'tadej-pogacar' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'remco-evenepoel' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [pogacar?.id, delToro?.id, evenepoel?.id].filter((id): id is number => id !== undefined)
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+
+  const heroImageId = await ensureCustomHeroImage('tadej-pogacar-vuelve-bicicleta-2026', {
+    url: '/images/headers/pogacar-vuelve-bicicleta-cover.jpg',
+    altText: 'Volvió: primer día después de su accidente y el último día vistiendo el arcoíris',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title: 'Tadej Pogačar vuelve a la bicicleta el mismo fin de semana en que pierde el maillot arcoíris',
+    subtitle: 'El esloveno pedaleó por primera vez desde su accidente en la Vuelta a España, justo cuando Montreal corona a su sucesor como campeón del mundo',
+    excerpt:
+      'Tadej Pogačar volvió a subirse a la bicicleta por primera vez desde su accidente en la Vuelta a España, en la misma semana en que el Mundial de Montreal corona a un nuevo campeón de ruta, título que él no pudo defender.',
+    content: pogacarReturnContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.eluniversal.com.co/deportes/2026/09/15/tadej-pogacar-vuelve-a-subirse-a-una-bicicleta-despues-de-su-caida-en-la-vuelta/',
+      'https://www.excelsior.com.mx/deportes/tadej-pogacar-vuelve-bicicleta-tras-accidente-vuelta',
+      'https://www.clarosports.com/ciclismo/tadej-pogacar-da-el-primer-paso-hacia-2027-y-presume-su-regreso-a-la-bicicleta/',
+      'https://www.olympics.com/es/noticias/mundial-ciclismo-2025-tadej-pogacar-campeon-solitario-resultados',
+      'https://www.elcolombiano.com/deportes/pogacar-operado-con-exito-intervencion-quirurgica-recuperacion-NB40503178',
+      'https://www.excelsior.com.mx/deportes/isaac-toro-favorito-mundial-ciclismo-ruta-montreal-2026',
+    ]),
+    sourceNames: toJsonField(['El Universal', 'Excélsior', 'ClaroSports', 'Olympics.com', 'El Colombiano']),
+    seoTitle: 'Tadej Pogačar vuelve a la bicicleta tras su accidente en la Vuelta a España',
+    seoDescription:
+      'Tadej Pogačar volvió a pedalear por primera vez desde su accidente en la Vuelta a España, la misma semana en que pierde el título de campeón del mundo en Montreal.',
+    readingTime: 6,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'tadej-pogacar-vuelve-bicicleta-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: [{ id: ultimaHoraTag.id }] },
+    },
+    create: {
+      slug: 'tadej-pogacar-vuelve-bicicleta-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: [{ id: ultimaHoraTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
