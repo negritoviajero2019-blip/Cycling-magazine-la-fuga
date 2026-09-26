@@ -21,10 +21,17 @@ const summarySelect = {
 /**
  * Home dinámica alimentada desde BD (§82) — nunca contenido hardcodeado.
  * Estructura de la portada (orden fijo acordado):
- * Hero (1 historia) → Últimas noticias (3) → Radar del Pelotón
- * (1 principal + 4 en feed) → Historias destacadas (hasta 6, curadas
- * con `featured`) → Próximas carreras → Análisis → Más leído.
- * Un mismo artículo nunca se repite entre Hero/Últimas/Radar.
+ * Hero (carrusel de 4-6 historias, deslizable) → Últimas noticias (3)
+ * → Radar del Pelotón (1 principal + 4 en feed) → Historias
+ * destacadas (hasta 6, curadas con `featured`) → Próximas carreras →
+ * Análisis → Más leído. Un mismo artículo nunca se repite entre
+ * Hero/Últimas/Radar.
+ *
+ * El carrusel prioriza los artículos marcados `featured` (más
+ * recientes primero) y, si hay menos de 4, se completa con los
+ * últimos publicados en general — así nunca queda fijo un solo
+ * artículo indefinidamente y el usuario puede desplazarse entre
+ * varios (ver HeroCarousel).
  */
 export async function getHomeSections() {
   const [featuredPool, recentPool, analysis, upcomingRaces, nextRace, mostRead] = await Promise.all([
@@ -63,8 +70,14 @@ export async function getHomeSections() {
     getMostReadArticles(),
   ])
 
-  const heroArticle: ArticleSummary | null = featuredPool[0] ?? recentPool[0] ?? null
-  const usedSlugs = new Set(heroArticle ? [heroArticle.slug] : [])
+  const heroCarouselArticles: ArticleSummary[] = []
+  const usedSlugs = new Set<string>()
+  for (const article of [...featuredPool, ...recentPool]) {
+    if (heroCarouselArticles.length >= 6) break
+    if (usedSlugs.has(article.slug)) continue
+    heroCarouselArticles.push(article)
+    usedSlugs.add(article.slug)
+  }
 
   const latestThree: ArticleSummary[] = []
   for (const article of recentPool) {
@@ -86,7 +99,7 @@ export async function getHomeSections() {
   // hero — evita que el mismo artículo aparezca dos veces en la home.
   const featuredStandout = featuredPool.filter((a) => !usedSlugs.has(a.slug)).slice(0, 6)
 
-  return { heroArticle, latestThree, radarArticles, featuredStandout, analysis, upcomingRaces, nextRace, mostRead }
+  return { heroCarouselArticles, latestThree, radarArticles, featuredStandout, analysis, upcomingRaces, nextRace, mostRead }
 }
 
 export async function getUpcomingRaces() {

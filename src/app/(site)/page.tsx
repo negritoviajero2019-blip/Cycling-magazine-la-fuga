@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Hero } from '@/components/editorial/Hero'
+import { HeroCarousel } from '@/components/editorial/HeroCarousel'
 import { ArticleCard } from '@/components/editorial/ArticleCard'
 import { PelotonRadar } from '@/components/editorial/PelotonRadar'
 import { UpcomingRaces } from '@/components/editorial/UpcomingRaces'
@@ -50,15 +50,15 @@ function Section({
 }
 
 export default async function HomePage() {
-  const { heroArticle, latestThree, radarArticles, featuredStandout, analysis, upcomingRaces, nextRace, mostRead } =
+  const { heroCarouselArticles, latestThree, radarArticles, featuredStandout, analysis, upcomingRaces, nextRace, mostRead } =
     await getHomeSections()
 
   // §83: nunca "No articles found" en producción — cada sección vacía se oculta.
   return (
     <Container>
-      {heroArticle && (
+      {heroCarouselArticles.length > 0 && (
         <div className="py-6">
-          <Hero article={heroArticle} />
+          <HeroCarousel articles={heroCarouselArticles} />
         </div>
       )}
 
