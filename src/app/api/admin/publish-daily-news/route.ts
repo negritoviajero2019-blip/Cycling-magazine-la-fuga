@@ -29,6 +29,7 @@ import {
   publishDemiVolleringWorldsArticle,
   publishPogacarReturnArticle,
   publishMcNultyWorldsArticle,
+  publishDelToroFifthWorldsArticle,
 } from '@/lib/content/daily-news'
 
 /**
@@ -71,6 +72,7 @@ export async function POST() {
       publishDemiVolleringWorldsArticle(),
       publishPogacarReturnArticle(),
       publishMcNultyWorldsArticle(),
+      publishDelToroFifthWorldsArticle(),
     ])
     return NextResponse.json({ ok: true, articles: results })
   } catch (error) {

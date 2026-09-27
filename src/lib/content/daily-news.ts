@@ -3002,12 +3002,12 @@ export async function publishPogacarReturnArticle() {
 // Michael Matthews, bronce para Mathieu van der Poel; Quinn Simmons 4º
 // e Isaac del Toro 5º. Primer título de EE. UU. desde Armstrong (1993).
 // Fuentes: Cyclingnews, Primicias, ClaroSports, franceinfo,
-// CyclingUpToDate, IDL Pro Cycling (ver sourceUrls). Sin citas del
-// ganador: ninguna fuente verificada las publicaba al redactar.
+// CyclingUpToDate, IDL Pro Cycling, Diario de México (ver sourceUrls).
+// Citas de McNulty traducidas según Diario de México.
 // ————————————————————————————————————————————————————————————
 
 const mcnultyWorldsContent = `
-<p>Nadie lo tenía en la primera línea de favoritos, y precisamente por eso nadie salió a por él. Brandon McNulty (Estados Unidos) es el nuevo campeón del mundo de ruta élite: ganó este domingo 27 de septiembre en Montreal después de un ataque en solitario a unos 32&nbsp;km de meta, cuando los grandes nombres del pelotón se miraban entre sí. Cruzó la línea tras 6 horas, 17 minutos y 4 segundos de carrera, con el tiempo justo para levantar los brazos antes de que llegara el grupo perseguidor.</p>
+<p>Nadie lo tenía en la primera línea de favoritos, y precisamente por eso nadie salió a por él. Brandon McNulty (Estados Unidos) es el nuevo campeón del mundo de ruta élite: ganó este domingo 27 de septiembre en Montreal después de un ataque en solitario a unos 32&nbsp;km de meta, cuando los grandes nombres del pelotón se miraban entre sí. Cruzó la línea tras 6 horas, 17 minutos y 4 segundos de carrera, con apenas 13 segundos de margen sobre el grupo perseguidor. &laquo;En los últimos cien metros ni siquiera me lo creía&raquo;, contó después.</p>
 
 <p>El australiano Michael Matthews ganó el esprint por la plata y Mathieu van der Poel (Países Bajos) se colgó el bronce. Detrás, Quinn Simmons completó una jornada redonda para Estados Unidos con el cuarto puesto, e Isaac del Toro (México) fue quinto.</p>
 
@@ -3021,7 +3021,7 @@ const mcnultyWorldsContent = `
 
 <p>Con un grupo de una docena de corredores en cabeza, después de aceleraciones de Matteo Jorgenson, Giulio Ciccone y Pidcock, McNulty eligió su momento, con dos vueltas por delante. Y aquí está la clave de la victoria: nadie tenía motivos para cazarlo. Simmons y Jorgenson, sus compañeros de selección, no iban a tirar contra él. Del Toro, que comparte equipo con McNulty en UAE Team Emirates-XRG, tampoco quería remolcar a sus rivales hasta su compañero de marca. Y el resto de favoritos se vigilaba entre sí. En pocos kilómetros, la ventaja subió a un minuto.</p>
 
-<p>La reacción llegó tarde. En la última vuelta Pidcock y Ciccone apretaron y a 2&nbsp;km de meta el hueco había bajado a poco más de 20 segundos, pero McNulty —un especialista contrarrelojista, campeón del mundo júnior de crono en 2016— aguantó el último kilómetro para llegar solo.</p>
+<p>La reacción llegó tarde. En la última vuelta Pidcock y Ciccone apretaron y a 2&nbsp;km de meta el hueco había bajado a poco más de 20 segundos, pero McNulty —un especialista contrarrelojista, campeón del mundo júnior de crono en 2016— aguantó el último kilómetro para llegar solo. &laquo;En la última subida estaba muriéndome, pero seguí empujando&raquo;, resumió.</p>
 
 <h2>33 años de espera para Estados Unidos</h2>
 
@@ -3086,8 +3086,9 @@ export async function publishMcNultyWorldsArticle() {
       'https://www.franceinfo.fr/sports/cyclisme/mondiaux/l-americain-brandon-mcnulty-piege-les-favoris-et-devient-champion-du-monde-de-cyclisme-au-bout-d-une-course-d-anthologie-a-montreal_8212400.html',
       'https://cyclinguptodate.com/cycling/live-2026-world-championships-elite-mens-road-race-evenepoel-van-der-poel-van-aert-pidcock-del-toro-and-seixas-battle-for-the-rainbow-jersey',
       'https://www.idlprocycling.com/cycling/live-2026-mens-world-cycling-championships-evenepoel-del-toro-seixas-and-pidcock-ready-to-go-head-to-head',
+      'https://www.diariodemexico.com/arena-deportiva/segundo-podio-isaac-toro-cruza-en-quinto-lugar-en-mundial-ciclismo-2026',
     ]),
-    sourceNames: toJsonField(['Cyclingnews', 'Primicias', 'ClaroSports', 'franceinfo', 'CyclingUpToDate', 'IDL Pro Cycling']),
+    sourceNames: toJsonField(['Cyclingnews', 'Primicias', 'ClaroSports', 'franceinfo', 'CyclingUpToDate', 'IDL Pro Cycling', 'Diario de México']),
     seoTitle: 'Brandon McNulty gana el Mundial de ciclismo de ruta 2026 en Montreal',
     seoDescription:
       'Brandon McNulty es campeón del mundo de ruta 2026 tras atacar en solitario en Montreal. Matthews plata, Van der Poel bronce e Isaac del Toro quinto.',
@@ -3109,6 +3110,119 @@ export async function publishMcNultyWorldsArticle() {
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
       races: race ? { connect: [{ id: race.id }] } : undefined,
       tags: { connect: [{ id: ultimaHoraTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Isaac del Toro, 5º en el Mundial de ruta élite de Montreal 2026: a
+// 14 s de McNulty y a 1 s del bronce, mejor resultado de un mexicano
+// en la historia de la prueba (mejora su 7º de Kigali 2025). Fuentes:
+// El Imparcial, Diario de México, El Universal, El Informador,
+// CyclingUpToDate (ver sourceUrls). Sin citas de Del Toro: ninguna
+// fuente verificada las publicaba al redactar.
+// ————————————————————————————————————————————————————————————
+
+const delToroFifthWorldsContent = `
+<p>Isaac del Toro llegó a Montreal como el hombre a batir y se va con un quinto lugar que, en frío, es el mejor resultado de un mexicano en la historia del Mundial de ruta élite. Pero la imagen del ensenadense tras la meta, sentado y con la cabeza escondida entre los brazos, dice lo que los números no: no era el resultado que él esperaba.</p>
+
+<p>Del Toro cruzó la línea en 6 horas, 17 minutos y 18 segundos, a solo 14 segundos del nuevo campeón del mundo, Brandon McNulty. La diferencia con el podio fue todavía más cruel: Michael Matthews, Mathieu van der Poel y Quinn Simmons entraron 13 segundos detrás del estadounidense, y el mexicano, un segundo después. Se quedó a un segundo del bronce.</p>
+
+<h2>El que más movió la carrera</h2>
+
+<p>Nadie puede decir que Del Toro corrió a rueda. En los 273,7&nbsp;km y 3.803 metros de desnivel del circuito del Mont-Royal fue de los corredores más activos: respondió a los ataques de Tom Pidcock, Remco Evenepoel y Paul Seixas, y sus propias aceleraciones pusieron en apuros más de una vez a Evenepoel, el gran rival que se esperaba en la previa. La selección mexicana hizo su parte: Carlos García, Ulises Castillo, José Escárcega, Éder Frayre y Edgar Cadena lo protegieron durante más de 170 kilómetros para que llegara fresco al final.</p>
+
+<p>A falta de una vuelta, unos 13&nbsp;km, lanzó un ataque calculado que lo colocó en la pelea por las medallas, y a 3,3&nbsp;km de meta se levantó del sillín para un último intento. Esta vez las piernas no respondieron como en el Gran Premio de Montreal, que había ganado en este mismo circuito dos semanas antes.</p>
+
+<h2>Atrapado entre la camiseta de México y la de su equipo</h2>
+
+<p>El final tuvo además una trampa táctica que pocos esperaban. El que se escapó a unos 32&nbsp;km de meta fue McNulty, su compañero en UAE Team Emirates-XRG. Del Toro corría por México, pero perseguir con todo a su compañero de marca, arrastrando de paso a sus rivales, no tenía mucho sentido para él. Mientras los favoritos se miraban entre ellos, la ventaja del estadounidense creció hasta el minuto y ya no hubo forma de recuperarla. McNulty lo reconoció después: &laquo;En la última subida estaba muriéndome, pero seguí empujando&raquo;.</p>
+
+<h2>Un paso más arriba que en Kigali</h2>
+
+<p>El quinto puesto mejora su séptimo lugar en el Mundial de Kigali 2025 y completa una semana muy sólida en Canadá: el 20 de septiembre ya había sido sexto en la contrarreloj élite. Son dos top 10 en el mismo Mundial para un corredor que todavía está en plena progresión.</p>
+
+<p>Del Toro, un torito que lo dio todo, se va de Montreal con la sensación de haber rozado algo grande. Le queda el consuelo de que el maillot arcoíris se quedó en casa, en su propio equipo, y de que, con esta forma, Il Lombardia del 10 de octubre y los próximos Mundiales ya lo esperan como uno de los corredores a vigilar.</p>
+`.trim()
+
+export async function publishDelToroFifthWorldsArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const [delToro, mcnulty, evenepoel, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'brandon-mcnulty' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'remco-evenepoel' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [delToro?.id, mcnulty?.id, evenepoel?.id].filter((id): id is number => id !== undefined)
+
+  const [ultimaHoraTag, latinosTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'latinos' },
+      update: {},
+      create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, latinosTag.id].map((id) => ({ id }))
+
+  const heroImageId = await ensureCustomHeroImage('isaac-del-toro-quinto-mundial-montreal-2026', {
+    url: '/images/headers/del-toro-quinto-mundial-cover.jpg',
+    altText: 'Un torito que lo dio todo: un 5º puesto en el Mundial de ruta',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title: 'Un torito que lo dio todo: Isaac del Toro, quinto en el Mundial de ruta',
+    subtitle: 'Evidentemente no el resultado que él esperaba: el mexicano terminó a 14 segundos de McNulty y a uno del bronce, pero firma el mejor resultado de México en la historia de la prueba',
+    excerpt:
+      'Isaac del Toro terminó quinto en el Mundial de ruta de Montreal, a 14 segundos del campeón Brandon McNulty y a solo un segundo del bronce. Es el mejor resultado de un mexicano en la historia de la prueba.',
+    content: delToroFifthWorldsContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.elimparcial.com/deporte/2026/09/27/isaac-del-toro-termina-quinto-en-el-mundial-de-ciclismo-de-montreal-a-14-segundos-del-campeon/',
+      'https://www.diariodemexico.com/arena-deportiva/segundo-podio-isaac-toro-cruza-en-quinto-lugar-en-mundial-ciclismo-2026',
+      'https://www.eluniversal.com.mx/deportes/isaac-del-toro-se-quedo-a-un-paso-del-podio-termina-en-la-quinta-posicion-del-campeonato-mundial-de-ciclismo/',
+      'https://www.informador.mx/deportes/isaac-del-toro-brilla-en-el-mundial-de-ciclismo-2026-en-montreal-logra-el-quinto-puesto-20260927-0062.html',
+      'https://cyclinguptodate.com/cycling/live-2026-world-championships-elite-mens-road-race-evenepoel-van-der-poel-van-aert-pidcock-del-toro-and-seixas-battle-for-the-rainbow-jersey',
+    ]),
+    sourceNames: toJsonField(['El Imparcial', 'Diario de México', 'El Universal', 'El Informador', 'CyclingUpToDate']),
+    seoTitle: 'Isaac del Toro, quinto en el Mundial de ciclismo de ruta 2026 en Montreal',
+    seoDescription:
+      'Isaac del Toro fue quinto en el Mundial de ruta de Montreal, a 14 segundos de McNulty y a uno del bronce: el mejor resultado de México en la historia.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'isaac-del-toro-quinto-mundial-montreal-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'isaac-del-toro-quinto-mundial-montreal-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: tagIds },
     },
   })
 
