@@ -15,7 +15,7 @@ producción (no solo escrito localmente).
 - [x] **Grand Prix Cycliste de Québec** (11 sept) — gana Evenepoel
 - [x] **Grand Prix Cycliste de Montréal** (13 sept) — Isaac del Toro hace historia
 - [x] **UCI Road World Championships 2026** — previa publicada (Pogačar fuera, favoritos Evenepoel/Del Toro). 20-27 sept, Montreal.
-- [ ] **UCI Road World Championships 2026** — resultado real, pendiente hasta que se corra (27 sept)
+- [x] **UCI Road World Championships 2026** — resultado real: Brandon McNulty campeón (Matthews plata, Van der Poel bronce, Del Toro 5º)
 - [ ] Il Lombardia (10 oct) — pendiente hasta que se corra
 - [ ] Tour of Guangxi (13–18 oct) — pendiente hasta que se corra, cierra la temporada WorldTour masculina
 - [ ] Tour of Chongming Island (13–15 oct) — cierra la temporada Women's WorldTour
@@ -23,7 +23,7 @@ producción (no solo escrito localmente).
 ## Ciclistas / historias en seguimiento
 
 - [x] Isaac del Toro — GP Montreal cubierto (récord de juventud, primer mexicano en ganarlo)
-- [ ] Isaac del Toro — seguimiento en el Mundial (20-27 sept, Montreal)
+- [x] Isaac del Toro — seguimiento en el Mundial (5º en la ruta élite, cubierto en la crónica de McNulty)
 
 ## Infraestructura / mecánica de publicación
 

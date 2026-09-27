@@ -2995,3 +2995,122 @@ export async function publishPogacarReturnArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Brandon McNulty gana el Mundial de ruta élite masculino en Montreal
+// 2026 tras un ataque en solitario a unos 32 km de meta. Plata para
+// Michael Matthews, bronce para Mathieu van der Poel; Quinn Simmons 4º
+// e Isaac del Toro 5º. Primer título de EE. UU. desde Armstrong (1993).
+// Fuentes: Cyclingnews, Primicias, ClaroSports, franceinfo,
+// CyclingUpToDate, IDL Pro Cycling (ver sourceUrls). Sin citas del
+// ganador: ninguna fuente verificada las publicaba al redactar.
+// ————————————————————————————————————————————————————————————
+
+const mcnultyWorldsContent = `
+<p>Nadie lo tenía en la primera línea de favoritos, y precisamente por eso nadie salió a por él. Brandon McNulty (Estados Unidos) es el nuevo campeón del mundo de ruta élite: ganó este domingo 27 de septiembre en Montreal después de un ataque en solitario a unos 32&nbsp;km de meta, cuando los grandes nombres del pelotón se miraban entre sí. Cruzó la línea tras 6 horas, 17 minutos y 4 segundos de carrera, con el tiempo justo para levantar los brazos antes de que llegara el grupo perseguidor.</p>
+
+<p>El australiano Michael Matthews ganó el esprint por la plata y Mathieu van der Poel (Países Bajos) se colgó el bronce. Detrás, Quinn Simmons completó una jornada redonda para Estados Unidos con el cuarto puesto, e Isaac del Toro (México) fue quinto.</p>
+
+<h2>Una carrera larguísima y sin dueño</h2>
+
+<p>El recorrido era de los más duros de los últimos años: 273,7&nbsp;km con 3.803 metros de desnivel, con salida en Brossard y doce vueltas a un circuito de 13,4&nbsp;km alrededor del Mont-Royal, con la subida de la Voie Camillien-Houde como punto clave en cada paso. Solo 94 de los 184 corredores que tomaron la salida llegaron a meta.</p>
+
+<p>Una fuga de 15 corredores, con Biniam Girmay entre ellos, marcó la primera mitad de la carrera, mientras Francia tomaba el control del pelotón y la mantenía a raya (unos cuatro minutos cerca del kilómetro 154). La carrera se rompió de verdad a unos 73&nbsp;km del final, cuando Van der Poel lanzó un ataque muy potente que solo pudieron seguir Quinn Simmons y Oscar Onley. A partir de ahí fue una sucesión de movimientos: Del Toro atacó varias veces y puso en apuros a Remco Evenepoel, que parecía descolgado una y otra vez y volvía a aparecer; Tom Pidcock, recuperado de una caída anterior, fue el más insistente; Wout van Aert pasó de agresor principal a trabajar para Evenepoel.</p>
+
+<h2>El ataque que nadie persiguió</h2>
+
+<p>Con un grupo de una docena de corredores en cabeza, después de aceleraciones de Matteo Jorgenson, Giulio Ciccone y Pidcock, McNulty eligió su momento, con dos vueltas por delante. Y aquí está la clave de la victoria: nadie tenía motivos para cazarlo. Simmons y Jorgenson, sus compañeros de selección, no iban a tirar contra él. Del Toro, que comparte equipo con McNulty en UAE Team Emirates-XRG, tampoco quería remolcar a sus rivales hasta su compañero de marca. Y el resto de favoritos se vigilaba entre sí. En pocos kilómetros, la ventaja subió a un minuto.</p>
+
+<p>La reacción llegó tarde. En la última vuelta Pidcock y Ciccone apretaron y a 2&nbsp;km de meta el hueco había bajado a poco más de 20 segundos, pero McNulty —un especialista contrarrelojista, campeón del mundo júnior de crono en 2016— aguantó el último kilómetro para llegar solo.</p>
+
+<h2>33 años de espera para Estados Unidos</h2>
+
+<p>McNulty, nacido en Phoenix (Arizona) hace 28 años, es apenas el tercer estadounidense campeón del mundo de ruta élite, después de Greg LeMond (1983 y 1989) y Lance Armstrong (1993). Estados Unidos llevaba 33 años sin el maillot arcoíris masculino. Hasta hoy, sus mayores victorias eran una etapa del Giro de Italia 2023, la primera etapa de la Vuelta a España 2024 y la general del Tour de Polonia 2025. Además, conocía muy bien este circuito: ganó el Gran Premio de Montreal en 2025 y fue tercero en la edición de este año, dos semanas antes del Mundial. Ahora hereda el maillot de Tadej Pogačar, su propio compañero de equipo, que no pudo defender el título por la caída que sufrió en la Vuelta.</p>
+
+<h2>Del Toro, quinto y con la sensación de haber sido el animador</h2>
+
+<p>Para México queda un sabor mixto. Isaac del Toro llegaba como uno de los grandes favoritos tras ganar el Gran Premio de Montreal dos semanas antes en este mismo circuito, y fue de los que más movió la carrera. Pero sufrió en los ataques de Pidcock en el final y, con su compañero de equipo por delante, no le tocaba perseguir. El quinto puesto es su mejor resultado en un Mundial de ruta élite y confirma que el de Ensenada ya pelea con los mejores en las carreras de un día.</p>
+
+<p>El Mundial de Montreal cierra así con dos campeones de ruta muy distintos: Demi Vollering, la gran dominadora de la temporada femenina, y Brandon McNulty, el hombre al que nadie vigiló. El maillot arcoíris que Pogačar ganó en Kigali ya tiene nuevo dueño.</p>
+`.trim()
+
+export async function publishMcNultyWorldsArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const [mcnulty, matthews, vanDerPoel, simmons, delToro, evenepoel, pogacar, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'brandon-mcnulty' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'michael-matthews' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'mathieu-van-der-poel' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'quinn-simmons' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'remco-evenepoel' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'tadej-pogacar' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [mcnulty?.id, matthews?.id, vanDerPoel?.id, simmons?.id, delToro?.id, evenepoel?.id, pogacar?.id].filter(
+    (id): id is number => id !== undefined,
+  )
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+
+  const heroImageId = await ensureCustomHeroImage('brandon-mcnulty-campeon-mundial-2026', {
+    url: '/images/headers/brandon-mcnulty-campeon-mundial-cover.jpg',
+    altText: 'El oro y nuevo campeón del mundo',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title: 'Brandon McNulty, campeón del mundo: el ataque que nadie persiguió en Montreal',
+    subtitle: 'El estadounidense se fue en solitario a unos 32 km de meta y devolvió el maillot arcoíris a Estados Unidos 33 años después; Matthews fue plata, Van der Poel bronce y Del Toro, quinto',
+    excerpt:
+      'Brandon McNulty ganó el Mundial de ruta élite en Montreal con un ataque en solitario a unos 32 km de meta. Michael Matthews fue plata, Mathieu van der Poel bronce e Isaac del Toro terminó quinto.',
+    content: mcnultyWorldsContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.cyclingnews.com/pro-cycling/live/road-world-championships-2026-elite-mens-road-race-live-who-will-be-pogacars-successor-the-battle-for-the-rainbow-jersey-ignites-in-montreal/',
+      'https://www.primicias.ec/deportes/ciclismo/resultados-envivo-mundial-ciclismo-montreal-canada-dondever-tv-canales-133529/',
+      'https://www.clarosports.com/ciclismo/isaac-del-toro-en-vivo-resultado-y-posiciones-de-la-prueba-en-ruta-del-mundial-de-ciclismo-2026/',
+      'https://www.franceinfo.fr/sports/cyclisme/mondiaux/l-americain-brandon-mcnulty-piege-les-favoris-et-devient-champion-du-monde-de-cyclisme-au-bout-d-une-course-d-anthologie-a-montreal_8212400.html',
+      'https://cyclinguptodate.com/cycling/live-2026-world-championships-elite-mens-road-race-evenepoel-van-der-poel-van-aert-pidcock-del-toro-and-seixas-battle-for-the-rainbow-jersey',
+      'https://www.idlprocycling.com/cycling/live-2026-mens-world-cycling-championships-evenepoel-del-toro-seixas-and-pidcock-ready-to-go-head-to-head',
+    ]),
+    sourceNames: toJsonField(['Cyclingnews', 'Primicias', 'ClaroSports', 'franceinfo', 'CyclingUpToDate', 'IDL Pro Cycling']),
+    seoTitle: 'Brandon McNulty gana el Mundial de ciclismo de ruta 2026 en Montreal',
+    seoDescription:
+      'Brandon McNulty es campeón del mundo de ruta 2026 tras atacar en solitario en Montreal. Matthews plata, Van der Poel bronce e Isaac del Toro quinto.',
+    readingTime: 5,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'brandon-mcnulty-campeon-mundial-2026' },
+    update: {
+      ...baseFields,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: [{ id: ultimaHoraTag.id }] },
+    },
+    create: {
+      slug: 'brandon-mcnulty-campeon-mundial-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: [{ id: ultimaHoraTag.id }] },
+    },
+  })
+
+  return { slug: article.slug }
+}
