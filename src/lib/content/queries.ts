@@ -21,20 +21,39 @@ const summarySelect = {
 /**
  * Home dinámica alimentada desde BD (§82) — nunca contenido hardcodeado.
  * Estructura de la portada (orden fijo acordado):
- * Hero (carrusel de 4-6 historias, deslizable) → Últimas noticias (3)
+ * Hero (carrusel de 5 historias de Última Hora, deslizable) → Últimas noticias (3)
  * → Radar del Pelotón (1 principal + 4 en feed) → Historias
  * destacadas (hasta 6, curadas con `featured`) → Próximas carreras →
  * Análisis → Más leído. Un mismo artículo nunca se repite entre
  * Hero/Últimas/Radar.
  *
- * El carrusel prioriza los artículos marcados `featured` (más
- * recientes primero) y, si hay menos de 4, se completa con los
- * últimos publicados en general — así nunca queda fijo un solo
- * artículo indefinidamente y el usuario puede desplazarse entre
- * varios (ver HeroCarousel).
+ * El carrusel muestra siempre las 5 noticias de Última Hora más
+ * recientes (categoría `ultima-hora`, etiqueta `ultima-hora` o
+ * `breakingNews`): cada artículo nuevo entra el primero y el más
+ * antiguo de los cinco sale. Si hubiera menos de 5, se completa con
+ * los últimos publicados en general (ver HeroCarousel).
  */
+const HERO_CAROUSEL_SIZE = 5
+
 export async function getHomeSections() {
-  const [featuredPool, recentPool, analysis, upcomingRaces, nextRace, mostRead] = await Promise.all([
+  const [breakingPool, featuredPool, recentPool, analysis, upcomingRaces, nextRace, mostRead] = await Promise.all([
+    safeQuery(
+      () =>
+        prisma.article.findMany({
+          where: {
+            status: { in: PUBLIC_STATUSES },
+            OR: [
+              { category: { slug: 'ultima-hora' } },
+              { tags: { some: { slug: 'ultima-hora' } } },
+              { breakingNews: true },
+            ],
+          },
+          orderBy: { publishedAt: 'desc' },
+          take: HERO_CAROUSEL_SIZE,
+          select: summarySelect,
+        }),
+      [] as ArticleSummary[],
+    ),
     safeQuery(
       () =>
         prisma.article.findMany({
@@ -72,8 +91,8 @@ export async function getHomeSections() {
 
   const heroCarouselArticles: ArticleSummary[] = []
   const usedSlugs = new Set<string>()
-  for (const article of [...featuredPool, ...recentPool]) {
-    if (heroCarouselArticles.length >= 6) break
+  for (const article of [...breakingPool, ...recentPool]) {
+    if (heroCarouselArticles.length >= HERO_CAROUSEL_SIZE) break
     if (usedSlugs.has(article.slug)) continue
     heroCarouselArticles.push(article)
     usedSlugs.add(article.slug)
