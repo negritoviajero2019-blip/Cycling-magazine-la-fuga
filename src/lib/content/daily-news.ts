@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage } from './uci-import'
+import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -3223,6 +3223,226 @@ export async function publishDelToroFifthWorldsArticle() {
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
       races: race ? { connect: [{ id: race.id }] } : undefined,
       tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Polémica tras el Mundial de Montreal: Pidcock y Matthews insinúan
+// que Del Toro ayudó a su compañero de UAE, McNulty; Del Toro responde
+// que fue México el que corrió en desventaja. Fuentes: road.cc,
+// CyclingUpToDate, Domestique (entrevista de Del Toro con ESPN MX),
+// IDL Pro Cycling, Velo (ver sourceUrls). Citas traducidas del inglés.
+// ————————————————————————————————————————————————————————————
+
+const delToroWorldsControversyContent = `
+<p>El Mundial de Montreal terminó el domingo, pero la discusión apenas empieza. Dos de los grandes derrotados de la carrera, Tom Pidcock (Gran Bretaña) y Michael Matthews (Australia), dejaron caer que la victoria de Brandon McNulty no fue solo mérito suyo: según ellos, Isaac del Toro, su compañero en UAE Team Emirates-XRG, no persiguió como debía. El mexicano, quinto a 14 segundos del campeón, lo ve justo al revés.</p>
+
+<h2>Lo que dijeron Pidcock y Matthews</h2>
+
+<p>Pidcock, que terminó con cortes en la pierna tras una caída en la carrera, fue el más directo. &laquo;Del Toro obviamente estaba trabajando para McNulty al final&raquo;, le dijo a Cyclingnews. Ante otro medio lo explicó con algo más de contexto: &laquo;Era difícil marcar diferencias, con el viento como estaba, con el equipo de Estados Unidos y con Matteo [Jorgenson], que estuvo muy fuerte una vez que Brandon atacó. Y obviamente Isaac es del mismo equipo&raquo;.</p>
+
+<p>Matthews, plata al esprint 13 segundos detrás de McNulty, fue más diplomático, pero apuntó en la misma dirección. &laquo;Hubo un poco de trabajo en equipo entre ciertos corredores. Iban rodando un poco juntos. Si menos equipos hubieran corrido juntos por encima de las fronteras nacionales, lo habríamos alcanzado. Es lo que hay&raquo;, declaró a la televisión belga Sporza.</p>
+
+<p>El momento que señalan es el ataque de McNulty, a unos 32&nbsp;km de meta. Del Toro llevaba dos horas moviendo la carrera, pero cuando su compañero de marca arrancó, dudó en la cabeza del grupo. En pocos kilómetros la ventaja del estadounidense pasó del minuto, y aunque la persecución se acercó en la última subida, ya no fue suficiente.</p>
+
+<h2>La respuesta de Del Toro: "Vinimos a ganar"</h2>
+
+<p>En una entrevista con ESPN México, Del Toro rechazó que haya corrido para McNulty y dio la vuelta al argumento: la que estaba en desventaja, dice, era México, con un equipo mucho menos potente que el de las grandes potencias. &laquo;Si todo el pelotón corrió un poco contra nosotros, o aprovechó que no teníamos el mejor equipo, creo que vamos a pelear todavía más el año que viene&raquo;.</p>
+
+<p>Tampoco escondió su decepción: &laquo;Creo que quedó claro que vinimos a ganar. Lo dejé todo, lo intentamos todo. Quizá debí colocarme mejor para el esprint final&raquo;. Y sobre el campeón: &laquo;Podría ser arrogante y decir que quería el arcoíris para mí. Aunque me alegro por él porque lo conozco un poco, también sé que México vino a ganar&raquo;. Remató sin rodeos: &laquo;No estoy nada contento. No me conformo con esto. Sabíamos que podíamos ganar y es una pena no haberlo conseguido&raquo;.</p>
+
+<h2>Un debate tan viejo como el Mundial</h2>
+
+<p>La discusión no es nueva. El Mundial es la única gran carrera del año en la que los corredores dejan su equipo comercial y compiten por su país, pero pasan el resto de la temporada —y cobran su sueldo— con sus equipos de marca. Cuando dos compañeros de equipo llegan juntos al final con camisetas distintas, la sospecha de que se cubren entre ellos aparece casi siempre, y es muy difícil de demostrar.</p>
+
+<p>En el caso de Del Toro, el argumento táctico también tiene lógica. Tirar a fondo detrás de McNulty habría significado llevar a rueda a Matthews, Van der Poel, Pidcock y compañía hasta la meta, con pocas opciones de ganarles al esprint. Estados Unidos, además, tenía a Quinn Simmons y Matteo Jorgenson en ese mismo grupo, sin ningún motivo para perseguir. Con un solo corredor de México en el grupo de cabeza, la persecución no era solo responsabilidad del mexicano.</p>
+
+<p>Lo que queda claro es que el quinto puesto de Del Toro, el mejor de un mexicano en la historia del Mundial de ruta, llega con debate incluido. Su próxima oportunidad de responder en la carretera será Il Lombardia, el 10 de octubre.</p>
+`.trim()
+
+export async function publishDelToroWorldsControversyArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const [delToro, mcnulty, pidcock, matthews, race] = await Promise.all([
+    prisma.rider.findUnique({ where: { slug: 'isaac-del-toro' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'brandon-mcnulty' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'tom-pidcock' }, select: { id: true } }),
+    prisma.rider.findUnique({ where: { slug: 'michael-matthews' }, select: { id: true } }),
+    prisma.race.findUnique({ where: { slug: 'uci-road-world-championships-2026' }, select: { id: true } }),
+  ])
+  const riderIds = [delToro?.id, mcnulty?.id, pidcock?.id, matthews?.id].filter((id): id is number => id !== undefined)
+
+  const [ultimaHoraTag, latinosTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'latinos' },
+      update: {},
+      create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, latinosTag.id].map((id) => ({ id }))
+
+  const title = 'Pidcock y Matthews acusan a Del Toro de ayudar a McNulty; el mexicano responde: "México vino a ganar"'
+  const heroImageId = await ensureCustomHeroImage('del-toro-polemica-mundial-mcnulty-2026', {
+    url: '/images/headers/del-toro-polemica-mundial-cover.jpg',
+    altText: '¿Traición o estrategia? Pidcock y Matthews acusan a Del Toro',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'Los derrotados del Mundial de Montreal señalan una alianza entre compañeros de UAE; Del Toro asegura que fue México el que corrió en desventaja',
+    excerpt:
+      'Tom Pidcock y Michael Matthews insinuaron que Isaac del Toro no persiguió a su compañero de UAE Brandon McNulty en el Mundial de Montreal. El mexicano lo niega: "Sabíamos que podíamos ganar y es una pena no haberlo conseguido".',
+    content: delToroWorldsControversyContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://road.cc/news/cycling-live-blog-28-september-2026',
+      'https://cyclinguptodate.com/cycling/angry-pidcock-and-matthews-claim-del-toro-helped-uae-teammate-mcnulty-claim-gold-if-fewer-teams-had-ridden-together-across-national-borders',
+      'https://www.domestiquecycling.com/en/news/del-toro-weighs-in-on-worlds-tactics-debate-other-teams-used-the-fact-we-didnt-have-the-best-team/',
+      'https://www.idlprocycling.com/cycling/matthews-joins-the-pidcock-del-toro-row-after-world-championships-if-fewer-teams-had-ridden-together-across-national-borders',
+      'https://velo.outsideonline.com/road/road-racing/del-toro-slated-for-helping-usas-mcnulty-at-worlds',
+    ]),
+    sourceNames: toJsonField(['road.cc', 'CyclingUpToDate', 'Domestique', 'IDL Pro Cycling', 'Velo']),
+    seoTitle: 'Polémica en el Mundial: acusan a Isaac del Toro de ayudar a McNulty',
+    seoDescription:
+      'Pidcock y Matthews insinúan que Isaac del Toro ayudó a su compañero de UAE Brandon McNulty a ganar el Mundial de Montreal. El mexicano responde.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'del-toro-polemica-mundial-mcnulty-2026' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'del-toro-polemica-mundial-mcnulty-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// MTB descenso: Asa Vermette gana la primera Copa del Mundo de la
+// historia en Whistler y se pone líder de la general a una carrera
+// del final (Lake Placid, 3-4 oct). Vali Höll gana en mujeres.
+// Fuentes: UCI MTB World Series, Pinkbike, Singletracks, Vital MTB
+// (ver sourceUrls). Citas traducidas del inglés.
+// ————————————————————————————————————————————————————————————
+
+const vermetteWhistlerContent = `
+<p>Whistler, la meca mundial del mountain bike, esperó hasta 2026 para recibir su primera Copa del Mundo de descenso, y la estrenó con un final a la altura. El estadounidense Asa Vermette (Frameworks Racing / TRP) ganó el domingo 27 de septiembre y, de paso, arrebató el liderato de la general a una sola carrera del final. En mujeres, la austriaca Vali Höll volvió a ser imbatible.</p>
+
+<h2>Una bajada casi perfecta</h2>
+
+<p>Vermette completó la pista en 3:23.930 y fue marcando en verde los tres últimos parciales hasta cruzar la meta cuatro segundos por delante del francés Max Alran (Commencal / Muc-Off). Según la organización, su bajada se quedó a siete décimas de la suma de los mejores parciales posibles, es decir, casi el descenso ideal. El podio lo completó Amaury Pierron, compañero de Alran, con Luke Wayman (Continental Atherton) cuarto y el canadiense Jacob Jewett (Giant) quinto, para delirio del público local.</p>
+
+<p>&laquo;Hice la bajada que quería&raquo;, resumió Vermette, que ya había ganado la primera prueba de la temporada, en Corea del Sur. Ganó tanto la clasificación como la final, lo que le dio el máximo de 300 puntos del fin de semana.</p>
+
+<h2>Vuelco en la general</h2>
+
+<p>El gran perjudicado del día fue el británico Jordan Williams (Specialized Gravity), que llegaba como líder y terminó 21º. Así quedó la clasificación general a falta de la última prueba:</p>
+
+<ol>
+<li>Asa Vermette (EE. UU.) — 1.347 puntos</li>
+<li>Jordan Williams (Gran Bretaña) — 1.251 puntos</li>
+<li>Amaury Pierron (Francia) — 1.173 puntos</li>
+</ol>
+
+<p>Con 300 puntos en juego en la final, Vermette tiene 96 de ventaja: no necesita ganar para llevarse el título. Si lo consigue, pondrá fin a una sequía de nueve años para Estados Unidos, que no gana la general de descenso desde Aaron Gwin en 2017.</p>
+
+<h2>Höll, a lo grande en casa de sus sueños</h2>
+
+<p>En mujeres, Valentina Höll (Commencal Schwalbe by Les Orres) ganó por apenas tres décimas sobre la canadiense Gracey Hemstreet (Norco x adidas), con la francesa Lisa Bouladou (Santa Cruz Burgtec) tercera. Fue su sexta victoria de la temporada, y la austriaca ya es la tercera mujer con más triunfos en la historia de la Copa del Mundo de descenso, empatada. Para ella tuvo un significado especial: &laquo;Vine a Whistler con 14 años. Siempre fue mi mayor sueño&raquo;.</p>
+
+<h2>Todo se decide en Lake Placid</h2>
+
+<p>La temporada termina del 2 al 4 de octubre en Lake Placid (Nueva York), sede olímpica de invierno, donde se decidirán las generales de descenso, cross-country y short track. En descenso, la clasificación es el sábado 3 y la final el domingo 4 de octubre. Todas las miradas estarán en si Vermette aguanta la presión de Williams y Pierron.</p>
+`.trim()
+
+export async function publishVermetteWhistlerArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'mtb-gravel' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+
+  const title = 'Asa Vermette gana la primera Copa del Mundo de descenso en Whistler y se pone líder a una carrera del final'
+  const heroImageId = await ensureHeroImage('asa-vermette-whistler-copa-mundo-descenso-2026', {
+    title,
+    label: 'MTB y Gravel',
+    riders: [
+      { name: 'Asa Vermette', team: 'Frameworks Racing' },
+      { name: 'Vali Höll', team: 'Commencal Schwalbe' },
+    ],
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'El estadounidense aventaja en 96 puntos a Jordan Williams antes de la final de Lake Placid; Vali Höll suma su sexta victoria del año',
+    excerpt:
+      'Asa Vermette ganó la primera Copa del Mundo de descenso celebrada en Whistler y es nuevo líder de la general, con 96 puntos sobre Jordan Williams antes de la final en Lake Placid. En mujeres ganó Vali Höll.',
+    content: vermetteWhistlerContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.ucimtbworldseries.com/news/vermette-and-holl-rule-a-thrilling-first-uci-downhill-world-cup-in-whistler-mountain-bike-park',
+      'https://www.pinkbike.com/news/results-2026-whistler-dh-world-cup-elite-finals.html',
+      'https://www.singletracks.com/community/asa-vermette-could-end-american-world-cup-downhill-drought-at-lake-placid/',
+      'https://www.vitalmtb.com/news/news/final-results-whistler-world-cup-downhill',
+    ]),
+    sourceNames: toJsonField(['UCI MTB World Series', 'Pinkbike', 'Singletracks', 'Vital MTB']),
+    seoTitle: 'Asa Vermette gana la Copa del Mundo de descenso de Whistler 2026',
+    seoDescription:
+      'Asa Vermette ganó la primera Copa del Mundo de descenso en Whistler y lidera la general antes de Lake Placid. Vali Höll ganó en mujeres.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'asa-vermette-whistler-copa-mundo-descenso-2026' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      tags: { set: [{ id: ultimaHoraTag.id }] },
+    },
+    create: {
+      slug: 'asa-vermette-whistler-copa-mundo-descenso-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      tags: { connect: [{ id: ultimaHoraTag.id }] },
     },
   })
 
