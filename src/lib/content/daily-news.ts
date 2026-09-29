@@ -7,7 +7,7 @@
  */
 import { prisma } from '@/lib/db'
 import { toJsonField } from './json-field'
-import { ensureCustomHeroImage, ensureHeroImage } from './uci-import'
+import { ensureCustomHeroImage } from './uci-import'
 
 // ————————————————————————————————————————————————————————————
 // Pogačar vuelve a la bici (rodillo), 17 días después de la caída
@@ -3397,13 +3397,13 @@ export async function publishVermetteWhistlerArticle() {
   })
 
   const title = 'Asa Vermette gana la primera Copa del Mundo de descenso en Whistler y se pone líder a una carrera del final'
-  const heroImageId = await ensureHeroImage('asa-vermette-whistler-copa-mundo-descenso-2026', {
-    title,
-    label: 'MTB y Gravel',
-    riders: [
-      { name: 'Asa Vermette', team: 'Frameworks Racing' },
-      { name: 'Vali Höll', team: 'Commencal Schwalbe' },
-    ],
+  const heroImageId = await ensureCustomHeroImage('asa-vermette-whistler-copa-mundo-descenso-2026', {
+    url: '/images/headers/vermette-whistler-cover.jpg',
+    altText: '¡Rey de Whistler! Asa Vermette gana y se pone líder del mundo',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
   })
 
   const baseFields = {
