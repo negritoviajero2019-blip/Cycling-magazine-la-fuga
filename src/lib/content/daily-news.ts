@@ -3838,14 +3838,14 @@ const mercadoFichajes2027Content = `
 
 <h2>Lo que queda por resolver</h2>
 
-<p>La gran incógnita sigue siendo Roglič, que deja Red Bull-Bora el 31 de diciembre y cuya decisión se esperaba tras el Mundial. Además, el mercado también trae despedidas: Ion Izagirre y Geoffrey Bouchard anunciaron su retiro el 1 de octubre, Ben Swift lo hizo el 2 de septiembre y Luka Mezgec correrá el Europeo de Eslovenia como su última carrera antes de ser director deportivo en Red Bull. Los datos de este balance proceden de los comunicados de los equipos recogidos por Ciclo21, IDLProCycling y la prensa especializada; seguiremos actualizándolo conforme se oficialicen nuevos movimientos.</p>
+<p>La gran incógnita sigue siendo Roglič, que deja Red Bull-Bora el 31 de diciembre y cuya decisión se esperaba tras el Mundial. Entre los que no se mueven está Paul Seixas: el joven francés aclaró que seguirá en Decathlon CMA CGM, con contrato hasta finales de 2027, según recogió Cyclist. Además, el mercado también trae despedidas: Ion Izagirre y Geoffrey Bouchard anunciaron su retiro el 1 de octubre, Ben Swift lo hizo el 2 de septiembre y Luka Mezgec correrá el Europeo de Eslovenia como su última carrera antes de ser director deportivo en Red Bull. Los datos de este balance proceden de los comunicados de los equipos recogidos por Ciclo21, IDLProCycling y la prensa especializada; seguiremos actualizándolo conforme se oficialicen nuevos movimientos.</p>
 `.trim()
 
 export async function publishMercadoFichajes2027OctubreArticle() {
   const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
   const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
 
-  const riderSlugs = ['felix-gall', 'mikel-landa', 'arnaud-de-lie', 'kaden-groves', 'nico-denz', 'jordi-meeus', 'fabio-jakobsen', 'juan-sebastian-molano', 'sergio-higuita', 'santiago-buitrago', 'guillaume-martin', 'lennert-van-eetvelt', 'kasper-asgreen', 'andrew-august', 'mauro-schmid', 'primoz-roglic', 'steffi-haberlin', 'kate-courtney', 'stan-dewulf']
+  const riderSlugs = ['felix-gall', 'mikel-landa', 'arnaud-de-lie', 'kaden-groves', 'nico-denz', 'jordi-meeus', 'fabio-jakobsen', 'juan-sebastian-molano', 'sergio-higuita', 'santiago-buitrago', 'guillaume-martin', 'lennert-van-eetvelt', 'kasper-asgreen', 'andrew-august', 'mauro-schmid', 'primoz-roglic', 'paul-seixas', 'steffi-haberlin', 'kate-courtney', 'stan-dewulf']
   const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
   const riderIds = riders.map((r) => r.id)
 
@@ -3890,6 +3890,7 @@ export async function publishMercadoFichajes2027OctubreArticle() {
       'https://procyclinguk.com/juan-sebastian-molano-joins-lotto-intermarche-on-two-year-deal-from-2027/',
       'https://www.domestiquecycling.com/en/news/tudor-land-de-lie-as-pinarello-q36-5-secure-upcoming-american-talent/',
       'https://www.ciclo21.com/ciclobreves-internacionales-2026-octubr-1/',
+      'https://www.cyclist.co.uk/news/cycling-transfer-rumours',
     ]),
     sourceNames: toJsonField(['Ciclo21', 'IDLProCycling', 'Cyclingnews', 'CyclingUpToDate', 'Visma | Lease a Bike', 'ProCyclingUK', 'Domestique']),
     seoTitle: 'Fichajes 2027: De Lie a Tudor, Gall a Lidl-Trek y Landa a Euskaltel',
