@@ -3566,3 +3566,354 @@ export async function publishEuropeoEsloveniaPreviewArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Primož Roglič deja Red Bull-Bora al terminar 2026 y decide su
+// futuro tras el Mundial. Hecho confirmado: la salida (Ralph Denk,
+// 12 jul). Rumor: destino (Lotto-Intermarché, Pinarello-Q36.5).
+// Fuentes: Domestique, CyclingUpToDate, IDLProCycling, FloBikes,
+// OA Sport (ver sourceUrls). Citas traducidas del inglés.
+// ————————————————————————————————————————————————————————————
+
+const roglicFuturoContent = `
+<p>Primož Roglič ya no será ciclista de Red Bull-Bora-Hansgrohe a partir del 1 de enero, pero todavía no sabe, o al menos no ha dicho, con qué maillot saldrá en 2027. El esloveno de 36 años, cuatro veces ganador de la Vuelta a España, esperaba a que terminara el Mundial de Montreal para decidir, y ese plazo acaba de cumplirse. Esto es lo que está confirmado, lo que es solo rumor y por qué su próximo destino importa para todo el mercado.</p>
+
+<h2>Lo confirmado: la salida de Red Bull-Bora</h2>
+
+<p>El 12 de julio, el director del equipo, Ralph Denk, confirmó oficialmente que la etapa de Roglič en el equipo alemán termina con su contrato. &laquo;Su camino con nuestro equipo termina el 31 de diciembre&raquo;, dijo, según Domestique. Roglič había llegado en 2024 desde Jumbo-Visma, de modo que su paso por el equipo habrá durado tres temporadas. Denk fue elogioso: &laquo;Ha tenido un tiempo fantástico con nosotros&hellip; Quiere seguir como corredor. Eso demuestra que es un auténtico deportista&raquo;. Es decir: la salida es un hecho y también lo es que el esloveno quiere seguir compitiendo en 2027.</p>
+
+<h2>Una Vuelta que no debía salir así</h2>
+
+<p>Lo que hizo más llamativa la espera fue el último gran resultado de Roglič. Menos de un mes antes de la Vuelta a España, sufrió un accidente de entrenamiento con un automóvil. FloBikes recogió el 18 de agosto las dudas del equipo; su director deportivo, Sven Vanthourenhout, admitió: &laquo;Tenemos que ser realistas porque su preparación ha sido muy diferente de lo que anticipábamos tras su caída&raquo;. El propio Roglič, que lo había ganado en cuatro ocasiones, se limitó a decir que tiene &laquo;muy buena historia con la Vuelta&raquo; y que siempre disfruta corriéndola.</p>
+
+<p>Aun así, terminó segundo. En la clasificación final, Enric Mas (Movistar) ganó la ronda española, Roglič fue segundo a 2 minutos y 15 segundos y Felix Gall tercero a 2 minutos y 44 segundos, según OA Sport. Mas heredó el maillot rojo después de que Tadej Pogačar, el gran favorito, tuviera que retirarse lesionado. Para un corredor que llegaba con la preparación alterada, era un resultado que reabrió el debate sobre cuánto le queda.</p>
+
+<h2>Lo rumoreado: Lotto-Intermarché, el nombre que más suena</h2>
+
+<p>En agosto, según recogió CyclingUpToDate, Het Laatste Nieuws aseguró, con fuentes de ambas partes, que Roglič dejaría Red Bull y que Lotto-Intermarché negociaba su fichaje. CyclingUpToDate resumió el planteamiento: un contrato de un año que le permitiría afrontar 2027 con libertad, elegir las carreras en las que quiere dejar huella y, a la vez, no obligaría al equipo a construir un proyecto de varios años a su alrededor. El equipo belga necesita un referente de grandes vueltas después de perder a Lennert Van Eetvelt y a Arnaud De Lie, y Roglič, según esa información, quiere carreras como el Tour de Suiza y una revancha en el Tour de Francia, la gran vuelta que nunca ganó.</p>
+
+<p>Lotto-Intermarché es, de hecho, el único equipo con una negociación descrita con detalle. Otras versiones no han ido más allá de la especulación. Pinarello-Q36.5 es el equipo que con más constancia se relaciona con él: la Gazzetta dello Sport habló en julio de que era &laquo;una opción&raquo;, y IDLProCycling subrayó que no hay acuerdo alguno. CyclingUpToDate llegó a escribir que las conversaciones no parecían haber ganado tracción. Y Bahrain Victorious, que también sonó por los vínculos eslovenos de su director general, Milan Eržen, negó expresamente tener interés.</p>
+
+<h2>Por qué importa su decisión</h2>
+
+<p>El 22 de septiembre, el periodista de la Gazzetta dello Sport Ciro Scognamiglio escribió que &laquo;no se ha tomado ninguna decisión definitiva&raquo; y que Roglič esperaría hasta después del Mundial. La carrera de Montreal ya pasó —y con ella el ciclo de rumores—, pero el esloveno no ha anunciado nada, y hoy empieza otro compromiso para él: lidera a Eslovenia en el Campeonato de Europa, junto a Matej Mohorič, ante su afición.</p>
+
+<p>Para el mercado, su decisión es la pieza que falta. Lotto-Intermarché ha perdido a De Lie, ha fichado a Guillaume Martin por un año y busca un líder claro para las grandes vueltas; si Roglič firma, el equipo belga tendría un líder de primera categoría. Si no, el esloveno, que cumplirá 37 años a finales de este mes, seguirá siendo uno de los grandes nombres sin destino conocido. Cuando se produzca el anuncio, lo contaremos aquí con su fuente oficial.</p>
+`.trim()
+
+export async function publishRoglicFuturo2027Article() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['primoz-roglic', 'enric-mas', 'felix-gall', 'arnaud-de-lie', 'tadej-pogacar', 'matej-mohoric']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+  const tagIds = [{ id: ultimaHoraTag.id }]
+
+  const title = 'Roglič deja Red Bull-Bora y decide su futuro tras el Mundial: Lotto-Intermarché, el equipo que más suena'
+  const heroImageId = await ensureCustomHeroImage('roglic-futuro-2027-red-bull-lotto', {
+    url: '/images/headers/roglic-futuro-2027-cover.jpg',
+    altText: 'Primož Roglič y su futuro para 2027 tras dejar Red Bull-Bora',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'La salida de Red Bull-Bora está confirmada; el destino, no. Lo que se sabe y lo que es rumor sobre el esloveno de 36 años',
+    excerpt:
+      'Primož Roglič dejará Red Bull-Bora-Hansgrohe el 31 de diciembre y seguirá corriendo en 2027. Lotto-Intermarché negocia, Pinarello-Q36.5 suena y Bahrain lo niega: qué es hecho y qué es rumor.',
+    content: roglicFuturoContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.domestiquecycling.com/en/news/bahrain-emerges-as-possible-destination-for-roglic-after-confirmed-red-bull-departure/',
+      'https://cyclinguptodate.com/cycling/primoz-roglic-will-leave-red-bull-in-2026-and-one-of-the-least-expected-teams-has-entered-the-race-to-sign-him',
+      'https://www.domestiquecycling.com/en/news/roglic-reportedly-puts-2027-decision-on-hold-until-after-world-championships/',
+      'https://www.idlprocycling.com/cycling/pidcock-and-roglic-on-the-same-team-for-2027-an-option-according-to-transfer-rumors',
+      'https://www.flobikes.com/articles/16135444-four-time-champion-primoz-roglic-to-ride-vuelta-a-espana-2026-after-crash',
+      'https://www.oasport.it/2026/09/classifica-vuelta-a-espana-2026-enric-mas-vince-roglic-e-gall-sul-podio/',
+    ]),
+    sourceNames: toJsonField(['Domestique', 'CyclingUpToDate', 'IDLProCycling', 'FloBikes', 'OA Sport']),
+    seoTitle: 'Roglič deja Red Bull-Bora: ¿Lotto-Intermarché o Pinarello-Q36.5 en 2027?',
+    seoDescription:
+      'Primož Roglič deja Red Bull-Bora-Hansgrohe el 31 de diciembre. Qué está confirmado, qué es rumor y qué equipos suenan para 2027: Lotto-Intermarché, Pinarello-Q36.5 y Bahrain.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'roglic-futuro-2027-red-bull-lotto' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'roglic-futuro-2027-red-bull-lotto',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// La Vuelta a México regresa al calendario UCI en 2027 como MEX Tour
+// (19-23 enero, categoría 2.1). La UCMex publicó el calendario de
+// enero el 30 de sept. Isaac del Toro NO está confirmado.
+// Fuentes: Infobae, Publimetro, ClaroSports, La Lista, N+, Excélsior,
+// COPACI (ver sourceUrls).
+// ————————————————————————————————————————————————————————————
+
+const mexTour2027Content = `
+<p>Más de una década después de su última edición, la Vuelta a México vuelve a la carretera. La Unión Ciclista de México (UCMex) publicó el calendario de enero de 2027 y en él aparece, con fechas y categoría UCI, una de las carreras más emblemáticas del ciclismo mexicano, ahora con un nombre nuevo: MEX Tour. Del 19 al 23 de enero, cinco días de competencia en una categoría 2.1. Lo que todavía nadie puede asegurar es lo que más ilusiona al país: si Isaac del Toro estará en la salida.</p>
+
+<h2>Lo que ya está confirmado</h2>
+
+<p>El calendario de enero de 2027 reúne cuatro citas, según la información difundida por la UCMex y recogida por Infobae, ClaroSports y Publimetro:</p>
+
+<ul>
+<li><strong>8 al 10 de enero:</strong> II Campeonato Nacional de Ruta.</li>
+<li><strong>17 de enero:</strong> Clásica de la República, prueba de un día, categoría UCI 1.1.</li>
+<li><strong>19 al 23 de enero:</strong> MEX Tour (antes Vuelta a México), carrera por etapas, categoría UCI 2.1.</li>
+<li><strong>26 al 31 de enero:</strong> II Campeonato Nacional de Pista, en el Velódromo Internacional de Xalapa, Veracruz.</li>
+</ul>
+
+<p>Publimetro destaca que será la primera carrera por etapas del calendario internacional en territorio mexicano desde 2015. La categoría 2.1 permite invitar a equipos de distinto nivel, incluidos equipos de WorldTour, y es el nivel que los organizadores esperaban para atraer a los grandes nombres.</p>
+
+<h2>Lo que falta por definir</h2>
+
+<p>El recorrido no está cerrado. El presidente de la UCMex, Bernardo de la Garza, lo reconoció con claridad: &laquo;el trazado de la ruta para la carrera todavía está por confirmarse&raquo;. La Ciudad de México aparece como uno de los escenarios de cierre, y entre las sedes posibles que se mencionan están Tlaxcala, Puebla, Veracruz, Guanajuato y Querétaro, pero ninguna está confirmada oficialmente. En agosto, N+ había hablado de cinco etapas, con una de montaña —quizá en La Malinche, Tlaxcala— y final en la capital. Tampoco hay lista de equipos participantes ni detalles de premios.</p>
+
+<h2>Una carrera con historia</h2>
+
+<p>La Vuelta a México nació en 1948 y se disputó hasta 2015, cuando se corrió bajo el nombre de Vuelta México Telmex y la ganó el colombiano Francisco Colorado, en una edición de seis etapas. Según COPACI, Colombia es el país con más títulos en la carrera: ocho. Entre los ganadores mexicanos está Raúl Alcalá, que se impuso en 1989. Desde entonces, México no ha tenido una carrera por etapas en el calendario internacional; en ese lapso, la irrupción de Isaac del Toro cambió el panorama del ciclismo mexicano.</p>
+
+<p>El regreso se gestó durante todo el año. En marzo, COPACI ya hablaba de la iniciativa de relanzar la carrera en 2027, aún sin aprobación de la UCI. En julio, De la Garza explicó a Excélsior que el objetivo era hacerlo en enero de 2027 y que, si no era posible, se trasladaría a 2028. Ahora ese primer plan ha cuajado.</p>
+
+<h2>¿Correrá Isaac del Toro?</h2>
+
+<p>Es la pregunta que todos se hacen y todavía no tiene respuesta. ClaroSports cita textualmente que, &laquo;de momento, no se puede confirmar la participación de &lsquo;Torito&rsquo;&raquo;. Infobae precisa que la decisión depende de su equipo, UAE Team Emirates, y que él y el equipo planificarán después de cerrar la temporada 2026. En julio, De la Garza había dicho a Excélsior que esperaba verlo competir en México en el primer trimestre de 2027, y que el Campeonato Nacional de Ruta se movió a enero precisamente para que coincida con el calendario de los mexicanos que corren en Europa. Del Toro ganó en 2025 la contrarreloj y la carrera en línea del campeonato nacional élite, según ClaroSports.</p>
+
+<p>Su temporada 2026 lo ha convertido en el rostro del ciclismo mexicano: fue el primer mexicano en subir al podio del Tour de Francia y quinto en el Mundial de Montreal, el mejor resultado de un mexicano en la historia del Mundial de ruta. En julio, De la Garza llegó a decir que sería &laquo;una locura&raquo; ver a Tadej Pogačar, su compañero en UAE, competir en México. Por ahora es un deseo, no un plan.</p>
+
+<h2>Un bloque con Colombia</h2>
+
+<p>La nueva Vuelta a México se coordina con otra carrera de comienzos de año. El presidente de la Federación Colombiana de Ciclismo, Rubén Darío Galeano, anunció en Montreal, durante el Mundial, que el Tour Colombia regresa en 2027 en la última semana de enero, y que ambas carreras funcionarán como un bloque para reducir costos logísticos y facilitar la planificación de los equipos WorldTour que inician su temporada, según ClaroSports. Se suma a otra buena noticia reciente para el ciclismo mexicano: Puebla organizará en 2029 el Mundial UCI de Maratón MTB, el primer mundial UCI de cualquier tipo en la historia del país.</p>
+
+<p>Falta que se defina el recorrido y que lleguen los primeros equipos confirmados, pero la fecha ya está en la agenda: del 19 al 23 de enero de 2027, el pelotón internacional volverá a rodar por las carreteras de México.</p>
+`.trim()
+
+export async function publishMexTour2027Article() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riders = await prisma.rider.findMany({ where: { slug: { in: ['isaac-del-toro', 'tadej-pogacar'] } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const [ultimaHoraTag, latinosTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'latinos' },
+      update: {},
+      create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, latinosTag.id].map((id) => ({ id }))
+
+  const title = 'La Vuelta a México regresa en 2027 como MEX Tour: cinco días en enero, más de una década después'
+  const heroImageId = await ensureCustomHeroImage('vuelta-mexico-mex-tour-2027-regresa', {
+    url: '/images/headers/mex-tour-2027-cover.jpg',
+    altText: 'La Vuelta a México regresa al calendario UCI en 2027 como MEX Tour',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'La UCMex confirma el MEX Tour del 19 al 23 de enero, categoría 2.1; el recorrido y la participación de Isaac del Toro siguen sin confirmarse',
+    excerpt:
+      'La Vuelta a México vuelve al calendario UCI en enero de 2027 con el nombre de MEX Tour: cinco días, categoría 2.1 y la duda de si Isaac del Toro estará en la salida.',
+    content: mexTour2027Content,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.infobae.com/mexico/deportes/2026/10/01/mexico-regresa-al-calendario-de-la-uci-estas-son-las-cuatro-competencias-de-ciclismo-que-habra-en-2027/',
+      'https://www.publimetro.com.mx/deportes/2026/10/02/regresa-la-vuelta-mexico-el-mex-tour-aparece-en-el-calendario-internacional-en-2027/',
+      'https://www.clarosports.com/ciclismo/ciclismo-mexicano-confirma-calendario-para-enero-de-2027-la-vuelta-a-mexico-regresa/',
+      'https://la-lista.com/deportes/confirmado-vuelta-a-mexico-regresa-al-calendario-de-la-uci-fechas-sedes-y-correra-isaac-del-toro',
+      'https://www.nmas.com.mx/deportes/regresa-la-vuelta-a-mexico-ciclismo-isaac-del-toro-podria-participar-esta-fecha/',
+      'https://www.excelsior.com.mx/deportes/isaac-toro-regreso-mexico-2027',
+      'https://www.copaci.org/en/the-tour-of-mexico-could-return-in-2027/',
+      'https://www.clarosports.com/ciclismo/tour-colombia-regresa-en-2027-junto-a-la-vuelta-a-mexico-alianza-para-atraer-equipos-worldtour/',
+    ]),
+    sourceNames: toJsonField(['Infobae', 'Publimetro', 'ClaroSports', 'La Lista', 'N+', 'Excélsior', 'COPACI']),
+    seoTitle: 'Vuelta a México 2027: regresa como MEX Tour del 19 al 23 de enero',
+    seoDescription:
+      'La Vuelta a México regresa al calendario UCI en 2027 como MEX Tour (19 al 23 de enero, categoría 2.1). Fechas, calendario de enero y qué se sabe de Isaac del Toro.',
+    readingTime: 5,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'vuelta-mexico-mex-tour-2027-regresa' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'vuelta-mexico-mex-tour-2027-regresa',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Mercado de fichajes 2027 (balance al 2 de octubre): grandes
+// movimientos ya oficiales. Fuentes: Ciclo21 (compilación),
+// IDLProCycling, Cyclist, ProCyclingUK, Cyclingnews, Visma (oficial),
+// Domestique, CyclingUpToDate (ver sourceUrls). Citas traducidas.
+// Contrato de Jakobsen: se usa el comunicado oficial de Visma (hasta
+// fin de 2027); un medio reportó 2028 y no coincide con el oficial.
+// ————————————————————————————————————————————————————————————
+
+const mercadoFichajes2027Content = `
+<p>Aún quedan Il Lombardia y varias clásicas de otoño por correr, pero el mercado de fichajes 2027 ya tiene forma. Desde principios de agosto, y con un ritmo que se acelera cada semana, los equipos han ido oficializando contratos: un velocista belga que cambia de bando después de una temporada difícil, un podio de grandes vueltas que cambia de equipo, un escalador vasco que vuelve a casa y un equipo belga que se reconstruye entero. Este es el balance de lo que ya es oficial, con el matiz de que el gran nombre pendiente, Primož Roglič, sigue sin destino.</p>
+
+<h2>Las vueltas: Gall a Lidl-Trek, Landa vuelve a casa</h2>
+
+<p>El movimiento más importante para las grandes vueltas es el de Felix Gall. El austriaco de 28 años, segundo en el Giro de Italia de mayo y tercero en la Vuelta a España de 2026, deja Decathlon CMA CGM para fichar por Lidl-Trek con un contrato de tres temporadas, hasta finales de 2029. Se lleva a su amigo Gregor Mühlberger, que firma hasta 2028. En Lidl-Trek se suma a una plantilla de líderes que ya incluye a Juan Ayuso y a Mattias Skjelmose, según Cyclingnews.</p>
+
+<p>Mikel Landa, por su parte, cierra un círculo. El 1 de agosto se confirmó que deja Soudal Quick-Step para regresar a Euskaltel-Euskadi, el equipo en el que corrió de 2011 a 2013, con un contrato de dos temporadas (2027 y 2028) y como líder del proyecto de la Fundación Euskadi. &laquo;Para mí, formar parte otra vez de Euskaltel-Euskadi, ponerme de nuevo la camiseta naranja y reconectar con la Fundación significa cerrar un ciclo&raquo;, declaró. En el mismo mercado, Guillaume Martin pasa de Groupama-FDJ a Lotto-Intermarché por una temporada.</p>
+
+<h2>Velocistas y clasicómanos: De Lie, Groves, Meeus, Jakobsen</h2>
+
+<p>Arnaud De Lie dejó Lotto-Intermarché, su primer equipo profesional, para firmar con Tudor hasta 2030. El belga de 24 años acumula 35 victorias, pero en 2026 solo ganó dos veces, abandonó pronto tanto el Giro como el Tour y atravesó una temporada marcada por enfermedades, lesiones y problemas de forma. &laquo;Lotto-Intermarché es mi primer equipo profesional y siempre lo seguirá siendo&raquo;, dijo al despedirse, y sobre Tudor: &laquo;Mi prioridad es adaptarme, conocer al equipo y seguir desarrollándome como corredor&raquo;. El equipo suizo también incorpora a Kaden Groves, procedente de Alpecin-Premier Tech, y a Nico Denz, de Red Bull-Bora, ambos con contratos hasta 2029 según el recuento de Ciclo21.</p>
+
+<p>Jordi Meeus deja Red Bull-Bora tras seis años y firma con Lidl-Trek hasta 2028. &laquo;Mis ambiciones son ganar muchas carreras con el equipo&raquo;, afirmó. Fabio Jakobsen, que salió de Picnic PostNL en pleno verano, firmó el 14 de agosto con Visma | Lease a Bike con efecto inmediato y hasta finales de 2027. Mathieu Heijboer, responsable de rendimiento del equipo, explicó el interés: &laquo;Buscábamos un especialista en los sprints llanos puros. Cuanto más analizábamos la situación de Fabio, más convencidos estábamos de que todavía hay un gran potencial sin explotar&raquo;.</p>
+
+<h2>Lotto se reconstruye y NSN se refuerza</h2>
+
+<p>El equipo que más ha cambiado es Lotto-Intermarché. Ha perdido a De Lie y a Lennert Van Eetvelt, que se va a NSN, y busca un líder para las vueltas: de ahí las negociaciones que se le atribuyen con Roglič. Mientras tanto ficha a Guillaume Martin, a Juan Sebastián Molano —el velocista colombiano de 31 años que deja UAE tras ocho temporadas, con contrato de dos años— y, según Ciclo21, a Stan Dewulf, procedente de Decathlon.</p>
+
+<p>NSN, el equipo neozelandés, es de los más activos: ficha a Santiago Buitrago (desde Bahrain Victorious, 10 de agosto), a Kasper Asgreen (desde EF Education-EasyPost, 24 de agosto) y al propio Van Eetvelt, y renueva a Corbin Strong hasta 2029, a Dion Smith por dos años y a George Bennett por uno.</p>
+
+<h2>Colombianos, jóvenes y mujeres</h2>
+
+<p>El mercado también mueve a los latinoamericanos. Sergio Higuita, de 29 años, deja XDS Astana tras ocho temporadas en el WorldTour y firma con Caja Rural-Seguros RGA hasta 2028; este año fue noveno en el Tour de Suiza. En cuanto a talentos jóvenes, Pinarello-Q36.5 ha asegurado al estadounidense Andrew August, de 20 años, con contrato de tres temporadas hasta 2029 desde el 1 de enero de 2027, tras ganar la general del Tour de Chequia, y a Mauro Schmid, procedente de Jayco AlUla.</p>
+
+<p>En el ciclismo femenino, la especialista de MTB Kate Courtney firma con FDJ United-Suez hasta 2028; la campeona suiza de ruta, Steffi Häberlin, ficha por Canyon; y Giorgia Bronzini será directora deportiva de Visma | Lease a Bike en 2027. Susanne Andersen renovó con Uno-X hasta 2028.</p>
+
+<h2>Lo que queda por resolver</h2>
+
+<p>La gran incógnita sigue siendo Roglič, que deja Red Bull-Bora el 31 de diciembre y cuya decisión se esperaba tras el Mundial. Además, el mercado también trae despedidas: Ion Izagirre y Geoffrey Bouchard anunciaron su retiro el 1 de octubre, Ben Swift lo hizo el 2 de septiembre y Luka Mezgec correrá el Europeo de Eslovenia como su última carrera antes de ser director deportivo en Red Bull. Los datos de este balance proceden de los comunicados de los equipos recogidos por Ciclo21, IDLProCycling y la prensa especializada; seguiremos actualizándolo conforme se oficialicen nuevos movimientos.</p>
+`.trim()
+
+export async function publishMercadoFichajes2027OctubreArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['felix-gall', 'mikel-landa', 'arnaud-de-lie', 'kaden-groves', 'nico-denz', 'jordi-meeus', 'fabio-jakobsen', 'juan-sebastian-molano', 'sergio-higuita', 'santiago-buitrago', 'guillaume-martin', 'lennert-van-eetvelt', 'kasper-asgreen', 'andrew-august', 'mauro-schmid', 'primoz-roglic', 'steffi-haberlin', 'kate-courtney', 'stan-dewulf']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+  const tagIds = [{ id: ultimaHoraTag.id }]
+
+  const title = 'Mercado 2027: De Lie a Tudor, Gall a Lidl-Trek, Landa vuelve a Euskaltel y Lotto se reconstruye'
+  const heroImageId = await ensureCustomHeroImage('mercado-fichajes-2027-octubre', {
+    url: '/images/headers/mercado-fichajes-2027-cover.jpg',
+    altText: 'Mercado de fichajes 2027: los movimientos oficiales hasta el 2 de octubre',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'Balance de los movimientos oficiales del mercado hasta el 2 de octubre, con Roglič como gran incógnita pendiente',
+    excerpt:
+      'Felix Gall a Lidl-Trek, Arnaud De Lie a Tudor, Mikel Landa de vuelta a Euskaltel y Lotto-Intermarché reconstruido: lo que ya es oficial en el mercado de fichajes 2027 y lo que falta.',
+    content: mercadoFichajes2027Content,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.ciclo21.com/mercado-fichajes-2027-octubr-2/',
+      'https://www.idlprocycling.com/cycling/cycling-transfers-20262027-every-confirmed-move-so-far',
+      'https://www.cyclingnews.com/pro-cycling/transfers/2026-giro-d-italia-and-vuelta-a-espana-podium-finisher-felix-gall-signs-for-lidl-trek-for-2027/',
+      'https://cyclinguptodate.com/cycling/official-mikel-landa-sign-with-euskaltel-euskadi-until-2028-truly-significant-on-a-personal-level',
+      'https://www.idlprocycling.com/cycling/after-many-months-the-much-anticipated-move-of-arnaud-de-lie-has-been-made-significant-step-in-our-vision',
+      'https://racing.trekbikes.com/stories/lidl-trek/jordi-meeus-joins-lidl-trek-through-2028',
+      'https://www.teamvismaleaseabike.com/news/news/jakobsen-to-join-team-visma-lease-a-bike/',
+      'https://procyclinguk.com/sergio-higuita-joins-caja-rural-seguros-rga-on-two-year-deal-through-2028/',
+      'https://procyclinguk.com/juan-sebastian-molano-joins-lotto-intermarche-on-two-year-deal-from-2027/',
+      'https://www.domestiquecycling.com/en/news/tudor-land-de-lie-as-pinarello-q36-5-secure-upcoming-american-talent/',
+      'https://www.ciclo21.com/ciclobreves-internacionales-2026-octubr-1/',
+    ]),
+    sourceNames: toJsonField(['Ciclo21', 'IDLProCycling', 'Cyclingnews', 'CyclingUpToDate', 'Visma | Lease a Bike', 'ProCyclingUK', 'Domestique']),
+    seoTitle: 'Fichajes 2027: De Lie a Tudor, Gall a Lidl-Trek y Landa a Euskaltel',
+    seoDescription:
+      'Balance del mercado de fichajes 2027: De Lie a Tudor, Felix Gall a Lidl-Trek, Landa a Euskaltel, Jakobsen a Visma, Molano a Lotto y lo que falta por resolver.',
+    readingTime: 5,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'mercado-fichajes-2027-octubre' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'mercado-fichajes-2027-octubre',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
