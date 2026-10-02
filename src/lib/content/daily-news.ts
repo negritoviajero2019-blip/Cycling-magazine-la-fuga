@@ -3448,3 +3448,121 @@ export async function publishVermetteWhistlerArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Previa del Campeonato de Europa de ruta 2026 (Eslovenia, 2-7 oct):
+// recorrido, calendario, favoritos y ausencias. Fuentes: Es Ciclismo,
+// Brújula Bike, ProCyclingUK, IDLProCycling, Domestique, Ciclismo al
+// Día, Infobae (ver sourceUrls). Citas traducidas del inglés/español.
+// ————————————————————————————————————————————————————————————
+
+const europeoEsloveniaContent = `
+<p>Con la resaca del Mundial de Montreal todavía fresca, el pelotón cruza el Atlántico rumbo a una cita que Eslovenia nunca había organizado: el Campeonato de Europa de ruta, del 2 al 7 de octubre en Liubliana y Šenčur. Son 14 pruebas, unos 900 corredores de 43 países y, como plato fuerte, las dos carreras en línea de élite de este fin de semana: la femenina el sábado 3 y la masculina el domingo 4. La gran ausencia tiene nombre y apellido: Tadej Pogačar, campeón de Europa vigente, no estará en la salida por las lesiones de su caída en la Vuelta a España.</p>
+
+<h2>El calendario: carreras primero, contrarreloj al final</h2>
+
+<p>Es la primera vez que Eslovenia acoge un gran campeonato internacional de ruta, y el programa trae una novedad: las pruebas en línea se disputan antes que las contrarrelojes, al revés de lo habitual en ediciones anteriores. Las citas de élite son estas:</p>
+
+<ul>
+<li><strong>Sábado 3 de octubre, 13:30:</strong> ruta élite femenina, 130&nbsp;km con 1.359&nbsp;m de desnivel.</li>
+<li><strong>Domingo 4 de octubre, 12:30:</strong> ruta élite masculina, 196,3&nbsp;km con 2.571&nbsp;m de desnivel.</li>
+<li><strong>Martes 6 de octubre:</strong> relevo mixto, 44,3&nbsp;km.</li>
+<li><strong>Miércoles 7 de octubre:</strong> contrarrelojes individuales de 22,1&nbsp;km en todas las categorías.</li>
+</ul>
+
+<h2>Možjanca: el juez de la carrera</h2>
+
+<p>Ambas carreras comparten el mismo esquema. Tras un tramo neutralizado de nueve kilómetros por la capital, el pelotón pone rumbo al norte, por Škofja Loka, Kranj y Kamnik, a lo largo de unos 85,8&nbsp;km de aproximación. Después llega el circuito final de 22,1&nbsp;km en torno a Šenčur —cinco vueltas para los hombres, dos para las mujeres— con una subida que lo decide todo: Možjanca, 2,1&nbsp;km al 10,2&nbsp;% de media y con tramos de hasta el 15,8&nbsp;%.</p>
+
+<p>Es una rampa corta pero lo bastante dura para abrir diferencias, seguida de un descenso técnico hacia la estación inferior del teleférico de Krvavec y de un valle rápido. Por el castillo de Strmol faltan algo más de siete kilómetros para la meta. IDLProCycling lo resume así: &laquo;un escalador puro puede escaparse en las rampas, pero después tiene que aguantar solo o con un grupo pequeño&raquo;. El trazado favorece a escaladores y a corredores explosivos de estilo ardennés, no a velocistas puros.</p>
+
+<h2>Evenepoel, favorito en un Europeo sin Pogačar</h2>
+
+<p>Con el vigente campeón fuera y con Mathieu van der Poel y Jonas Vingegaard también ausentes, IDLProCycling señala a Remco Evenepoel como máximo favorito. Llega como campeón mundial de contrarreloj —su cuarto título consecutivo en Montreal— pero con la espina de la carrera en línea del Mundial, donde terminó 12.º y lo describió con una frase gráfica: &laquo;Se me apagaron las luces&raquo;. En el Europeo ya ha sido subcampeón en ruta en 2021 y 2025, y Es Ciclismo recuerda que ganó la contrarreloj en 2025. Según informó Ciclismo al Día el 1 de octubre, retrasó 24 horas su viaje a Eslovenia y solo correrá la prueba en línea del domingo, descartando la contrarreloj del miércoles. Bélgica lo acompañará con Jenno Berckmoes, Sander De Pestel, Ramses Debruyne, Quinten Hermans, Maxim Van Gils, Ilan Van Wilder y Louis Vervaeke.</p>
+
+<p>Los rivales con más crédito son locales. Eslovenia juega en casa con Primož Roglič y Matej Mohorič, además del joven Jakob Omrzel. España llega con Juan Ayuso como referencia, escoltado por Iván Romeo, Pau Miquel, Urko Berrade, Cristian Rodríguez y Joel Nicolau; el español aspira a heredar el título que Pogačar ganó en 2025. Italia apuesta por Giulio Ciccone, Diego Ulissi, Christian Scaroni y Giulio Pellizzari, Francia por Romain Grégoire, Kévin Vauquelin, Mathys Rondel y Léo Bisiaux, Dinamarca por Mads Pedersen y la República Checa por Mathias Vacek.</p>
+
+<h2>Vollering, campeona del mundo y del Europeo, abre el fuego</h2>
+
+<p>La primera gran carrera es la femenina, este sábado. Demi Vollering llega como defensora del título —lo ganó en 2025 en Guilherand-Granges— y como flamante campeona del mundo tras su victoria en Montreal el pasado 26 de septiembre, al sprint sobre Katarzyna Niewiadoma-Phinney, con Elisa Longo Borghini tercera. Domestique le atribuye 17 victorias en lo que va de 2026, entre ellas el Giro, el Tour y el Mundial. Su equipo, Países Bajos, tiene además a Puck Pieterse como segunda carta ofensiva y a Lorena Wiebes para el caso de que la carrera llegue compacta.</p>
+
+<p>Las rivales de Montreal repiten con ganas de revancha: Niewiadoma-Phinney, Longo Borghini y Marlen Reusser terminaron todas a menos de ocho segundos de Vollering en el Mundial. En el segundo escalón aparecen la española Paula Blasi —que abandonó el Mundial tras una caída—, las francesas Juliette Berthet y Cédrine Kerbaol, la suiza Noemi Rüegg, la polaca Dominika Włodarczyk y la alemana Franziska Koch. Con solo dos pasos por Možjanca en 130&nbsp;km, la primera subida ya tendrá peso táctico.</p>
+
+<h2>Una despedida y una semana para ordenar el final de temporada</h2>
+
+<p>El Europeo también traerá una despedida: Luka Mezgec (38 años, Jayco AlUla) disputará aquí su última carrera como profesional antes de convertirse en director deportivo de Red Bull-Bora-Hansgrohe en 2027. Y para el pelotón masculino es una de las últimas oportunidades de sumar una victoria importante antes de las clásicas italianas de otoño. Mañana, la crónica de la carrera femenina; el domingo, la de la masculina.</p>
+`.trim()
+
+export async function publishEuropeoEsloveniaPreviewArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['remco-evenepoel', 'primoz-roglic', 'juan-ayuso', 'matej-mohoric', 'demi-vollering', 'tadej-pogacar', 'mads-pedersen', 'lorena-wiebes', 'puck-pieterse']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+  const tagIds = [{ id: ultimaHoraTag.id }]
+
+  const title = 'Campeonato de Europa de ruta en Eslovenia: Evenepoel y Roglič, favoritos sin Pogačar; Vollering abre el sábado'
+  const heroImageId = await ensureCustomHeroImage('europeo-ruta-eslovenia-2026-previa', {
+    url: '/images/headers/europeo-eslovenia-2026-cover.jpg',
+    altText: 'Campeonato de Europa de ruta, Eslovenia, 2 al 7 de octubre: favoritos y favoritas',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'Del 2 al 7 de octubre en Liubliana y Šenčur: recorrido, calendario y favoritos de una cita histórica para Eslovenia',
+    excerpt:
+      'Del 2 al 7 de octubre, Eslovenia organiza por primera vez un gran campeonato de ruta. Evenepoel, Roglič, Ayuso y Vollering encabezan el cartel; Pogačar, campeón vigente, no estará.',
+    content: europeoEsloveniaContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://esciclismo.com/actualidad/carretera/93299.html',
+      'https://brujulabike.com/europeo-ciclismo-2026-recorrido-horarios-favoritos',
+      'https://procyclinguk.com/2026-european-road-championships-route-guide-men-women-u23-slovenia/',
+      'https://www.idlprocycling.com/cycling/2026-european-cycling-championships-elite-men-preview-no-pogacar-in-slovenia-but-plenty-of-favourites-with-a-point-to-prove',
+      'https://www.domestiquecycling.com/en/features/2026-euros-womens-elite-road-race-preview-can-anyone-stop-demi-vollering/',
+      'https://ciclismoaldia.es/ciclismo/remco-evenepoel-modifica-a-ultima-hora-sus-planes-para-el-campeonato-de-europa-tras-el-reves-de-montreal',
+      'https://www.infobae.com/espana/agencias/2026/09/28/ayuso-encabeza-la-lista-de-espana-para-el-europeo-de-liubliana/',
+      'https://en.wikipedia.org/wiki/2026_European_Road_Championships',
+    ]),
+    sourceNames: toJsonField(['Es Ciclismo', 'Brújula Bike', 'ProCyclingUK', 'IDLProCycling', 'Domestique', 'Ciclismo al Día', 'Infobae', 'Wikipedia']),
+    seoTitle: 'Europeo de ruta 2026 en Eslovenia: recorrido, horarios y favoritos',
+    seoDescription:
+      'Previa del Campeonato de Europa de ruta 2026 en Eslovenia: recorrido con Možjanca, calendario, favoritos Evenepoel, Roglič, Ayuso y Vollering, y la ausencia de Pogačar.',
+    readingTime: 5,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'europeo-ruta-eslovenia-2026-previa' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'europeo-ruta-eslovenia-2026-previa',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
