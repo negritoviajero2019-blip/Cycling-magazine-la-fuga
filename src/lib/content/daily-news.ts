@@ -3918,3 +3918,338 @@ export async function publishMercadoFichajes2027OctubreArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Europeo de ruta 2026 (Eslovenia): Evenepoel gana la prueba élite
+// masculina (4 oct) a Ciccone en foto finish. Fuentes: ProCyclingUK,
+// Domestique, Cyclingnews, Ciclo21, TodoAlicante (ver sourceUrls).
+// Quién atacó primero y el km exacto difieren entre crónicas; se
+// presentan con cautela. Citas traducidas del inglés.
+// ————————————————————————————————————————————————————————————
+
+const evenepoelEuropeoContent = `
+<p>Remco Evenepoel ya es campeón de Europa de ruta. El belga ganó este domingo la prueba élite masculina en Šenčur tras un esprint a dos con Giulio Ciccone que solo pudo resolverse con la foto de llegada: ambos cruzaron la meta en 4 horas, 16 minutos y 37 segundos, después de 196,3&nbsp;km desde Liubliana. Evenepoel se había caído en plena ofensiva, remontó y todavía tuvo fuerzas para disputar el esprint.</p>
+
+<h2>Una carrera de desgaste en Možjanca</h2>
+
+<p>Con Pogačar, Van der Poel y Vingegaard ausentes, el Europeo no tuvo un gran favorito claro más allá de Evenepoel, pero la carrera tampoco se dejó controlar. Según ProCyclingUK, la prueba no se decidió por una fuga temprana: el ataque constante de corredores como Kristinn Jónsson o Alex Molenaar creó un arranque &laquo;inquieto&raquo; que fue estrechando el grupo, y la subida de Možjanca, con unos 60&nbsp;km por delante, endureció todavía más la carrera. Bélgica controló la mayor parte del recorrido, e Italia subió el ritmo a mitad de carrera. Solo 42 corredores entraron en la penúltima vuelta.</p>
+
+<h2>El ataque, la caída y el regreso</h2>
+
+<p>La carrera se rompió a unos 36&nbsp;km de meta, en la penúltima subida a Možjanca. Las crónicas difieren en quién movió primero: Domestique cuenta que Ciccone atacó y Evenepoel contraatacó, mientras que ProCyclingUK habla de un ataque conjunto, y el propio belga lo contó como una ofensiva suya. Lo que sí coincide es lo que pasó después: Evenepoel se cayó en la curva de la cima. &laquo;Fue una situación un poco complicada en la penúltima vez en la subida. Puse un buen ataque, pero fui un poco rápido en la curva y simplemente me resbalé&raquo;, explicó.</p>
+
+<p>Se levantó, volvió a subirse a la bicicleta y, con la ayuda de sus compañeros, enlazó con el grupo perseguidor pocos kilómetros después. Según TodoAlicante, el belga afirmó haber mantenido la calma, ceñido al plan y vuelto a atacar. Ciccone fue el único que logró seguir su rueda. En los últimos diez kilómetros hubo tensión entre ambos: Evenepoel negó con la cabeza cuando el italiano se negó a relevar.</p>
+
+<h2>La foto de llegada</h2>
+
+<p>En la última curva, a unos 300&nbsp;metros de meta, Evenepoel lideraba, pero Ciccone se coló por el interior y pareció tener la victoria en el bolsillo. El belga respondió con una aceleración potente y ambos lanzaron la bicicleta hacia la línea. Tuvieron que esperar a la fotografía —unos dos minutos, según TodoAlicante— antes de que se confirmara que el oro era para Evenepoel; Ciccone se llevó plata. Christian Scaroni completó el podio para Italia, a 59&nbsp;segundos, tras acelerar desde el grupo perseguidor en los últimos 14&nbsp;km. Toms Skujiņš fue cuarto a 1&nbsp;minuto y 13&nbsp;segundos.</p>
+
+<h2>Ciccone: "uno de los años más duros de mi carrera"</h2>
+
+<p>Para el italiano, la derrota es una más en una temporada con muchos segundos puestos. &laquo;Vi la primera imagen y no estaba muy claro; luego vi la segunda y estaba claro. Me siento muy, muy decepcionado, pero antes que nada quiero felicitar a Remco, fue una actuación súper fuerte&raquo;, dijo a CyclingPro.net, según Domestique. Y añadió: &laquo;Creo que es uno de los años más duros de mi carrera. No sé cuántas veces he terminado segundo o en el podio, ocho o nueve veces&raquo;. Ciccone, que vistió la maglia rosa en el Giro, llega así a entre ocho y nueve podios sin victoria este año, según sus propias cuentas.</p>
+
+<h2>Una victoria que cura el Mundial</h2>
+
+<p>Para Evenepoel, el oro llega una semana después de un Mundial agridulce: ganó su cuarta contrarreloj mundialista consecutiva, pero en la prueba en línea terminó 12.º y lo describió con una frase gráfica: &laquo;Se me apagaron las luces&raquo;. En Šenčur lo expresó así: &laquo;Sentí que había fallado a mi país en el Mundial, pero hoy puedo sentirme orgulloso&raquo;. Con el título europeo, TodoAlicante y Ciclo21 destacan que completa su colección de grandes títulos: doble campeón olímpico y mundial en ruta y contrarreloj, y ahora campeón de Europa en línea, después de ganar la crono continental en 2025.</p>
+
+<p>España tuvo a Iván Romeo como mejor corredor, quinto a 1&nbsp;minuto y 16&nbsp;segundos; Pau Miquel fue 22.º y Urko Berrade 25.º, según Ciclo21, que informa también de que Juan Ayuso abandonó a más de 80&nbsp;km de meta. Primož Roglič, líder de Eslovenia, terminó a 1&nbsp;minuto y 19&nbsp;segundos del ganador. La carrera tuvo también un momento emotivo: Luka Mezgec, que disputaba la última prueba de su carrera, recibió un pasillo de honor.</p>
+
+<p>El Europeo continúa el martes con el relevo mixto y el miércoles con las contrarrelojes, en las que Evenepoel, según se informó el 1 de octubre, no tenía previsto participar.</p>
+`.trim()
+
+export async function publishEvenepoelEuropeoArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['remco-evenepoel', 'giulio-ciccone', 'christian-scaroni', 'ivan-romeo', 'primoz-roglic', 'luka-mezgec', 'juan-ayuso']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+  const tagIds = [{ id: ultimaHoraTag.id }]
+
+  const title = 'Evenepoel gana el Europeo de ruta en la foto finish tras una caída: Ciccone, plata por un suspiro'
+  const heroImageId = await ensureCustomHeroImage('europeo-evenepoel-gana-ciccone-foto-finish-2026', {
+    url: '/images/headers/europeo-evenepoel-cover.jpg',
+    altText: 'Evenepoel campeón de Europa de ruta tras vencer a Ciccone en la foto finish',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'El belga se cayó en la penúltima subida a Možjanca, remontó y venció a Giulio Ciccone en un esprint a dos que decidió la fotografía',
+    excerpt:
+      'Remco Evenepoel es campeón de Europa de ruta: ganó en Šenčur en 4h16\'37" tras una caída y un esprint a dos con Giulio Ciccone resuelto por la foto de llegada. Christian Scaroni fue bronce.',
+    content: evenepoelEuropeoContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://procyclinguk.com/remco-evenepoel-wins-2026-european-championships-mens-road-race/',
+      'https://www.domestiquecycling.com/en/news/evenepoel-overcomes-crash-to-pip-ciccone-to-european-title-at-the-last/',
+      'https://www.domestiquecycling.com/en/news/one-of-the-hardest-years-of-my-career-ciccone-accepts-tight-call-in-euros-photo-finish/',
+      'https://www.cyclingnews.com/pro-cycling/racing/uec-european-championships-remco-evenepoel-snatches-photo-finish-victory-in-the-elite-mens-race-after-two-man-sprint/',
+      'https://www.ciclo21.com/europeos-liublian-2026-evenepoel/',
+      'https://www.todoalicante.es/english/evenepoel-completes-clean-sweep-20261004051021-nt.html',
+    ]),
+    sourceNames: toJsonField(['ProCyclingUK', 'Domestique', 'Cyclingnews', 'Ciclo21', 'TodoAlicante']),
+    seoTitle: 'Evenepoel, campeón de Europa de ruta 2026: foto finish ante Ciccone',
+    seoDescription:
+      'Remco Evenepoel gana el Campeonato de Europa de ruta 2026 en Šenčur tras una caída y un esprint a dos con Giulio Ciccone resuelto por la foto de llegada.',
+    readingTime: 5,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'europeo-evenepoel-gana-ciccone-foto-finish-2026' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'europeo-evenepoel-gana-ciccone-foto-finish-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Europeo de ruta 2026: Vollering revalida el título en su debut con
+// el arcoíris (3 oct), doblete neerlandés con Pieterse. Fuentes:
+// Domestique, ProCyclingUK, CyclingUpToDate, Es Ciclismo, Ciclo21,
+// Prensa Latina (ver sourceUrls). Citas traducidas del inglés.
+// Km del ataque: 14,6-15,3 según fuente; se dice "unos 15 km".
+// ————————————————————————————————————————————————————————————
+
+const volleringEuropeoContent = `
+<p>Demi Vollering no tardó ni una semana en estrenar el arcoíris con victoria. La neerlandesa, campeona del mundo desde el 26 de septiembre, ganó el sábado el Campeonato de Europa de ruta élite femenino en Šenčur y revalidó el título que ya había conquistado en 2025. Lo hizo en solitario, tras atacar a unos 15&nbsp;km de meta, y con un doblete de Países Bajos: Puck Pieterse fue segunda a 5&nbsp;segundos. Marlen Reusser completó el podio al mismo tiempo, en una carrera de 130&nbsp;km desde Liubliana que Vollering cerró en 3 horas, 10 minutos y 33 segundos.</p>
+
+<h2>Cómo se rompió la carrera en Možjanca</h2>
+
+<p>La prueba empezó con una escapada temprana de la austriaca Carina Schrempf y la belga Margot Vanpachtenbeke que el pelotón controló. La selección llegó en la subida de Možjanca: Karlijn Swinkels puso un ritmo &laquo;endiablado&raquo; que dejó el grupo en unas quince corredoras, según Domestique, y una aceleración de Reusser lo redujo a siete. Con ese grupo selecto se llegó al último circuito, con Vollering, Pieterse, Reusser y la polaca Kasia Niewiadoma-Phinney entre las protagonistas.</p>
+
+<p>Pieterse fue clave en el tramo intermedio: cerró huecos y tiró en cabeza para mantener la presión, y cuando el grupo se redujo a tres con Niewiadoma-Phinney, trabajó para su compañera. En la segunda ascensión a Možjanca, con unos 15&nbsp;km por delante (las fuentes dan entre 14,6 y 15,3), Vollering aceleró y abrió un hueco que Niewiadoma-Phinney no pudo cerrar. Con 12&nbsp;km por recorrer, según Ciclo21, ya sumaba 35&nbsp;segundos de ventaja, y la distancia fue suficiente hasta meta.</p>
+
+<h2>Plata para Pieterse, caída de Niewiadoma</h2>
+
+<p>Detrás, la lucha fue por las medallas restantes. Pieterse ganó el esprint por la plata, con Reusser tercera y Elisa Longo Borghini cuarta, las tres a 5 segundos de Vollering. Niewiadoma-Phinney, que se disputaba el podio, se cayó en el último kilómetro. La mejor española fue Usoa Ostolaza, novena a 1&nbsp;minuto y 55&nbsp;segundos; Mavi García abandonó, según Ciclo21.</p>
+
+<h2>"Es realmente un año dorado"</h2>
+
+<p>Vollering reconoció, tras la carrera, que el balance es excepcional y que ya lo echa de menos: &laquo;Es realmente un año dorado, y es una pena que ya haya terminado&raquo;, dijo a Domestique. Y sobre su motivación: &laquo;Simplemente me encanta ganar y nunca se me hace aburrido&raquo;. También elogió a su compañera: &laquo;Es una locura, y también un bonito segundo puesto para Puck hoy. Creo que podemos estar muy orgullosos de su esfuerzo otra vez&raquo;.</p>
+
+<p>Su 2026 ya incluía el Giro de Italia Femenino, el Tour de Francia Femenino, el Tour de Flandes y el Mundial de ruta de Montreal, donde se impuso al sprint a Niewiadoma-Phinney, con Longo Borghini tercera. Con este Europeo suma otro título a una temporada que ella misma define como dorada. Domestique añade que Países Bajos ha ganado diez de las once ediciones de la prueba en línea élite femenina del Europeo.</p>
+
+<h2>El equipo neerlandés, con sacrificios incluidos</h2>
+
+<p>Domestique relata un detalle que explica la calidad del bloque neerlandés: Lorena Wiebes se ofreció personalmente al seleccionador para ayudar al equipo, y Pieterse renunció a una prueba de la Copa del Mundo de MTB para correr en Eslovenia. Fue un trabajo colectivo que acabó en un doblete y que Ciclismo al Día describió como una gran actuación coral de Países Bajos.</p>
+
+<p>El Europeo continúa el martes con el relevo mixto y el miércoles con las contrarrelojes. La prueba élite masculina ya se disputó este domingo y la ganó Remco Evenepoel.</p>
+`.trim()
+
+export async function publishVolleringEuropeoArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ciclismo-femenino' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['demi-vollering', 'puck-pieterse', 'marlen-reusser', 'elisa-longo-borghini', 'katarzyna-niewiadoma-phinney', 'lorena-wiebes', 'karlijn-swinkels', 'mavi-garcia']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+  const tagIds = [{ id: ultimaHoraTag.id }]
+
+  const title = 'Vollering revalida el título europeo en su estreno con el arcoíris; doblete de Países Bajos con Pieterse'
+  const heroImageId = await ensureCustomHeroImage('europeo-vollering-revalida-titulo-2026', {
+    url: '/images/headers/europeo-vollering-cover.jpg',
+    altText: 'Demi Vollering revalida el título de campeona de Europa de ruta',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'La campeona del mundo ganó en solitario en Šenčur, con Pieterse segunda y Reusser tercera, y suma su segundo Europeo consecutivo',
+    excerpt:
+      'Demi Vollering ganó el Campeonato de Europa de ruta élite femenino en solitario tras atacar a unos 15 km de meta, en su primera carrera con el arcoíris. Puck Pieterse fue segunda y Marlen Reusser tercera.',
+    content: volleringEuropeoContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.domestiquecycling.com/en/news/vollering-delivers-flawless-rainbow-jersey-debut-to-defend-european-title/',
+      'https://www.domestiquecycling.com/en/news/its-really-a-golden-year-vollering-caps-stunning-run-with-second-straight-european-title/',
+      'https://cyclinguptodate.com/cycling/live-european-championships-womens-elite-road-race-2026-vollering-reusser-and-niewiadoma-lead-elite-seven-rider-group-on-final-circuit',
+      'https://www.esciclismo.com/actualidad/carretera/93352.html',
+      'https://www.ciclo21.com/europeo-liubliana-f-perfil-2026-vollering/',
+      'https://www.prensa-latina.cu/2026/10/03/triunfo-neerlandesa-demi-vollering-en-europeo-de-ruta/',
+    ]),
+    sourceNames: toJsonField(['Domestique', 'CyclingUpToDate', 'Es Ciclismo', 'Ciclo21', 'Prensa Latina']),
+    seoTitle: 'Vollering, campeona de Europa de ruta 2026: doblete de Países Bajos',
+    seoDescription:
+      'Demi Vollering revalida el título europeo de ruta en Šenčur en su primera carrera con el arcoíris. Puck Pieterse, plata; Marlen Reusser, bronce.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'europeo-vollering-revalida-titulo-2026' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'europeo-vollering-revalida-titulo-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Giro dell'Emilia 2026 (3 oct): Piganzoli (Visma) gana y Nairo
+// Quintana disputa su última carrera profesional. Fuentes:
+// ProCyclingUK, CyclingUpToDate, IDLProCycling, TuttoBiciWeb,
+// El Espectador, El Tiempo, Infobae, Movistar Team (ver sourceUrls).
+// Distancia: 197,9 km; diferencia de Pidcock/Onley: +2 s (ProCyclingUK;
+// otras fuentes dicen +3). Temporadas de Quintana: 15-17 según fuente;
+// se dice "más de quince". Citas traducidas del italiano/inglés.
+// ————————————————————————————————————————————————————————————
+
+const emiliaPiganzoliQuintanaContent = `
+<p>El Giro dell'Emilia del sábado dejó dos historias a la vez: una victoria que puede cambiar la carrera de Davide Piganzoli y la despedida del ciclismo profesional de Nairo Quintana. El italiano de Visma | Lease a Bike ganó en la cima de San Luca, en Bolonia, tras 197,9&nbsp;km desde Ferrara, y el colombiano, que corría su última prueba, cruzó la meta en el puesto 48, a más de tres minutos.</p>
+
+<h2>Piganzoli ataca en el descenso y aguanta en la subida final</h2>
+
+<p>Una escapada de ocho corredores fue neutralizada en la primera ascensión a San Luca, según CyclingUpToDate, y a partir de ahí el favoritismo se fue reduciendo vuelta a vuelta. En la penúltima, las aceleraciones de Ben Healy y Matteo Jorgenson dejaron en cabeza a Tom Pidcock, Oscar Onley, Healy y al dúo de Visma, Jorgenson y Piganzoli; Matteo Jorgenson atacó varias veces, y Visma, con superioridad numérica, jugó sus cartas.</p>
+
+<p>La decisión llegó a 4,8&nbsp;km de meta: Piganzoli tomó el mando en el descenso técnico y rápido y se fue en solitario. Los perseguidores lo apretaron en la subida final, y estuvieron a punto de alcanzarlo en los últimos 700&nbsp;metros, pero el italiano llegó con unos dos segundos de ventaja sobre Pidcock y Onley, según ProCyclingUK (otras fuentes dan tres). Ben Tulett fue cuarto a 5&nbsp;segundos y Jorgenson quinto a 12. Para Pidcock (Pinarello-Q36.5) fue el tercer segundo puesto consecutivo en esta carrera. Onley (Netcompany INEOS) fue tercero.</p>
+
+<p>Brandon McNulty, que debutaba con el maillot arcoíris, probó con un ataque de unos 19&nbsp;km que fue absorbido antes de la selección final y terminó décimo, a 45&nbsp;segundos. Es la primera victoria italiana en la prueba desde la de Alessandro De Marchi en 2018, según la prensa italiana. &laquo;Este año he dado un gran salto de nivel, por el cual debo agradecer al equipo y a quienes siempre estuvieron presentes&raquo;, declaró Piganzoli, según TuttoBiciWeb. Su próximo objetivo es Il Lombardia, el sábado.</p>
+
+<h2>Quién es Piganzoli</h2>
+
+<p>Piganzoli, de 23 años y nacido en la Valtellina, vive su primera temporada en el WorldTour tras tres años en el Polti VisitMalta y llegó a Visma con un contrato de tres temporadas. Antes de este triunfo ya tenía dos participaciones en el Giro de Italia con 13.º y 14.º puestos en la general, un tercer lugar en el Tour del Avenir 2023 y el maillot de líder en el Tour de Luxemburgo. CyclingUpToDate la califica como una victoria que cambia su carrera y la prensa italiana la presenta como el mayor éxito de su joven trayectoria.</p>
+
+<h2>La despedida de Nairo Quintana</h2>
+
+<p>Quintana, de 36 años, nacido en Cómbita (Boyacá), cerró su carrera con la camiseta del Movistar Team en la misma carrera en la que ganó en 2012, con 22 años, en su temporada de debut en el WorldTour y precisamente en la subida a San Luca. Antes de la salida, los corredores formaron un pasillo de honor levantando las ruedas delanteras de sus bicicletas, y él lo atravesó visiblemente emocionado. La organización había publicado el 2 de octubre un homenaje con una frase: &laquo;Algunas carreras se ganan. Otras se convierten en parte de tu historia&raquo;. Su bicicleta, un Canyon especial, llevaba los colores del Giro 2014 (rosa), la Vuelta 2016 (rojo) y una línea azul que representaba el camino de su infancia de casa al colegio, según Movistar.</p>
+
+<p>Su despedida no estaba pensada aquí: iba a retirarse en la Vuelta a España, pero Movistar no lo incluyó en su alineación y el plan cambió. Terminó 48.º, a más de tres minutos de Piganzoli, y según El Espectador cruzó la meta con una sonrisa.</p>
+
+<h2>El legado de un escalador histórico</h2>
+
+<p>Según el balance del Movistar Team, Quintana se retira con 53 victorias, 42 de ellas con el equipo español. Ganó el Giro de Italia de 2014 —fue el primer colombiano en lograrlo—, la Vuelta a España de 2016, y subió al podio del Tour de Francia en tres ocasiones (2013, 2015 y 2016); en 2013 y 2015 ganó el maillot blanco de mejor joven y en 2013 el de la montaña. Suma también dos Tirreno-Adriático, además del País Vasco y el Tour de Romandía. El equipo le dedicó unas palabras: &laquo;Ha sido un placer tenerte con nosotros todos estos años y un honor haber logrado tantas cosas juntos&raquo;.</p>
+
+<p>Con más de quince temporadas como profesional, Quintana se despide de un deporte en el que fue un referente para el ciclismo colombiano y latinoamericano. Su último día coincidió, además, con la victoria de un italiano en la misma subida a San Luca donde él empezó a ganar en Europa.</p>
+`.trim()
+
+export async function publishPiganzoliEmiliaQuintanaArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['davide-piganzoli', 'tom-pidcock', 'oscar-onley', 'matteo-jorgenson', 'brandon-mcnulty', 'nairo-quintana', 'ben-tulett', 'ben-healy']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const [ultimaHoraTag, latinosTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'latinos' },
+      update: {},
+      create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, latinosTag.id].map((id) => ({ id }))
+
+  const title = 'Piganzoli gana el Giro dell\'Emilia en el día en que Nairo Quintana se despide del ciclismo'
+  const heroImageId = await ensureCustomHeroImage('giro-emilia-2026-piganzoli-quintana-despedida', {
+    url: '/images/headers/giro-emilia-piganzoli-quintana-cover.jpg',
+    altText: 'Piganzoli gana el Giro dell\'Emilia y Nairo Quintana se despide del ciclismo',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'El italiano de Visma atacó en el descenso final y resistió en San Luca; el colombiano corrió su última carrera profesional, con pasillo de honor',
+    excerpt:
+      'Davide Piganzoli ganó el Giro dell\'Emilia en Bolonia por delante de Pidcock y Onley, mientras Nairo Quintana disputó su última carrera como profesional con pasillo de honor y terminó 48.º.',
+    content: emiliaPiganzoliQuintanaContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://procyclinguk.com/davide-piganzoli-wins-giro-dellemilia-2026/',
+      'https://cyclinguptodate.com/cycling/results-giro-dellemilia-2026-visma-dominate-as-piganzoli-takes-career-changing-victory-pidcock-and-onley-on-the-podium',
+      'https://www.idlprocycling.com/cycling/vismas-piganzoli-takes-resounding-victory-at-giro-dellemilia-with-perfect-attack',
+      'https://www.tuttobiciweb.it/article/2026/10/03/1791034625/davide-piganzoli-vittoria-giro-dell-emilia',
+      'https://www.elespectador.com/deportes/ciclismo/nairo-quintana-se-despidio-de-la-bicicleta-en-el-giro-de-emilia-2026/',
+      'https://www.eltiempo.com/deportes/ciclismo/a-nairo-quintana-le-hicieron-tremendo-homenaje-antes-de-su-ultima-carrera-video-del-pasillo-de-honor-para-la-eternidad-en-el-giro-de-emilia-3590966',
+      'https://www.infobae.com/colombia/deportes/2026/10/02/el-giro-de-emilia-publico-promocion-de-la-despedida-de-nairo-quintana-quien-correra-su-ultima-prueba-a-nivel-profesional-algunas-carreras-se-ganan-otras-se-convierten-en-parte-de-tu-historia/',
+      'https://movistarteam.com/2026-10-03/nairo-quintana-una-leyenda-que-ya-forma-parte-de-la-historia-del-ciclismo',
+    ]),
+    sourceNames: toJsonField(['ProCyclingUK', 'CyclingUpToDate', 'IDLProCycling', 'TuttoBiciWeb', 'El Espectador', 'El Tiempo', 'Infobae', 'Movistar Team']),
+    seoTitle: 'Giro dell\'Emilia 2026: Piganzoli gana y Nairo Quintana se despide',
+    seoDescription:
+      'Davide Piganzoli gana el Giro dell\'Emilia 2026 en San Luca por delante de Pidcock y Onley, y Nairo Quintana disputa su última carrera como profesional.',
+    readingTime: 5,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'giro-emilia-2026-piganzoli-quintana-despedida' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'giro-emilia-2026-piganzoli-quintana-despedida',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
