@@ -57,7 +57,7 @@ export default async function HomePage() {
   return (
     <Container>
       {heroCarouselArticles.length > 0 && (
-        <div className="py-6">
+        <div className="mx-auto max-w-5xl py-8 md:py-10">
           <HeroCarousel articles={heroCarouselArticles} />
         </div>
       )}
