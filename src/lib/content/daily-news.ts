@@ -4134,50 +4134,56 @@ export async function publishVolleringEuropeoArticle() {
 
   return { slug: article.slug }
 }
-
 // ————————————————————————————————————————————————————————————
-// Giro dell'Emilia 2026 (3 oct): Piganzoli (Visma) gana y Nairo
-// Quintana disputa su última carrera profesional. Fuentes:
-// ProCyclingUK, CyclingUpToDate, IDLProCycling, TuttoBiciWeb,
-// El Espectador, El Tiempo, Infobae, Movistar Team (ver sourceUrls).
-// Distancia: 197,9 km; diferencia de Pidcock/Onley: +2 s (ProCyclingUK;
-// otras fuentes dicen +3). Temporadas de Quintana: 15-17 según fuente;
-// se dice "más de quince". Citas traducidas del italiano/inglés.
+// Nairo Quintana se despide del ciclismo profesional en el Giro
+// dell'Emilia (3 oct 2026). Retiro anunciado el 22 mar 2026. Fuentes:
+// El Espectador, El Tiempo, Infobae, Semana, Movistar Team, Giro
+// d'Italia, CyclingUpToDate, ProCyclingUK, Publimetro (ver sourceUrls).
+// Temporadas: 17 según la mayoría (Movistar resume habla de 15).
+// Citas en español tal cual; las del inglés, traducidas.
 // ————————————————————————————————————————————————————————————
 
-const emiliaPiganzoliQuintanaContent = `
-<p>El Giro dell'Emilia del sábado dejó dos historias a la vez: una victoria que puede cambiar la carrera de Davide Piganzoli y la despedida del ciclismo profesional de Nairo Quintana. El italiano de Visma | Lease a Bike ganó en la cima de San Luca, en Bolonia, tras 197,9&nbsp;km desde Ferrara, y el colombiano, que corría su última prueba, cruzó la meta en el puesto 48, a más de tres minutos.</p>
+const nairoAdiosContent = `
+<p>Nairo Quintana ya no es ciclista profesional. El colombiano de 36 años cerró el sábado 3 de octubre 17 temporadas de carrera con una última salida en el Giro dell'Emilia, la misma carrera que ganó en 2012 y en la misma subida, San Luca, en Bolonia, donde empezó a llamar la atención de Europa. Terminó 48.º, a más de tres minutos del ganador, el italiano Davide Piganzoli, pero el resultado fue lo de menos: antes de la salida, sus rivales y compañeros le hicieron un pasillo de honor y él lo atravesó visiblemente emocionado.</p>
 
-<h2>Piganzoli ataca en el descenso y aguanta en la subida final</h2>
+<h2>Un pasillo de honor, con las ruedas levantadas</h2>
 
-<p>Una escapada de ocho corredores fue neutralizada en la primera ascensión a San Luca, según CyclingUpToDate, y a partir de ahí el favoritismo se fue reduciendo vuelta a vuelta. En la penúltima, las aceleraciones de Ben Healy y Matteo Jorgenson dejaron en cabeza a Tom Pidcock, Oscar Onley, Healy y al dúo de Visma, Jorgenson y Piganzoli; Matteo Jorgenson atacó varias veces, y Visma, con superioridad numérica, jugó sus cartas.</p>
+<p>Según relatan El Tiempo y El Espectador, los corredores formaron un pasillo con sus bicicletas, levantando las ruedas delanteras, mientras él pasaba entre aplausos. Corrió con el Movistar Team buena parte de los 197,9&nbsp;km entre Ferrara y Bolonia dentro del pelotón principal, sin disputar la victoria. Su bicicleta, un Canyon preparado especialmente por el equipo, llevaba los colores del Giro de 2014 (rosa), de la Vuelta de 2016 (rojo) y una línea azul que representaba el camino que hacía de niño de su casa al colegio, según Movistar. La organización de la carrera había publicado el día anterior un homenaje que decía: &laquo;Algunas carreras se ganan. Otras se convierten en parte de tu historia&raquo;.</p>
 
-<p>La decisión llegó a 4,8&nbsp;km de meta: Piganzoli tomó el mando en el descenso técnico y rápido y se fue en solitario. Los perseguidores lo apretaron en la subida final, y estuvieron a punto de alcanzarlo en los últimos 700&nbsp;metros, pero el italiano llegó con unos dos segundos de ventaja sobre Pidcock y Onley, según ProCyclingUK (otras fuentes dan tres). Ben Tulett fue cuarto a 5&nbsp;segundos y Jorgenson quinto a 12. Para Pidcock (Pinarello-Q36.5) fue el tercer segundo puesto consecutivo en esta carrera. Onley (Netcompany INEOS) fue tercero.</p>
+<p>Tras la carrera, según recogieron medios colombianos, publicó en X un mensaje breve: &laquo;Mi último baile. Gracias&raquo;. Para entonces, su carrera ya había recibido homenajes de otras partes del mundo: el Giro d'Italia lo despidió como &laquo;un rey de la montaña. Un símbolo de todo un continente&raquo;, y el expresidente colombiano Iván Duque le agradeció que llevara el nombre de Colombia con orgullo por el mundo, según recogió El País de Cali. Movistar le dedicó unas palabras: &laquo;Ha sido un placer tenerte con nosotros todos estos años y un honor haber logrado tantas cosas juntos&raquo;.</p>
 
-<p>Brandon McNulty, que debutaba con el maillot arcoíris, probó con un ataque de unos 19&nbsp;km que fue absorbido antes de la selección final y terminó décimo, a 45&nbsp;segundos. Es la primera victoria italiana en la prueba desde la de Alessandro De Marchi en 2018, según la prensa italiana. &laquo;Este año he dado un gran salto de nivel, por el cual debo agradecer al equipo y a quienes siempre estuvieron presentes&raquo;, declaró Piganzoli, según TuttoBiciWeb. Su próximo objetivo es Il Lombardia, el sábado.</p>
+<h2>Una despedida que no estaba pensada aquí</h2>
 
-<h2>Quién es Piganzoli</h2>
+<p>Quintana anunció su retiro el 22 de marzo de 2026 en una rueda de prensa: &laquo;El día de hoy he venido a contarles que es la última temporada que hago como ciclista profesional&raquo;. La despedida ideal era la Vuelta a España, la gran vuelta que ganó en 2016, pero el 18 de agosto Movistar dejó fuera al colombiano de su alineación, según CyclingUpToDate; el equipo priorizó los resultados sobre la nostalgia, en línea con los planes fijados a finales de 2025. Así, Quintana cerró el año sin correr ninguna de las tres grandes vueltas. Los medios colombianos recogieron que se mostró correcto y agradeció a Eusebio Unzué la segunda oportunidad que le dio el equipo, aunque le habría gustado estar en esa Vuelta.</p>
 
-<p>Piganzoli, de 23 años y nacido en la Valtellina, vive su primera temporada en el WorldTour tras tres años en el Polti VisitMalta y llegó a Visma con un contrato de tres temporadas. Antes de este triunfo ya tenía dos participaciones en el Giro de Italia con 13.º y 14.º puestos en la general, un tercer lugar en el Tour del Avenir 2023 y el maillot de líder en el Tour de Luxemburgo. CyclingUpToDate la califica como una victoria que cambia su carrera y la prensa italiana la presenta como el mayor éxito de su joven trayectoria.</p>
+<h2>Un último año con victoria</h2>
 
-<h2>La despedida de Nairo Quintana</h2>
+<p>La temporada tuvo, sin embargo, un momento especial. En abril, Quintana ganó la Vuelta a Asturias, su tercera: venció con 25&nbsp;segundos sobre el español Adrià Pericas tras atacar en el Alto de Carabanzo en la segunda etapa, con el colombiano Diego Pescador tercero, según Publimetro. Fue su primera victoria desde 2022. &laquo;La última carrera que gané este año fue espectacular&hellip; para mí es una de las carreras que más me ha llenado y me ha dado emoción&raquo;, dijo a El Tiempo.</p>
 
-<p>Quintana, de 36 años, nacido en Cómbita (Boyacá), cerró su carrera con la camiseta del Movistar Team en la misma carrera en la que ganó en 2012, con 22 años, en su temporada de debut en el WorldTour y precisamente en la subida a San Luca. Antes de la salida, los corredores formaron un pasillo de honor levantando las ruedas delanteras de sus bicicletas, y él lo atravesó visiblemente emocionado. La organización había publicado el 2 de octubre un homenaje con una frase: &laquo;Algunas carreras se ganan. Otras se convierten en parte de tu historia&raquo;. Su bicicleta, un Canyon especial, llevaba los colores del Giro 2014 (rosa), la Vuelta 2016 (rojo) y una línea azul que representaba el camino de su infancia de casa al colegio, según Movistar.</p>
+<h2>"Retirarme en el máximo era un símbolo de ego"</h2>
 
-<p>Su despedida no estaba pensada aquí: iba a retirarse en la Vuelta a España, pero Movistar no lo incluyó en su alineación y el plan cambió. Terminó 48.º, a más de tres minutos de Piganzoli, y según El Espectador cruzó la meta con una sonrisa.</p>
+<p>En esa misma entrevista, antes de su última carrera, Quintana habló con franqueza del fin de su etapa: &laquo;Ya veíamos que el declive estaba. Los vatios siguen siendo los mismos, sigo teniendo muy buen desempeño, pero hay un cansancio psicológico&raquo;. Explicó que lo planificó con su familia: &laquo;Con la familia dijimos que eran dos años y comenzamos nuevos proyectos&raquo;. Y sobre por qué no se retiró en su mejor momento: &laquo;Uno tiene que retornar parte de lo que le han dado a uno. Retirarme en el máximo era un símbolo de ego o egoísmo&raquo;.</p>
 
-<h2>El legado de un escalador histórico</h2>
+<p>Sobre el cariño de la gente, dijo en declaraciones recogidas por Semana: &laquo;Es el premio más grande que he podido ganar a lo largo de mi carrera deportiva, no solamente poder hacer soñar a los ciclistas, sino a todo un país&raquo;. Y dejó una frase para los aficionados: &laquo;Agradecerles infinitamente porque, aun los que no montaban una bicicleta, pedaleaban conmigo&raquo;.</p>
 
-<p>Según el balance del Movistar Team, Quintana se retira con 53 victorias, 42 de ellas con el equipo español. Ganó el Giro de Italia de 2014 —fue el primer colombiano en lograrlo—, la Vuelta a España de 2016, y subió al podio del Tour de Francia en tres ocasiones (2013, 2015 y 2016); en 2013 y 2015 ganó el maillot blanco de mejor joven y en 2013 el de la montaña. Suma también dos Tirreno-Adriático, además del País Vasco y el Tour de Romandía. El equipo le dedicó unas palabras: &laquo;Ha sido un placer tenerte con nosotros todos estos años y un honor haber logrado tantas cosas juntos&raquo;.</p>
+<h2>Del camino a la escuela al Giro de Italia</h2>
 
-<p>Con más de quince temporadas como profesional, Quintana se despide de un deporte en el que fue un referente para el ciclismo colombiano y latinoamericano. Su último día coincidió, además, con la victoria de un italiano en la misma subida a San Luca donde él empezó a ganar en Europa.</p>
+<p>Apodado el Cóndor, Quintana creció en La Concepción, una vereda de Cómbita, en Boyacá, en una familia campesina. Según El Colombiano, a los 15 años su padre le regaló una bicicleta con la que se desplazaba al colegio y hacía mandados, unos 32&nbsp;km diarios. Esa rutina de montaña construyó al escalador que, años después, ganó el Giro de Italia de 2014, y que el propio Giro d'Italia recuerda como el primer latinoamericano en conseguirlo. En su homenaje, la organización evocó su primera victoria de etapa, en Val Martello, en 2014, cuando su compañero Gorka Izagirre le dijo: &laquo;Si pones un pie en el suelo, abandonas la carrera. Y tú no abandonas&raquo;.</p>
+
+<h2>El legado: 53 victorias</h2>
+
+<p>Según el balance del Movistar Team, Quintana se retira con 53 victorias, 42 de ellas con el equipo español, y un palmarés que incluye el Giro de 2014 y la Vuelta de 2016, tres podios en el Tour de Francia (segundo en 2013 y 2015, tercero en 2016), dos Tirreno-Adriático (2015 y 2017), la Vuelta al País Vasco y el Tour de Romandía. Fue, además, mejor joven del Tour en 2013 y 2015 y ganador de la montaña en 2013. Con su Vuelta de 2016 igualó la hazaña de Luis &laquo;Lucho&raquo; Herrera en 1987, según NTN24. Entre las cimas italianas que lo vieron ganar, el Giro cita Monte Grappa, Blockhaus y Terminillo.</p>
+
+<h2>¿Qué sigue?</h2>
+
+<p>Quintana no se aleja del ciclismo. Según Semana, a partir de 2027 será gerente general de una estructura ciclista profesional que busca desarrollar talento latinoamericano y europeo para competir en las grandes carreras de Europa, con apoyo de patrocinadores e inversores y personal técnico especializado. &laquo;Seguramente estaremos acompañando a la selección, acompañando a nuestros jóvenes y ayudando al desarrollo del ciclismo&raquo;, afirmó. Después de 17 años, el cóndor deja de volar con el maillot de un equipo, pero el ciclismo colombiano y latinoamericano seguirá midiéndose con su sombra.</p>
 `.trim()
 
-export async function publishPiganzoliEmiliaQuintanaArticle() {
-  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+export async function publishNairoQuintanaAdiosArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
   const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
 
-  const riderSlugs = ['davide-piganzoli', 'tom-pidcock', 'oscar-onley', 'matteo-jorgenson', 'brandon-mcnulty', 'nairo-quintana', 'ben-tulett', 'ben-healy']
+  const riderSlugs = ['nairo-quintana', 'davide-piganzoli', 'diego-pescador']
   const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
   const riderIds = riders.map((r) => r.id)
 
@@ -4195,10 +4201,10 @@ export async function publishPiganzoliEmiliaQuintanaArticle() {
   ])
   const tagIds = [ultimaHoraTag.id, latinosTag.id].map((id) => ({ id }))
 
-  const title = 'Piganzoli gana el Giro dell\'Emilia en el día en que Nairo Quintana se despide del ciclismo'
-  const heroImageId = await ensureCustomHeroImage('giro-emilia-2026-piganzoli-quintana-despedida', {
-    url: '/images/headers/giro-emilia-piganzoli-quintana-cover.jpg',
-    altText: 'Piganzoli gana el Giro dell\'Emilia y Nairo Quintana se despide del ciclismo',
+  const title = 'Adiós al Cóndor: Nairo Quintana se retira del ciclismo en el Giro dell\'Emilia, donde empezó todo'
+  const heroImageId = await ensureCustomHeroImage('nairo-quintana-adios-condor-giro-emilia-2026', {
+    url: '/images/headers/nairo-quintana-adios-cover.jpg',
+    altText: 'Adiós al Cóndor: Nairo Quintana se despide del ciclismo profesional',
     credit: 'Ilustración: La Fuga',
     width: 1672,
     height: 941,
@@ -4207,10 +4213,10 @@ export async function publishPiganzoliEmiliaQuintanaArticle() {
 
   const baseFields = {
     title,
-    subtitle: 'El italiano de Visma atacó en el descenso final y resistió en San Luca; el colombiano corrió su última carrera profesional, con pasillo de honor',
+    subtitle: 'El colombiano cerró 17 temporadas con pasillo de honor en San Luca, la subida donde ganó en 2012; deja 53 victorias, el Giro de 2014 y la Vuelta de 2016',
     excerpt:
-      'Davide Piganzoli ganó el Giro dell\'Emilia en Bolonia por delante de Pidcock y Onley, mientras Nairo Quintana disputó su última carrera como profesional con pasillo de honor y terminó 48.º.',
-    content: emiliaPiganzoliQuintanaContent,
+      'Nairo Quintana disputó su última carrera como profesional en el Giro dell\'Emilia, con pasillo de honor del pelotón. Deja 53 victorias, el Giro 2014, la Vuelta 2016 y tres podios en el Tour.',
+    content: nairoAdiosContent,
     categoryId: category.id,
     authorId: author.id,
     heroImageId,
@@ -4218,24 +4224,28 @@ export async function publishPiganzoliEmiliaQuintanaArticle() {
     breakingNews: true,
     featured: false,
     sourceUrls: toJsonField([
-      'https://procyclinguk.com/davide-piganzoli-wins-giro-dellemilia-2026/',
-      'https://cyclinguptodate.com/cycling/results-giro-dellemilia-2026-visma-dominate-as-piganzoli-takes-career-changing-victory-pidcock-and-onley-on-the-podium',
-      'https://www.idlprocycling.com/cycling/vismas-piganzoli-takes-resounding-victory-at-giro-dellemilia-with-perfect-attack',
-      'https://www.tuttobiciweb.it/article/2026/10/03/1791034625/davide-piganzoli-vittoria-giro-dell-emilia',
       'https://www.elespectador.com/deportes/ciclismo/nairo-quintana-se-despidio-de-la-bicicleta-en-el-giro-de-emilia-2026/',
       'https://www.eltiempo.com/deportes/ciclismo/a-nairo-quintana-le-hicieron-tremendo-homenaje-antes-de-su-ultima-carrera-video-del-pasillo-de-honor-para-la-eternidad-en-el-giro-de-emilia-3590966',
-      'https://www.infobae.com/colombia/deportes/2026/10/02/el-giro-de-emilia-publico-promocion-de-la-despedida-de-nairo-quintana-quien-correra-su-ultima-prueba-a-nivel-profesional-algunas-carreras-se-ganan-otras-se-convierten-en-parte-de-tu-historia/',
+      'https://www.eltiempo.com/deportes/ciclismo/nairo-quintana-se-desahoga-antes-de-afrontar-su-ultima-carrera-como-profesional-veiamos-que-el-declive-estaba-3590522',
+      'https://www.semana.com/deportes/ciclismo/articulo/al-borde-del-llanto-nairo-quintana-envio-sentido-mensaje-por-su-despedida-del-ciclismo-ha-sido-bonito/202637/',
+      'https://www.semana.com/deportes/ciclismo/articulo/nairo-quintana-y-su-nueva-profesion-tras-el-retiro-del-ciclismo-profesional-estrenara-trabajo/202612/',
       'https://movistarteam.com/2026-10-03/nairo-quintana-una-leyenda-que-ya-forma-parte-de-la-historia-del-ciclismo',
+      'https://www.giroditalia.it/en/news/nairo-quintana-bids-farewell-to-professional-cycling/',
+      'https://www.elcolombiano.com/deportes/despedida-nairo-quintana-historia-carrera-ciclismo-colombiano-DF41886764',
+      'https://www.elpais.com.co/deportes/asi-reacciono-el-mundo-al-retiro-de-nairo-quintana-del-ciclismo-en-el-giro-de-emilia-2026-gracias-por-tanto-leyenda-0343.html',
+      'https://www.ntn24.com/noticias-deportes/el-final-de-la-ruta-ciclista-colombiano-nairo-quintana-anuncio-su-retiro-tras-17-anos-de-carrera-613548',
+      'https://cyclinguptodate.com/cycling/no-nairo-quintana-vuelta-a-espana-farewell-movistar-exclude-colombian-legend-from-line-up-in-retirement-season',
+      'https://www.publimetro.co/deportes/2026/04/26/nairo-quintana-campeon-volvio-a-ganar-tras-cuatro-anos-y-conquisto-la-vuelta-a-asturias/',
     ]),
-    sourceNames: toJsonField(['ProCyclingUK', 'CyclingUpToDate', 'IDLProCycling', 'TuttoBiciWeb', 'El Espectador', 'El Tiempo', 'Infobae', 'Movistar Team']),
-    seoTitle: 'Giro dell\'Emilia 2026: Piganzoli gana y Nairo Quintana se despide',
+    sourceNames: toJsonField(['El Espectador', 'El Tiempo', 'Semana', 'Movistar Team', 'Giro d\'Italia', 'El Colombiano', 'El País (Cali)', 'NTN24', 'CyclingUpToDate', 'Publimetro']),
+    seoTitle: 'Nairo Quintana se retira: así fue su despedida en el Giro dell\'Emilia',
     seoDescription:
-      'Davide Piganzoli gana el Giro dell\'Emilia 2026 en San Luca por delante de Pidcock y Onley, y Nairo Quintana disputa su última carrera como profesional.',
-    readingTime: 5,
+      'Nairo Quintana se retiró del ciclismo profesional en el Giro dell\'Emilia 2026 con pasillo de honor. Su legado: 53 victorias, Giro 2014, Vuelta 2016 y tres podios en el Tour.',
+    readingTime: 6,
   }
 
   const article = await prisma.article.upsert({
-    where: { slug: 'giro-emilia-2026-piganzoli-quintana-despedida' },
+    where: { slug: 'nairo-quintana-adios-condor-giro-emilia-2026' },
     update: {
       ...baseFields,
       heroImageId: heroImageId ?? undefined,
@@ -4243,7 +4253,7 @@ export async function publishPiganzoliEmiliaQuintanaArticle() {
       tags: { set: tagIds },
     },
     create: {
-      slug: 'giro-emilia-2026-piganzoli-quintana-despedida',
+      slug: 'nairo-quintana-adios-condor-giro-emilia-2026',
       ...baseFields,
       publishedAt: new Date(),
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
