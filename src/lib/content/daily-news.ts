@@ -4263,3 +4263,125 @@ export async function publishNairoQuintanaAdiosArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Coppa Bernocchi 2026 (5 oct): Isidore gana; Van den Berg
+// descalificado por el jurado; Aular sube al podio; fractura de C3 de
+// Raccagni Noviero. Sección CLÁSICAS (cuota mensual). Fuentes:
+// Domestique, CyclingFlash, OA Sport, TuttoBiciWeb, Es Ciclismo,
+// Revista Mundo Ciclístico, Velo 101 (ver sourceUrls). Tiempo del
+// ganador y número de escapados difieren según fuente: no se citan.
+// La causa exacta de la caída se atribuye al jurado, no se afirma.
+// ————————————————————————————————————————————————————————————
+
+const coppaBernocchi2026Content = `
+<p>La Coppa Bernocchi, la clásica de Legnano que abre la recta final del otoño italiano, tuvo un final caótico y un podio que se reescribió después de cruzar la meta. El francés Noa Isidore (Decathlon CMA CGM) ganó al esprint, el italiano Tommaso Dati (Team UKYO) fue segundo y el venezolano Orluis Aular (Movistar) acabó tercero, después de que el jurado descalificara al neerlandés Marijn van den Berg, que había llegado tercero. Pero el día lo marcó también la caída del último kilómetro: Andrea Raccagni Noviero se fracturó la tercera vértebra cervical.</p>
+
+<h2>Una carrera de desgaste en la Valle Olona</h2>
+
+<p>La 107.ª edición se disputó sobre unos 178&nbsp;km entre Legnano y el circuito de la Valle Olona, repetido siete veces, una menos que en años anteriores, con los pasos por San Pancrazio, el Piccolo Stelvio y Caramamma. Tomaron la salida 25 equipos —16 WorldTour, 8 ProTeam y uno Continental—, una cifra récord para una prueba 1.Pro, según TuttoBiciWeb.</p>
+
+<p>Una escapada temprana, con Sergio Samitier (Cofidis) y Samuele Zoccarato entre sus integrantes, llegó a tener unos cuatro minutos de ventaja sobre el Piccolo Stelvio, pero el pelotón la fue recortando hasta neutralizarla en los últimos kilómetros. Jhonatan Narváez (UAE Team Emirates-XRG) y Neilson Powless probaron fortuna a unos 50&nbsp;km de meta sin éxito, y el grupo llegó compacto a un final nervioso.</p>
+
+<h2>La caída a 700 metros</h2>
+
+<p>La carrera se rompió a unos 700&nbsp;metros de la línea. Según las crónicas, en el último kilómetro una caída en pleno grupo envió al suelo a varios corredores, entre ellos Filippo Ganna (Netcompany INEOS), Andrea Raccagni Noviero (Soudal Quick-Step) y Dario Igor Belletta (Polti VisitMalta). Los relatos difieren en el origen: algunos señalan que un corredor de EF Education empujó a Isidore y este tocó a otros rivales, y los comisarios sancionaron después a Van den Berg por un esprint irregular, con un empujón de hombro a Isidore, según CyclingFlash. Isidore logró mantenerse en pie y seguir en cabeza.</p>
+
+<h2>Isidore remonta a Dati</h2>
+
+<p>En el esprint, Dati lanzó su ataque desde lejos, pero Isidore, de 22 años, esperó el momento y lo superó a pocos metros de la meta. Fue el segundo triunfo consecutivo de Decathlon CMA CGM en el Trittico Lombardo, después de la victoria de Paul Lapeira en la Coppa Agostoni el domingo. &laquo;Vine a ganar&raquo;, dijo Isidore, según medios franceses. Alessandro Romele (XDS Astana) terminó cuarto.</p>
+
+<h2>Descalificación y podio para Aular</h2>
+
+<p>Van den Berg, que había cruzado la meta tercero, fue relegado al puesto 33, el último del grupo, por decisión de los comisarios. Con ello, Orluis Aular subió al último escalón del podio, con el mismo tiempo que los dos primeros. Aular, que había cruzado la meta en cuarta posición, se lleva así un tercer puesto en una clásica de la ProSeries. Entre los latinoamericanos, el uruguayo Thomas Silva (XDS Astana) fue 14.º y el colombiano Sergio Higuita, 52.º a 21&nbsp;segundos, según Revista Mundo Ciclístico.</p>
+
+<h2>Raccagni Noviero, con la tercera vértebra fracturada</h2>
+
+<p>La peor noticia de la jornada llegó después. Raccagni Noviero fue trasladado a un hospital y los estudios, entre ellos una tomografía, confirmaron la fractura de la tercera vértebra cervical. Según TuttoBiciWeb, un equipo de cirujanos lo evaluará este martes para decidir el tratamiento y el plan de recuperación.</p>
+
+<h2>Lapeira, ayer; Isidore, hoy</h2>
+
+<p>La Coppa Agostoni del domingo, en Lissone, la ganó Paul Lapeira en un esprint de escapados por delante de Brandon McNulty, que corría con el arcoíris, y de Mauro Schmid. Con las dos victorias de Decathlon en el Trittico, la atención se traslada ya a la Tre Valli Varesine, este martes, y a Il Lombardia, el sábado 10 de octubre, la última clásica monumento de la temporada.</p>
+`.trim()
+
+export async function publishCoppaBernocchi2026Article() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'clasicas' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['noa-isidore', 'orluis-aular', 'filippo-ganna', 'andrea-raccagni-noviero', 'paul-lapeira', 'brandon-mcnulty', 'mauro-schmid', 'sergio-higuita', 'thomas-silva', 'jhonatan-narvaez']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const [ultimaHoraTag, latinosTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'latinos' },
+      update: {},
+      create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, latinosTag.id].map((id) => ({ id }))
+
+  const title = 'Coppa Bernocchi: Isidore gana, descalifican a Van den Berg y el venezolano Orluis Aular sube al podio'
+  const heroImageId = await ensureCustomHeroImage('coppa-bernocchi-2026-isidore-aular-podio', {
+    url: '/images/headers/coppa-bernocchi-2026-cover.jpg',
+    altText: 'Coppa Bernocchi 2026: Isidore gana y Orluis Aular sube al podio',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'Una caída a 700 metros de meta, una descalificación y una fractura cervical marcaron la clásica de Legnano',
+    excerpt:
+      'Noa Isidore ganó la Coppa Bernocchi al esprint; el jurado descalificó a Van den Berg y el venezolano Orluis Aular subió al podio. Raccagni Noviero se fracturó la tercera vértebra cervical.',
+    content: coppaBernocchi2026Content,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.domestiquecycling.com/en/news/noa-isidore-avoids-late-crash-to-streak-to-coppa-bernocchi-victory/',
+      'https://cyclingflash.com/news/no-podium-for-marijn-van-den-berg-after-dutchman-relegated-in-coppa-bernocchi',
+      'https://www.tuttobiciweb.it/article/2026/10/05/1791139640/coppa-bernocchi-2026-legnano-uci-proseries-professional-cycling?lang=en',
+      'https://www.tuttobiciweb.it/article/2026/10/05/1791211131/coppa-bernocchi-2026-vittoria-noa-isidore',
+      'https://www.tuttobiciweb.it/article/2026/10/05/1791228870/coppabernocchi-andrea-raccagnii-infortunio-frattura-cervicale',
+      'https://www.oasport.it/2026/10/coppa-bernocchi-2026-isidore-beffa-dati-sul-traguardo-di-legnano/',
+      'https://www.esciclismo.com/actualidad/carretera/93393.html',
+      'https://www.revistamundociclistico.com/2026/noa-isidore-conquista-la-copa-bernocchi-2026-con-orluis-aular-en-el-podio/',
+      'https://www.velo101.com/courses/coppa-bernocchi/noa-isidore-remporte-la-coppa-bernocchi-2026/',
+    ]),
+    sourceNames: toJsonField(['Domestique', 'CyclingFlash', 'TuttoBiciWeb', 'OA Sport', 'Es Ciclismo', 'Revista Mundo Ciclístico', 'Velo 101']),
+    seoTitle: 'Coppa Bernocchi 2026: Isidore gana y Orluis Aular sube al podio',
+    seoDescription:
+      'Noa Isidore gana la Coppa Bernocchi 2026; descalifican a Van den Berg y Orluis Aular sube al podio. Caída masiva y fractura cervical de Raccagni Noviero.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'coppa-bernocchi-2026-isidore-aular-podio' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'coppa-bernocchi-2026-isidore-aular-podio',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
