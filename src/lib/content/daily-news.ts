@@ -4392,11 +4392,11 @@ export async function publishCoppaBernocchi2026Article() {
 // fotofinish). Fuentes: ANSA, CyclingUpToDate, Escape Collective,
 // Virgilio, TuttoBiciWeb (comunicado UEC/EvoData), Bicisport, Cyclingnews.
 // Margen: Ciccone/prensa italiana citan 0,0028 s (2,8 ms); UEC/EvoData
-// dan 0,0002 s (~2,8-3,3 mm). Ambas cifras se presentan, no se concilian.
+// dan 0,0002 s (~2,8-3,3 mm). Se usa "2,8" como cifra principal (decisión del editor) aclarando unidades.
 // ————————————————————————————————————————————————————————————
 
 const cicconeFotofinishContent = `
-<p>Giulio Ciccone no se resigna. Un día después de perder el Campeonato de Europa de ruta ante Remco Evenepoel por una diferencia mínima, el italiano publicó un mensaje en Instagram en el que pide ver el fotofinish &laquo;correspondiente exactamente a la línea de meta real&raquo;. No pide que se anule el resultado ni pone en duda al belga: lo que reclama, dice, es transparencia. La Unión Europea de Ciclismo (UEC) y la empresa que cronometró la prueba respondieron con una explicación técnica detallada.</p>
+<p>Giulio Ciccone no se resigna. Un día después de perder el Campeonato de Europa de ruta ante Remco Evenepoel por apenas 2,8 —milisegundos, según el propio Ciccone; milímetros, según los técnicos de la UEC—, el italiano publicó un mensaje en Instagram en el que pide ver el fotofinish &laquo;correspondiente exactamente a la línea de meta real&raquo;. No pide que se anule el resultado ni pone en duda al belga: lo que reclama, dice, es transparencia. La Unión Europea de Ciclismo (UEC) y la empresa que cronometró la prueba respondieron con una explicación técnica detallada.</p>
 
 <h2>Lo que dice Ciccone</h2>
 
@@ -4404,9 +4404,9 @@ const cicconeFotofinishContent = `
 
 <p>Su petición es concreta: &laquo;Si un título europeo se decide por 2,8 milisegundos, creo que es legítimo pedir que ese mismo paso pueda mostrarse con la misma precisión con la que se determinó el resultado&raquo;, añadió. Según Escape Collective, también dijo que quiere ver &laquo;sin ambigüedad el paso de nuestras ruedas en el punto exacto donde, según el reglamento, se determina la meta&raquo;. Y dejó una frase para cerrar: &laquo;No voy a encontrar paz hasta que me enseñen el fotofinish que corresponde a la línea de meta real&raquo;, recogió Virgilio. Ciccone reconoció que Evenepoel fue &laquo;el corredor más fuerte&raquo; y firmó una actuación extraordinaria. Su duda, según CyclingUpToDate, es que el software superpone una línea vertical sobre la rueda delantera del primero y esa línea técnica podría no coincidir con la posición real de la línea de meta.</p>
 
-<h2>Dos cifras distintas para el margen</h2>
+<h2>2,8: milisegundos o milímetros</h2>
 
-<p>Aquí hay una discrepancia que conviene señalar. Ciccone y la prensa italiana hablan de 0,0028 segundos, es decir, 2,8 milisegundos. En cambio, el comunicado de la UEC y de EvoData, la empresa de cronometraje, habla de una diferencia de 0,0002 segundos (0,2 milisegundos), que a velocidad de esprint equivale a entre 2,8 y 3,3 milímetros, según TuttoBiciWeb. Que el número 2,8 aparezca en ambos casos, en unidades distintas, podría indicar una confusión entre milisegundos y milímetros, pero ninguna de las partes lo ha confirmado. En lo que sí coinciden todas las fuentes es en que la diferencia fue mínima y en que el belga cruzó primero.</p>
+<p>La cifra que domina la conversación es 2,8, pero con unidades distintas según quién la cite. Ciccone y la prensa italiana hablan de 0,0028 segundos, es decir, 2,8 milisegundos. El comunicado de la UEC y de EvoData, la empresa de cronometraje, habla de 0,0002 segundos (0,2 milisegundos), que a velocidad de esprint equivalen a entre 2,8 y 3,3 milímetros, según TuttoBiciWeb. Dicho de otro modo: la distancia es tan pequeña que 2,8 sirve como referencia en ambos casos, ya sea como milisegundos o como milímetros. Todas las fuentes coinciden en lo esencial: la diferencia fue mínima y el belga cruzó primero.</p>
 
 <h2>Cómo funciona el fotofinish, según la UEC</h2>
 
@@ -4447,9 +4447,9 @@ export async function publishCicconeFotofinishArticle() {
 
   const baseFields = {
     title,
-    subtitle: 'El italiano no cuestiona a Evenepoel pero exige ver la imagen en la línea real; la UEC y EvoData detallan su tecnología y hablan de una diferencia de unos 3 milímetros',
+    subtitle: 'El italiano no cuestiona a Evenepoel pero exige ver la imagen en la línea real: la diferencia fue de 2,8 (milisegundos para Ciccone, milímetros para la UEC)',
     excerpt:
-      'Giulio Ciccone pidió en Instagram ver el fotofinish en la línea de meta real tras perder el Europeo ante Evenepoel. La UEC respondió que usó dos sistemas independientes y 13.000 líneas por segundo.',
+      'Giulio Ciccone pidió en Instagram ver el fotofinish en la línea de meta real tras perder el Europeo ante Evenepoel por 2,8 (milisegundos, según él; milímetros, según la UEC). La UEC respondió que usó dos sistemas independientes.',
     content: cicconeFotofinishContent,
     categoryId: category.id,
     authorId: author.id,
@@ -4469,7 +4469,7 @@ export async function publishCicconeFotofinishArticle() {
     sourceNames: toJsonField(['ANSA', 'CyclingUpToDate', 'Escape Collective', 'Virgilio Sport', 'TuttoBiciWeb', 'Bicisport', 'Cyclingnews']),
     seoTitle: 'Ciccone pide revisar el fotofinish del Europeo ante Evenepoel',
     seoDescription:
-      'Giulio Ciccone pide ver el fotofinish en la línea de meta real tras perder el Europeo ante Evenepoel. La UEC explica la tecnología: dos sistemas y 13.000 líneas por segundo.',
+      'Giulio Ciccone pide ver el fotofinish en la línea de meta real tras perder el Europeo ante Evenepoel por 2,8 milisegundos. La UEC explica la tecnología: dos sistemas y 13.000 líneas por segundo.',
     readingTime: 5,
   }
 
