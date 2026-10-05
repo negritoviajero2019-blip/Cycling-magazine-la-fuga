@@ -4492,3 +4492,393 @@ export async function publishCicconeFotofinishArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// MTB Gravel (cuota octubre): Asa Vermette campeón general de descenso
+// 2026 en Lake Placid (4 oct). Puesto de Vermette en la final: 8.º según
+// Singletrack/Canadian Cycling Magazine, 4.º según Daily Gazette (se
+// indica la discrepancia). Fuentes: Singletrack World, MBAction, Daily
+// Gazette, Canadian Cycling Magazine. Citas traducidas del inglés.
+// ————————————————————————————————————————————————————————————
+
+const vermetteTituloContent = `
+<p>Asa Vermette ya es campeón general de la Copa del Mundo de descenso. El estadounidense, de 19 años, selló el título el domingo 4 de octubre en Lake Placid, en la final de la temporada, y lo hizo en su primer año en la categoría élite. Con su triunfo, se convirtió en apenas el segundo estadounidense en ganar el título general masculino en los 33 años de historia de la serie, después de Aaron Gwin, cuyo último título fue en 2017. La carrera, en cambio, la ganó el australiano Luke Meier-Smith, y en mujeres Lisa Bouladou impidió que Valentina Höll igualara el récord de siete victorias en una temporada.</p>
+
+<h2>Un título con la carrera a medias</h2>
+
+<p>Vermette llegaba a Lake Placid como líder tras ganar su primera Copa del Mundo en Whistler, y el título dependía de sus rivales. Singletrack World cuenta que superó la presión de la clasificación después de que sus rivales por el título se cayeran, y Canadian Cycling Magazine explica que el golpe definitivo llegó cuando Jordan Williams (Specialized Gravity) terminó sexto en la final. El estadounidense cruzó la meta octavo en la carrera, según esas dos fuentes (el Daily Gazette de Lake Placid lo sitúa cuarto, una discrepancia que no cambia el desenlace). Con 1.442 puntos, superó a Williams (1.376) y Amaury Pierron fue tercero en la general. Finn Iles, el canadiense, fue quinto en la carrera y cuarto de la general con 1.125 puntos.</p>
+
+<p>Según Canadian Cycling Magazine, Vermette es solo el segundo corredor en ganar el título general en su primera temporada élite, después de Nicolas Vouilloz. Su reacción fue de incredulidad: &laquo;Es una locura. Soñé con esto al principio de la temporada, así que que pase es de locos&raquo;. Y sobre los nervios de la mañana: &laquo;Mi cabeza daba vueltas. Antes de lanzarme solo pensaba: simplemente monta tu bici. Era muy difícil concentrarse con todos esos nervios&raquo;, contó al Daily Gazette.</p>
+
+<h2>Meier-Smith repite en Lake Placid</h2>
+
+<p>La carrera masculina la ganó Luke Meier-Smith (Giant Factory Off-Road Team) con un tiempo de 3:08.389, lo que le da su segunda victoria en la Copa del Mundo y la segunda consecutiva en este mismo circuito, ya que ganó hace doce meses. El austriaco Andreas Kolb (Santa Cruz Syndicate) fue segundo, a 1,4 segundos, y el neozelandés Lachlan Stevens-McNab (Trek – Unbroken DH) tercero, a 1,8 segundos. El trazado de Whiteface Mountain, de unos dos kilómetros construido con máquinas, fue cambiando a lo largo del fin de semana: de mojado a cada vez más seco.</p>
+
+<h2>Bouladou frena a Höll</h2>
+
+<p>En mujeres, la francesa Lisa Bouladou (Santa Cruz Burgtec by Goodman) logró su primera victoria en la Copa del Mundo con 3:36.037, por delante de Höll (Commencal Schwalbe by Les Orres) y de la británica Tahnée Seagrave (Orbea FMD Racing), que fue tercera. Höll, que cerró así el título general, se quedó a una victoria de igualar el récord de siete triunfos en una temporada: ganó seis. Su ventaja final en la general fue de 1.085 puntos sobre la británica Harriet Harnden, según el Daily Gazette.</p>
+
+<h2>Una temporada para el recuerdo</h2>
+
+<p>La serie 2026 se disputó en nueve carreras repartidas entre Asia, Europa y Norteamérica y termina con dos campeones claros: una Höll dominante, que alcanzó las seis victorias, y un Vermette que ha pasado de debutante a campeón en una temporada. Como contamos hace unos días, su primera victoria en Whistler fue la primera de su carrera en la Copa del Mundo, y aquel triunfo ya lo puso al frente de la clasificación. Para el descenso estadounidense, es el primer título general masculino desde Gwin.</p>
+`.trim()
+
+export async function publishVermetteTituloArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'mtb-gravel' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+  const tagIds = [{ id: ultimaHoraTag.id }]
+
+  const title = 'Asa Vermette, campeón general de descenso a los 19 años; Meier-Smith y Bouladou ganan en Lake Placid'
+  const heroImageId = await ensureCustomHeroImage('asa-vermette-campeon-general-descenso-lake-placid-2026', {
+    url: '/images/headers/asa-vermette-campeon-cover.jpg',
+    altText: 'Asa Vermette, campeón general de la Copa del Mundo de descenso 2026',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'El estadounidense, segundo de su país en ganar el título masculino tras Aaron Gwin, lo selló en su primer año élite; Höll se queda a una victoria del récord',
+    excerpt:
+      'Asa Vermette, de 19 años, ganó el título general de la Copa del Mundo de descenso en Lake Placid. Luke Meier-Smith y Lisa Bouladou ganaron la final; Valentina Höll, campeona general con seis victorias.',
+    content: vermetteTituloContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://singletrackworld.com/2026/10/lake-placid-dh-world-series-rd9-results-report-highlight-vids',
+      'https://mbaction.com/asa-vermette-and-vali-holl-take-the-world-cup-dh-titles/',
+      'https://cyclingmagazine.ca/mtb/asa-vermette-makes-history-in-lake-placid-at-world-cup-finale/',
+      'https://www.dailygazette.com/lpn/ade/american-asa-vermette-clinches-2026-overall-uci-downhill-crown-at-whiteface/article_4cc8eb69-bb55-480b-a663-0b3815ae743a.html',
+    ]),
+    sourceNames: toJsonField(['Singletrack World', 'MBAction', 'Canadian Cycling Magazine', 'Daily Gazette']),
+    seoTitle: 'Asa Vermette, campeón de la Copa del Mundo de descenso 2026',
+    seoDescription:
+      'Asa Vermette, de 19 años, gana el título general de la Copa del Mundo de descenso 2026 en Lake Placid. Meier-Smith y Bouladou ganan la final; Höll, campeona.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'asa-vermette-campeon-general-descenso-lake-placid-2026' },
+    update: { ...baseFields, heroImageId: heroImageId ?? undefined, tags: { set: tagIds } },
+    create: {
+      slug: 'asa-vermette-campeon-general-descenso-lake-placid-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Grand Tours (cuota octubre): Giro d'Italia 2027. Lo confirmado (salida
+// en Trieste, Zoncolan, presentación 3 nov) vs lo reportado (resto del
+// recorrido). Fuentes: Domestique, CyclingUpToDate (5 oct 2026).
+// ————————————————————————————————————————————————————————————
+
+const giro2027Content = `
+<p>El Giro d'Italia 2027 ya tiene casa de salida: Trieste. Lo confirmó Urbano Cairo, dueño de RCS Media Group y de la organizadora RCS Sport, que ha cerrado un acuerdo de unos diez millones de euros con la región de Friuli-Venezia Giulia, según Domestique. El recorrido completo se conocerá el 3 de noviembre en Roma, pero las filtraciones de las últimas horas ya dibujan una carrera que arranca en el noreste italiano y termina con el Monte Zoncolan en la penúltima etapa.</p>
+
+<h2>Lo que está confirmado</h2>
+
+<p>Según Domestique, que cita al periodista Antonio Simeoli de <em>Il Messaggero Veneto</em> y a TuttoBiciWeb, hay tres datos que se dan por seguros: la salida desde Trieste, con dos etapas en el noreste de Italia; una etapa 20 que acaba en el Monte Zoncolan por la vertiente de Ovaro; y la presentación del recorrido completo en Roma, el 3 de noviembre. Domestique añade que el anuncio oficial de la Grande Partenza podría hacerse el 12 de octubre, una fecha que aún se considera posible, no confirmada.</p>
+
+<h2>Lo que se espera</h2>
+
+<p>El resto del recorrido es, de momento, información filtrada, no oficial. CyclingUpToDate recoge que la etapa 1 empezaría y terminaría en Trieste con un bucle por Eslovenia pensado para los velocistas, y que la etapa 2 acabaría en Pordenone, capital italiana de la cultura en 2027. Más adelante, siempre según esas informaciones, habría una etapa con el Gavia y el Mortirolo, y una contrarreloj de perfil ondulado hasta Vicenza. La etapa 20 podría salir de Lienz, en Austria, antes de subir al Zoncolan, y la carrera acabaría, probablemente, en Roma.</p>
+
+<h2>El regreso del Zoncolan, nueve años después</h2>
+
+<p>La subida de Ovaro es la gran noticia para los aficionados. El Zoncolan vuelve al Giro nueve años después de su última aparición en la edición de 2018, en la que ganó la etapa Chris Froome, según CyclingUpToDate. Es una subida de tal dureza que la propia organización decidió dejarla fuera del Giro de 2026: el director de recorrido, Mauro Vegni, la descartó entonces por temor a que una ascensión tan exigente en la tercera semana hiciera correr con cautela a los favoritos.</p>
+
+<h2>¿Y Pogačar?</h2>
+
+<p>CyclingUpToDate apunta que el diseño del recorrido podría tener un objetivo concreto: atraer el regreso de Tadej Pogačar, ganador del Giro de 2024, que se recupera de las lesiones de la Vuelta a España y podría empezar su temporada 2027 pronto. Es una interpretación del medio, no un anuncio: ni el esloveno ni su equipo han dicho nada sobre su calendario del próximo año.</p>
+
+<p>Habrá que esperar a que el 3 de noviembre, en Roma, RCS presente el recorrido oficial. Hasta entonces, conviene tratar todo lo que no sea la salida en Trieste, el Zoncolan en la etapa 20 y la fecha de presentación como un borrador, sujeto a cambios.</p>
+`.trim()
+
+export async function publishGiro2027Article() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'grand-tours' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riders = await prisma.rider.findMany({ where: { slug: { in: ['tadej-pogacar'] } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+  const tagIds = [{ id: ultimaHoraTag.id }]
+
+  const title = 'Giro d\'Italia 2027: salida en Trieste y regreso del Zoncolan; lo que es oficial y lo que es filtración'
+  const heroImageId = await ensureCustomHeroImage('giro-italia-2027-trieste-zoncolan', {
+    url: '/images/headers/giro-2027-trieste-cover.jpg',
+    altText: 'Giro d\'Italia 2027: salida en Trieste y regreso del Monte Zoncolan',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'Cairo confirma la salida en Trieste y el Zoncolan en la etapa 20 se da por seguro; el recorrido completo se presenta el 3 de noviembre en Roma',
+    excerpt:
+      'El Giro 2027 saldrá de Trieste y subirá al Monte Zoncolan en la etapa 20, nueve años después. El resto del recorrido (Eslovenia, Gavia, Mortirolo, crono a Vicenza) es filtración hasta la presentación del 3 de noviembre.',
+    content: giro2027Content,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.domestiquecycling.com/en/news/2027-giro-ditalia-start-in-trieste-revealed-with-mortirolo-and-zoncolan-expected-on-route/',
+      'https://cyclinguptodate.com/cycling/giro-ditalia-2027-start-reportedly-set-to-ride-through-slovenia-details-emerge-as-legendary-climb-set-for-return-nine-years-after-iconic-stage',
+    ]),
+    sourceNames: toJsonField(['Domestique', 'CyclingUpToDate']),
+    seoTitle: 'Giro d\'Italia 2027: salida en Trieste y Zoncolan en la etapa 20',
+    seoDescription:
+      'Giro d\'Italia 2027: Trieste acoge la salida y el Monte Zoncolan vuelve en la etapa 20. Qué es oficial, qué es filtración y cuándo se presenta el recorrido.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'giro-italia-2027-trieste-zoncolan' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'giro-italia-2027-trieste-zoncolan',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Análisis (cuota octubre): claves de Il Lombardia 2026 (sábado 10 oct).
+// Hechos de recorrido y ausencias de Domestique, CyclingUpToDate y
+// ProCyclingUK; las lecturas y pronósticos son de la redacción y se
+// marcan como tales.
+// ————————————————————————————————————————————————————————————
+
+const lombardia2026ClavesContent = `
+<p>Después de cinco años en los que el nombre del ganador de Il Lombardia no admitía discusión, el sábado 10 de octubre habrá un campeón nuevo. Tadej Pogačar, que ganó la carrera de 2021 a 2025 e igualó así las cinco victorias de Fausto Coppi, no estará: se rompió la clavícula en la Vuelta a España y su equipo dio por terminada su temporada. La carrera, la quinta y última monumento del año, parte de Bérgamo, llega a Como y se presenta más abierta que nunca. Estas son las claves.</p>
+
+<h2>Clave 1: un campeón nuevo después de cinco años</h2>
+
+<p>CyclingUpToDate lo plantea sin rodeos: con Pogačar fuera, la carrera está abierta. Entre los favoritos citan a Remco Evenepoel, segundo en 2024 y 2025 y campeón de Europa desde el domingo; a Paul Seixas, Tom Pidcock, Giulio Ciccone, Matteo Jorgenson y Davide Piganzoli, ganador del Giro dell'Emilia hace una semana; y también a Isaac del Toro. Domestique añade a Enric Mas, vencedor de la Vuelta a España, entre los posibles aspirantes. Nuestra lectura: no hay un favorito claro, y eso suele favorecer a quien llega con la mejor forma y no a quien tiene el mejor palmarés.</p>
+
+<h2>Clave 2: un recorrido de escaladores, con final en circuito</h2>
+
+<p>La distancia es de 239&nbsp;km con unos 4.600&nbsp;m de desnivel y nueve ascensiones. Entre ellas, Selvino, Colle di Berbenno, Valpiana y Giovenzana, antes de la subida tradicional al Madonna del Ghisallo, de 8,6&nbsp;km al 5,4&nbsp;% según CyclingUpToDate, que se corona a 60,6&nbsp;km de meta. La novedad es el regreso de un final en circuito en torno a Como, como en 2022: San Fermo della Battaglia se sube dos veces —la primera con unos 28&nbsp;km por recorrer—, con el Civiglio entre ambas, y la cima de la última ascensión queda a 5,2&nbsp;km de la línea, según Domestique.</p>
+
+<h2>Clave 3: el Civiglio puede decidirlo</h2>
+
+<p>El Civiglio mide 4,2&nbsp;km al 9,7&nbsp;% y tiene un descenso técnico hasta la zona de meta. Nuestra lectura: con tantas rampas duras tan cerca de la llegada, la carrera tiene pocas probabilidades de decidirse al esprint y favorece a los corredores que puedan atacar en la penúltima subida y arriesgar en el descenso. Un ataque a unos 28&nbsp;km de meta, en el primer paso por San Fermo, tendría margen suficiente para mantenerse, pero también tiempo para que los perseguidores se organicen.</p>
+
+<h2>Clave 4: Evenepoel y la cuenta pendiente</h2>
+
+<p>Evenepoel ha sido segundo dos años seguidos. Llega con la moral alta tras ganar el Europeo el domingo en una foto finish a Ciccone —que ahora discute la imagen de llegada—, pero con la duda de su Mundial en línea, donde terminó 12.º. Su cuenta pendiente con Il Lombardia es evidente. Si el belga acierta con el momento, tiene argumentos para ser el favorito.</p>
+
+<h2>Clave 5: la nueva presentación de equipos y los latinos</h2>
+
+<p>Il Lombardia estrena este año una presentación de equipos en Bérgamo la víspera de la carrera, siguiendo el modelo de otros monumentos como la París-Roubaix o la Lieja-Bastoña-Lieja, según Domestique. Y entre los nombres que se esperan está el de Isaac del Toro, que llegó quinto al Mundial de Montreal y es una de las bazas latinoamericanas. Nairo Quintana, por cierto, ya no estará: se retiró el pasado sábado.</p>
+
+<p>Sin Pogačar, Il Lombardia 2026 es una carrera de apuestas. Nuestra recomendación: mirar a quien llegue a San Fermo con piernas, no al que llegue con nombre.</p>
+`.trim()
+
+export async function publishLombardia2026ClavesArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'analisis' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['tadej-pogacar', 'remco-evenepoel', 'paul-seixas', 'tom-pidcock', 'giulio-ciccone', 'matteo-jorgenson', 'davide-piganzoli', 'isaac-del-toro', 'enric-mas']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+  const tagIds = [{ id: ultimaHoraTag.id }]
+
+  const title = 'Il Lombardia 2026 sin Pogačar: cinco claves de una carrera abierta con final en circuito'
+  const heroImageId = await ensureCustomHeroImage('il-lombardia-2026-claves-sin-pogacar', {
+    url: '/images/headers/lombardia-2026-claves-cover.jpg',
+    altText: 'Il Lombardia 2026 sin Pogačar: cinco claves de la carrera',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'Un campeón nuevo después de cinco años: recorrido de 239 km, el Civiglio y los favoritos de una monumento sin Pogačar',
+    excerpt:
+      'Il Lombardia 2026 tendrá un campeón nuevo tras cinco años de Pogačar. Evenepoel, Seixas, Pidcock, Ciccone, Jorgenson, Piganzoli y Del Toro, entre los favoritos de una carrera de 239 km con final en circuito.',
+    content: lombardia2026ClavesContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://cyclinguptodate.com/cycling/il-lombardia-2026-preview-profile-favourites-predictions-who-will-win-after-5-years-of-tadej-pogacar-dominance',
+      'https://www.domestiquecycling.com/en/news/no-pogacar-a-circuit-finale-and-a-team-presentation-whats-new-at-il-lombardia-in-2026/',
+      'https://procyclinguk.com/il-lombardia-2026-route-guide-ghisallo-civiglio-and-double-san-fermo-finale/',
+    ]),
+    sourceNames: toJsonField(['CyclingUpToDate', 'Domestique', 'ProCyclingUK']),
+    seoTitle: 'Il Lombardia 2026: cinco claves de una carrera abierta sin Pogačar',
+    seoDescription:
+      'Cinco claves de Il Lombardia 2026: recorrido de 239 km con final en circuito, el Civiglio y los favoritos Evenepoel, Seixas, Pidcock, Ciccone, Piganzoli y Del Toro.',
+    readingTime: 5,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'il-lombardia-2026-claves-sin-pogacar' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'il-lombardia-2026-claves-sin-pogacar',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Leyendas (cuota octubre): Lucho Herrera, el primer colombiano y
+// latinoamericano en ganar una gran vuelta (Vuelta 1987). Hilo con el
+// retiro de Nairo Quintana. Fuentes: Banrepcultural, Infobae,
+// Wikipedia (Vuelta 1987), NTN24. Quién era el líder designado de Café de
+// Colombia varía por fuente (Ramírez/Parra): no se afirma.
+// ————————————————————————————————————————————————————————————
+
+const luchoHerreraContent = `
+<p>Cuando Nairo Quintana se despidió del ciclismo el sábado, medios y aficionados recordaron una frase de su palmarés: con su Vuelta a España de 2016 había igualado la hazaña de Luis &laquo;Lucho&raquo; Herrera, que en 1987 se convirtió en el primer colombiano y el primer latinoamericano en ganar una gran vuelta. Lucho abrió el camino por el que, casi cuarenta años después, se retiró Nairo. Esta es su historia.</p>
+
+<h2>El jardinerito de Fusagasugá</h2>
+
+<p>Luis Alberto Herrera Herrera nació el 4 de mayo de 1961 en Fusagasugá, Cundinamarca, en una familia campesina. Por su origen humilde le pusieron el apodo de &laquo;el Jardinerito&raquo;, según la Enciclopedia del Banco de la República de Colombia. Una bicicleta que le regaló su madre se convirtió en su forma de recorrer las largas distancias rurales, y de ahí, según la misma fuente, nació su carrera. Fue profesional de 1982 a 1992 y acabó con unas 30 victorias.</p>
+
+<h2>Rey en Colombia, sorpresa en Europa</h2>
+
+<p>En su país dominó la década de los ochenta: ganó cuatro veces el Clásico RCN, entre 1982 y 1986, y cuatro veces la Vuelta a Colombia, entre 1984 y 1988, y logró el doblete en 1984 y 1986. Ese mismo 1984 dio la primera gran sorpresa al mundo: corriendo como aficionado en el Tour de Francia, ganó la etapa de Alpe d'Huez, el primer aficionado en ganar una etapa del Tour, según Banrepcultural.</p>
+
+<h2>La Vuelta de 1987: el que no tenía que ganar</h2>
+
+<p>En la primavera de 1987, la Vuelta a España se corría en abril y mayo, y Herrera no estaba en ella para ganar. Según Infobae, había aceptado la invitación como preparación para el Tour de Francia y, aunque corría para el Café de Colombia, no era el líder designado del equipo. La carrera, del 23 de abril al 15 de mayo, tuvo 22 etapas más un prólogo y 3.921 kilómetros, según Wikipedia.</p>
+
+<p>El golpe llegó en la etapa 11, hacia los Lagos de Covadonga: Herrera la ganó y se vistió de líder, un maillot que ya no soltó. Infobae cuenta que llegó en 5 horas, 16 minutos y 10 segundos, y que sacó 1 minuto y 28 segundos a Sean Kelly y 1 minuto y 39 a Reimund Dietzen. Kelly acabó abandonando la carrera, según esa misma fuente. Herrera ganó también la etapa 20 y la clasificación de la montaña.</p>
+
+<h2>Un final sin discusión</h2>
+
+<p>La clasificación final fue esta, según Wikipedia: Herrera, primero, en 105 horas, 34 minutos y 25 segundos; Reimund Dietzen, segundo, a 1:04; Laurent Fignon, tercero, a 3:13; Pedro Delgado, cuarto, a 3:52; y otro colombiano, Óscar Vargas, quinto, a 4:03. Era la primera vez que un colombiano, y un sudamericano, ganaba una de las tres grandes vueltas. El propio Herrera dijo después, según Infobae, que siempre aseguró que él no era el líder del equipo.</p>
+
+<h2>El legado: de Lucho a Nairo</h2>
+
+<p>La victoria de Herrera abrió la puerta a la generación de escaladores colombianos que llegó después: Nairo Quintana, con el Giro de 2014 y la Vuelta de 2016, y Egan Bernal, entre otros. NTN24 señaló que, con su Vuelta de 2016, Quintana igualó la hazaña de Lucho en 1987. El Jardinerito de Fusagasugá demostró que un campesino colombiano podía ganar en Europa, y casi cuatro décadas después, Nairo Quintana, apodado el Cóndor, cierra su carrera sobre aquellos cimientos.</p>
+`.trim()
+
+export async function publishLuchoHerreraLegendArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'leyendas' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riders = await prisma.rider.findMany({ where: { slug: { in: ['nairo-quintana', 'egan-bernal'] } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const latinosTag = await prisma.tag.upsert({
+    where: { slug: 'latinos' },
+    update: {},
+    create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+  })
+  const tagIds = [{ id: latinosTag.id }]
+
+  const title = 'Lucho Herrera, el Jardinerito de Fusagasugá que abrió el camino de Nairo: la Vuelta de 1987'
+  const heroImageId = await ensureCustomHeroImage('lucho-herrera-jardinerito-vuelta-1987', {
+    url: '/images/headers/lucho-herrera-leyenda-cover.jpg',
+    altText: 'Lucho Herrera, el primer colombiano en ganar una gran vuelta',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'En 1987 se convirtió en el primer colombiano y latinoamericano en ganar una gran vuelta; casi cuarenta años después, Nairo Quintana se retira siguiendo su huella',
+    excerpt:
+      'Lucho Herrera nació en Fusagasugá en una familia campesina y en 1987 ganó la Vuelta a España: la primera gran vuelta para Colombia y Latinoamérica. Su historia, que enlaza con la despedida de Nairo Quintana.',
+    content: luchoHerreraContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://enciclopedia.banrepcultural.org/Luis_Alberto_Herrera_Herrera',
+      'https://www.infobae.com/america/colombia/2022/08/18/el-dia-que-lucho-herrera-hizo-historia-en-la-vuelta-a-espana/',
+      'https://en.wikipedia.org/wiki/1987_Vuelta_a_Espa%C3%B1a',
+      'https://www.ntn24.com/noticias-deportes/el-final-de-la-ruta-ciclista-colombiano-nairo-quintana-anuncio-su-retiro-tras-17-anos-de-carrera-613548',
+    ]),
+    sourceNames: toJsonField(['Banrepcultural', 'Infobae', 'Wikipedia', 'NTN24']),
+    seoTitle: 'Lucho Herrera: el primer colombiano en ganar una gran vuelta (Vuelta 1987)',
+    seoDescription:
+      'Historia de Lucho Herrera, el Jardinerito de Fusagasugá: primer colombiano y latinoamericano en ganar una gran vuelta, la Vuelta a España de 1987, y su legado hasta Nairo Quintana.',
+    readingTime: 5,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'lucho-herrera-jardinerito-vuelta-1987' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'lucho-herrera-jardinerito-vuelta-1987',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}

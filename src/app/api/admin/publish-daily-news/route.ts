@@ -42,6 +42,7 @@ import {
   publishDelToroWorldsControversyArticle,
   publishVermetteWhistlerArticle,
 } from '@/lib/content/daily-news'
+import { applyPublicationSchedule } from '@/lib/content/schedule'
 
 /**
  * Artículos publicados uno por uno a partir de la lista diaria de
@@ -96,7 +97,8 @@ export async function POST() {
       publishDelToroWorldsControversyArticle(),
       publishVermetteWhistlerArticle(),
     ])
-    return NextResponse.json({ ok: true, articles: results })
+    const schedule = await applyPublicationSchedule()
+    return NextResponse.json({ ok: true, articles: results, schedule })
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Error desconocido' }, { status: 500 })
   }

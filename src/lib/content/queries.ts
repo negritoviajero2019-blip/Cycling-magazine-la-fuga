@@ -35,7 +35,21 @@ const summarySelect = {
  */
 const HERO_CAROUSEL_SIZE = 5
 
+/** Publica los artículos programados cuya hora ya llegó. Respaldo del cron
+ * scheduled-publisher: la portada lo ejecuta en cada visita (es barato). */
+export async function publishDueScheduledArticles() {
+  await safeQuery(
+    () =>
+      prisma.article.updateMany({
+        where: { status: 'scheduled', publishedAt: { lte: new Date() } },
+        data: { status: 'published' },
+      }),
+    null,
+  )
+}
+
 export async function getHomeSections() {
+  await publishDueScheduledArticles()
   const [breakingPool, featuredPool, recentPool, analysis, upcomingRaces, nextRace, mostRead] = await Promise.all([
     safeQuery(
       () =>
