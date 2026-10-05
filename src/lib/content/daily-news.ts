@@ -4385,3 +4385,110 @@ export async function publishCoppaBernocchi2026Article() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Ciccone pide ver el fotofinish "en la línea de meta real" tras el
+// Europeo (5 oct). Sección TECNOLOGÍA (cuota mensual; explicación del
+// fotofinish). Fuentes: ANSA, CyclingUpToDate, Escape Collective,
+// Virgilio, TuttoBiciWeb (comunicado UEC/EvoData), Bicisport, Cyclingnews.
+// Margen: Ciccone/prensa italiana citan 0,0028 s (2,8 ms); UEC/EvoData
+// dan 0,0002 s (~2,8-3,3 mm). Ambas cifras se presentan, no se concilian.
+// ————————————————————————————————————————————————————————————
+
+const cicconeFotofinishContent = `
+<p>Giulio Ciccone no se resigna. Un día después de perder el Campeonato de Europa de ruta ante Remco Evenepoel por una diferencia mínima, el italiano publicó un mensaje en Instagram en el que pide ver el fotofinish &laquo;correspondiente exactamente a la línea de meta real&raquo;. No pide que se anule el resultado ni pone en duda al belga: lo que reclama, dice, es transparencia. La Unión Europea de Ciclismo (UEC) y la empresa que cronometró la prueba respondieron con una explicación técnica detallada.</p>
+
+<h2>Lo que dice Ciccone</h2>
+
+<p>Ciccone explicó que el lunes por la mañana habló con comisarios y técnicos de la federación italiana, que le explicaron cómo funciona el sistema de fotofinish y los criterios con los que se interpreta. Aun así, mantuvo sus dudas. &laquo;He revisado cientos de veces las imágenes disponibles y, en los fotogramas en los que se ve la línea de meta, sigo viendo una dinámica que no consigo conciliar con ese veredicto&raquo;, escribió, según la agencia ANSA.</p>
+
+<p>Su petición es concreta: &laquo;Si un título europeo se decide por 2,8 milisegundos, creo que es legítimo pedir que ese mismo paso pueda mostrarse con la misma precisión con la que se determinó el resultado&raquo;, añadió. Según Escape Collective, también dijo que quiere ver &laquo;sin ambigüedad el paso de nuestras ruedas en el punto exacto donde, según el reglamento, se determina la meta&raquo;. Y dejó una frase para cerrar: &laquo;No voy a encontrar paz hasta que me enseñen el fotofinish que corresponde a la línea de meta real&raquo;, recogió Virgilio. Ciccone reconoció que Evenepoel fue &laquo;el corredor más fuerte&raquo; y firmó una actuación extraordinaria. Su duda, según CyclingUpToDate, es que el software superpone una línea vertical sobre la rueda delantera del primero y esa línea técnica podría no coincidir con la posición real de la línea de meta.</p>
+
+<h2>Dos cifras distintas para el margen</h2>
+
+<p>Aquí hay una discrepancia que conviene señalar. Ciccone y la prensa italiana hablan de 0,0028 segundos, es decir, 2,8 milisegundos. En cambio, el comunicado de la UEC y de EvoData, la empresa de cronometraje, habla de una diferencia de 0,0002 segundos (0,2 milisegundos), que a velocidad de esprint equivale a entre 2,8 y 3,3 milímetros, según TuttoBiciWeb. Que el número 2,8 aparezca en ambos casos, en unidades distintas, podría indicar una confusión entre milisegundos y milímetros, pero ninguna de las partes lo ha confirmado. En lo que sí coinciden todas las fuentes es en que la diferencia fue mínima y en que el belga cruzó primero.</p>
+
+<h2>Cómo funciona el fotofinish, según la UEC</h2>
+
+<p>La UEC respondió con un comunicado en el que explica que el fotofinish &laquo;no es una fotografía tradicional&raquo;. Según TuttoBiciWeb, EvoData utilizó una cámara de escaneo lineal, la EtherLynx Vision PRO, que no captura imágenes en dos dimensiones, sino que escanea de forma continua una franja de un solo píxel situada exactamente sobre la línea de meta. Paolo Orestelli, cofundador de EvoData, lo describió así: el eje horizontal de la imagen representa el tiempo y el vertical, la posición en la pista.</p>
+
+<p>Las especificaciones que da el comunicado son estas: 13.000 líneas por segundo y dos cámaras sincronizadas, una principal y otra de respaldo, colocadas en ángulos opuestos como medida de redundancia. La UEC subraya que se utilizaron dos sistemas de fotofinish independientes para fijar el orden de llegada. Como el resultado es una sucesión de registros en el tiempo y no una fotografía instantánea, puede generar distorsiones aparentes sin afectar la precisión de la medida. La referencia que decide la llegada es &laquo;la parte más avanzada (tangente) de la rueda delantera&raquo; al cruzar la línea.</p>
+
+<h2>Cómo se vivió el final</h2>
+
+<p>La polémica llega después de un esprint dramático. Evenepoel lideraba en la última curva, a unos 300&nbsp;metros, pero Ciccone ocupó la línea interior y pareció tener la victoria en su mano. El belga respondió y ambos lanzaron la bicicleta a la línea. Tuvieron que esperar unos dos minutos hasta la confirmación del resultado. Evenepoel contó después: &laquo;En los últimos cien metros vi que perdía velocidad y logré pasarlo justo en la línea&raquo;, y admitió que en el esprint pensó que no iba a poder. Ese domingo, Ciccone había sido más contenido: &laquo;Vi la primera imagen y no estaba muy claro; luego vi la segunda y estaba claro&raquo;.</p>
+
+<p>Hasta el cierre de esta nota, no se ha anunciado ningún cambio en el resultado, y la petición de Ciccone, que no pide anular el resultado, se ha hecho pública a través de sus redes sociales. Falta por ver si la UEC mostrará la imagen en la línea de meta real.</p>
+`.trim()
+
+export async function publishCicconeFotofinishArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'tecnologia' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riders = await prisma.rider.findMany({ where: { slug: { in: ['giulio-ciccone', 'remco-evenepoel'] } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const ultimaHoraTag = await prisma.tag.upsert({
+    where: { slug: 'ultima-hora' },
+    update: {},
+    create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+  })
+  const tagIds = [{ id: ultimaHoraTag.id }]
+
+  const title = 'Ciccone pide ver el fotofinish "en la línea de meta real" y la UEC explica cómo se decidió el Europeo'
+  const heroImageId = await ensureCustomHeroImage('ciccone-fotofinish-europeo-evenepoel-linea-meta', {
+    url: '/images/headers/ciccone-fotofinish-cover.jpg',
+    altText: 'Ciccone pide revisar el fotofinish del Europeo ante Evenepoel',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'El italiano no cuestiona a Evenepoel pero exige ver la imagen en la línea real; la UEC y EvoData detallan su tecnología y hablan de una diferencia de unos 3 milímetros',
+    excerpt:
+      'Giulio Ciccone pidió en Instagram ver el fotofinish en la línea de meta real tras perder el Europeo ante Evenepoel. La UEC respondió que usó dos sistemas independientes y 13.000 líneas por segundo.',
+    content: cicconeFotofinishContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.ansa.it/sito/notizie/sport/ciclismo/2026/10/05/ciccone-contesta-2o-posto-agli-europei-voglio-vedere-il-fotofinish-su-linea-arrivo_ceffe3b0-f837-4e1d-b761-d0c462eb4a45.html',
+      'https://cyclinguptodate.com/cycling/furious-giulio-ciccone-questions-european-championships-photo-finish-loss-to-remco-evenepoel-italian-wants-to-see-photo-on-the-real-finish-line',
+      'https://escapecollective.com/ciccone-questions-photo-finish-at-euros/',
+      'https://sport.virgilio.it/ciccone-evenepoel-beffa-europei-fotofinish-974481',
+      'https://www.tuttobiciweb.it/article/2026/10/05/1791227125/fotofinish-europei-strada-evenepoel-tecnologia',
+      'https://www.quibicisport.it/2026/10/05/europei-lappello-di-ciccone-voglio-vedere-il-fotofinish-sulla-vera-linea-darrivo/',
+      'https://www.cyclingnews.com/pro-cycling/racing/ive-looked-at-the-images-hundreds-of-times-giulio-ciccone-pleads-for-transparency-as-he-questions-controversial-photo-finish-loss-to-evenepoel-at-european-championships/',
+    ]),
+    sourceNames: toJsonField(['ANSA', 'CyclingUpToDate', 'Escape Collective', 'Virgilio Sport', 'TuttoBiciWeb', 'Bicisport', 'Cyclingnews']),
+    seoTitle: 'Ciccone pide revisar el fotofinish del Europeo ante Evenepoel',
+    seoDescription:
+      'Giulio Ciccone pide ver el fotofinish en la línea de meta real tras perder el Europeo ante Evenepoel. La UEC explica la tecnología: dos sistemas y 13.000 líneas por segundo.',
+    readingTime: 5,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'ciccone-fotofinish-europeo-evenepoel-linea-meta' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'ciccone-fotofinish-europeo-evenepoel-linea-meta',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
