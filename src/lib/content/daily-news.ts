@@ -4882,3 +4882,116 @@ export async function publishLuchoHerreraLegendArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Isaac del Toro vuelve a competir tras el Mundial y apunta a Il
+// Lombardia (10 oct). Gran Piemonte (8 oct) solo "tentativo" según el
+// propio Del Toro. Fuentes: Excélsior, Fox Sports México, ClaroSports,
+// Tribuna, Eurosport, CyclingUpToDate. Citas en español tal cual.
+// ————————————————————————————————————————————————————————————
+
+const delToroLombardiaContent = `
+<p>Isaac del Toro vuelve a la competencia. Nueve días después de quedarse a un segundo del podio en el Mundial de Montreal, el mexicano del UAE Team Emirates-XRG prepara el final de su temporada en Italia, y su gran objetivo tiene fecha: Il Lombardia, el sábado 10 de octubre. Será, según ClaroSports, su última carrera del año. Y llega con una circunstancia nueva: con Tadej Pogačar fuera por la fractura de clavícula de la Vuelta, el equipo necesita un líder para la carrera donde él mismo fue quinto el año pasado.</p>
+
+<h2>Un Mundial agridulce</h2>
+
+<p>La última vez que lo vimos competir fue en Montreal, donde fue quinto en la prueba en línea, a 14 segundos del campeón, su compañero Brandon McNulty, y a un segundo del bronce. Fue el mejor resultado de un mexicano en un Mundial de ruta élite, pero su reacción al cruzar la meta fue de lágrimas. Después lo resumió así en Instagram, según Tribuna: &laquo;Con un quinto lugar agridulce me despido de Canadá&raquo;, y añadió: &laquo;Hice todo lo que sé hacer y lo di todo por el ciclismo&raquo;. Y sobre la dificultad de ganar un Mundial: &laquo;Para ganar el Mundial se necesitan muchísimas más cosas en ciclismo, como en la vida misma&raquo;. Excélsior recoge otro mensaje: &laquo;No es cómo te golpean, sino cómo te levantas&raquo;.</p>
+
+<p>El resultado vino acompañado de una polémica: Tom Pidcock y Michael Matthews insinuaron que Del Toro no persiguió a McNulty. El mexicano respondió, según Eurosport, que &laquo;los demás corrieron de forma pasiva&raquo; y que su equipo intentó aprovecharlo. Ese debate ya quedó atrás: ahora la respuesta tiene que llegar en la carretera.</p>
+
+<h2>Gran Piemonte, opcional; Il Lombardia, seguro</h2>
+
+<p>El propio Del Toro describió su calendario inmediato así, según ClaroSports: &laquo;Me falta Gran Piemonte y Lombardía. Creo, puede que no, no sé, pero Lombardía seguro&raquo;. El Gran Piemonte, previsto para el 8 de octubre según ClaroSports, es una carrera que ganó en 2025 con un ataque en solitario, de modo que tendría la oportunidad de defender el título, aunque su participación es solo tentativa. La que sí está confirmada es Il Lombardia.</p>
+
+<h2>Un monumento que ya conoce</h2>
+
+<p>Il Lombardia es una carrera de 239&nbsp;km entre Bérgamo y Como, con unos 4.600&nbsp;m de desnivel y un final en circuito con el San Fermo della Battaglia dos veces. En 2025, Del Toro fue quinto, a 4 minutos y 16 segundos de Pogačar, mientras trabajaba para el esloveno, según Excélsior, y se impuso al esprint a corredores como Egan Bernal y Tom Pidcock. Este año, sin el ganador de las últimas cinco ediciones, CyclingUpToDate lo incluye entre los favoritos, junto a Remco Evenepoel, Paul Seixas, Pidcock, Giulio Ciccone, Matteo Jorgenson y Davide Piganzoli.</p>
+
+<h2>Una temporada para mirar con ambición</h2>
+
+<p>Del Toro tiene 22 años y llega con la experiencia de un año grande: ganó el UAE Tour, fue el primer mexicano en subir al podio del Tour de Francia y ganó el Gran Premio de Montreal dos semanas antes del Mundial. Excélsior subraya que ya no es una promesa, sino un corredor consolidado del WorldTour. Il Lombardia es la última oportunidad de la temporada para sumar un monumento a esa lista, y la primera vez que lo afronta sin Pogačar a su lado.</p>
+
+<h2>Cómo verlo desde México</h2>
+
+<p>Según Fox Sports México, la carrera arranca el sábado 10 de octubre a las 02:45 de la madrugada, hora del centro de México, y se podrá ver por ESPN y la plataforma Disney+.</p>
+`.trim()
+
+export async function publishDelToroLombardiaArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['isaac-del-toro', 'brandon-mcnulty', 'tom-pidcock', 'remco-evenepoel', 'tadej-pogacar']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const [ultimaHoraTag, latinosTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'latinos' },
+      update: {},
+      create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, latinosTag.id].map((id) => ({ id }))
+
+  const title = 'Del Toro vuelve a competir y apunta a Il Lombardia: "Lombardía seguro"'
+  const heroImageId = await ensureCustomHeroImage('del-toro-vuelve-apunta-il-lombardia-2026', {
+    url: '/images/headers/del-toro-vuelve-lombardia-cover.jpg',
+    altText: 'Del Toro vuelve a competir y apunta a Il Lombardia',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'Tras el quinto puesto agridulce del Mundial, el mexicano prepara el final de temporada en Italia: Gran Piemonte, quizá; Il Lombardia, seguro',
+    excerpt:
+      'Isaac del Toro vuelve a competir tras el Mundial de Montreal y tiene en Il Lombardia, el 10 de octubre, su objetivo: con Pogačar fuera, el UAE necesita un líder. Dónde verlo desde México.',
+    content: delToroLombardiaContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.excelsior.com.mx/deportes/isaac-toro-il-lombardia-ciclismo-uae-team-emirates-monumento-2026',
+      'https://www.foxsports.com.mx/2026/10/05/cuando-corre-isaac-del-toro-en-el-giro-de-lombardia-2026-y-donde-ver-al-ciclista-mexicano/',
+      'https://www.clarosports.com/ciclismo/que-sigue-para-isaac-del-toro-despues-del-campeonato-mundial/',
+      'https://tribuna.com.mx/deportes/2026/09/29/isaac-del-toro-reconoce-su-decepcion-tras-el-quinto-puesto-en-el-mundial-2026-hice-todo-por-el-ciclismo_695586/',
+      'https://excelsior.com.mx/deportes/isaac-toro-manda-emotivo-mensaje-despues-mundial-ciclismo-montreal',
+      'https://www.eurosport.es/ciclismo/campeonatos-mundiales/2026/cruce-declaraciones-pidcock-mcnulty-polemica_sto23341329/story.shtml',
+      'https://cyclinguptodate.com/cycling/il-lombardia-2026-preview-profile-favourites-predictions-who-will-win-after-5-years-of-tadej-pogacar-dominance',
+    ]),
+    sourceNames: toJsonField(['Excélsior', 'Fox Sports México', 'ClaroSports', 'Tribuna', 'Eurosport', 'CyclingUpToDate']),
+    seoTitle: 'Isaac del Toro vuelve a competir: Il Lombardia 2026 y dónde verlo',
+    seoDescription:
+      'Isaac del Toro vuelve a competir tras el Mundial de Montreal y apunta a Il Lombardia el 10 de octubre. Fecha, hora en México y dónde ver la carrera.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'del-toro-vuelve-apunta-il-lombardia-2026' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'del-toro-vuelve-apunta-il-lombardia-2026',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}

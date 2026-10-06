@@ -10,6 +10,7 @@ import { prisma } from '@/lib/db'
  */
 export const PUBLICATION_SCHEDULE: Record<string, string> = {
   // 14:00 UTC = 08:00 Ciudad de México = 16:00 Madrid
+  'del-toro-vuelve-apunta-il-lombardia-2026': '2026-10-06T16:00:00Z',
   'coppa-bernocchi-2026-isidore-aular-podio': '2026-10-06T14:00:00Z',
   'ciccone-fotofinish-europeo-evenepoel-linea-meta': '2026-10-06T19:00:00Z',
   'giro-italia-2027-trieste-zoncolan': '2026-10-07T14:00:00Z',
