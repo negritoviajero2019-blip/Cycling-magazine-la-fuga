@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { formatDate } from '@/lib/content/format-date'
+import { getRaceInfo, formatInZone } from '@/lib/content/race-info'
 
 interface UpcomingRace {
   slug: string
@@ -31,15 +32,34 @@ export function UpcomingRaces({ races }: { races: UpcomingRace[] }) {
               href={`/races/${race.slug}`}
               className="flex flex-wrap items-center justify-between gap-2 p-5 transition-colors hover:bg-surface-soft"
             >
-              <div>
+              <div className="min-w-0">
                 <p className="font-heading text-lg font-bold tracking-tight">{race.name}</p>
                 <p className="text-xs uppercase tracking-wide text-muted">
                   {[race.category.replace('-', ' '), race.country].filter(Boolean).join(' · ')}
                 </p>
+                {(() => {
+                  const info = getRaceInfo(race.slug)
+                  if (!info) return null
+                  return (
+                    <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
+                      <span className="rounded-full bg-lime px-2 py-0.5 font-extrabold text-primary">{info.distanceKm} km</span>
+                      <span>
+                        {info.start} → {info.finish}
+                      </span>
+                      <span aria-hidden>·</span>
+                      <span>
+                        Sale {formatInZone(info.startUtc, 'Europe/Madrid')} (Europa) · {formatInZone(info.startUtc, 'America/Mexico_City')} (México)
+                      </span>
+                    </p>
+                  )
+                })()}
               </div>
-              <time dateTime={race.startDate.toISOString()} className="text-sm font-semibold text-accent">
-                {formatDate(race.startDate)}
-              </time>
+              <div className="text-right">
+                <time dateTime={race.startDate.toISOString()} className="block text-sm font-semibold text-accent">
+                  {formatDate(race.startDate)}
+                </time>
+                {getRaceInfo(race.slug) && <span className="text-[11px] font-bold uppercase tracking-wide text-muted">Ver ficha →</span>}
+              </div>
             </Link>
           </li>
         ))}

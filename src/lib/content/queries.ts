@@ -135,11 +135,18 @@ export async function getHomeSections() {
   return { heroCarouselArticles, latestThree, radarArticles, featuredStandout, analysis, upcomingRaces, nextRace, mostRead }
 }
 
+/** Inicio del día de hoy (UTC): una carrera cuyo último día es hoy sigue vigente.
+ * Se filtra por fecha y no por `status`, que puede quedarse desactualizado. */
+function startOfTodayUtc(): Date {
+  const now = new Date()
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+}
+
 export async function getUpcomingRaces() {
   return safeQuery(
     () =>
       prisma.race.findMany({
-        where: { OR: [{ status: 'upcoming' }, { startDate: { gte: new Date() } }] },
+        where: { endDate: { gte: startOfTodayUtc() } },
         orderBy: { startDate: 'asc' },
         take: 5,
         select: { slug: true, name: true, startDate: true, country: true, category: true },
@@ -168,7 +175,7 @@ export async function getNextRace() {
   return safeQuery(
     () =>
       prisma.race.findFirst({
-        where: { OR: [{ status: 'upcoming' }, { status: 'ongoing' }, { startDate: { gte: new Date() } }] },
+        where: { endDate: { gte: startOfTodayUtc() } },
         orderBy: { startDate: 'asc' },
         select: {
           slug: true,

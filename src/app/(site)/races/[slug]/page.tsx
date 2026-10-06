@@ -6,6 +6,9 @@ import { getRaceBySlug } from '@/lib/content/queries'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { sportsEventJsonLd } from '@/lib/seo/structured-data'
 import { formatDate } from '@/lib/content/format-date'
+import { RaceFicha } from '@/components/editorial/race/RaceFicha'
+import { getRaceInfo } from '@/lib/content/race-info'
+import { prisma, safeQuery } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,7 +21,7 @@ export async function generateMetadata({ params }: Props) {
   if (!race) return buildMetadata({ title: 'Carrera no encontrada', description: '', noindex: true })
   return buildMetadata({
     title: race.name,
-    description: race.description || `Recorrido, etapas, resultados y noticias de ${race.name}`,
+    description: getRaceInfo(race.slug)?.tagline || race.description || `Recorrido, etapas, resultados y noticias de ${race.name}`,
     path: `/races/${race.slug}`,
   })
 }
@@ -34,6 +37,39 @@ export default async function RacePage({ params }: Props) {
     endDate: race.endDate,
     country: race.country,
   })
+
+  const info = getRaceInfo(race.slug)
+  const riders = info
+    ? await safeQuery(
+        () =>
+          prisma.rider.findMany({
+            where: { slug: { in: info.favorites.map((f) => f.slug) } },
+            select: { slug: true, name: true, photoUrl: true, photoCredit: true },
+          }),
+        [],
+      )
+    : []
+
+  if (info) {
+    return (
+      <Container className="py-6">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <Breadcrumbs items={[{ name: 'Inicio', href: '/' }, { name: 'Carreras', href: '/races' }, { name: race.name, href: `/races/${race.slug}` }]} />
+        <RaceFicha raceName={race.name} startDate={race.startDate} info={info} riders={riders} />
+
+        {race.articles.length > 0 && (
+          <section className="border-t border-border pt-8">
+            <h2 className="mb-4 font-display text-3xl">Noticias relacionadas</h2>
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {race.articles.map((article) => (
+                <ArticleCard key={article.slug} article={article} size="compact" />
+              ))}
+            </div>
+          </section>
+        )}
+      </Container>
+    )
+  }
 
   return (
     <Container className="py-6">

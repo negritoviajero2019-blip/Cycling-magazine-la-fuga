@@ -4736,6 +4736,8 @@ export async function publishLombardia2026ClavesArticle() {
     source: 'cover-composited',
   })
 
+  const raceLombardia = await prisma.race.findUnique({ where: { slug: 'il-lombardia-2026' }, select: { id: true } })
+
   const baseFields = {
     title,
     subtitle: 'Un campeón nuevo después de cinco años: recorrido de 239 km, el Civiglio y los favoritos de una monumento sin Pogačar',
@@ -4766,6 +4768,7 @@ export async function publishLombardia2026ClavesArticle() {
       ...baseFields,
       heroImageId: heroImageId ?? undefined,
       riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: raceLombardia ? { set: [{ id: raceLombardia.id }] } : undefined,
       tags: { set: tagIds },
     },
     create: {
@@ -4773,6 +4776,7 @@ export async function publishLombardia2026ClavesArticle() {
       ...baseFields,
       publishedAt: new Date(),
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: raceLombardia ? { connect: [{ id: raceLombardia.id }] } : undefined,
       tags: { connect: tagIds },
     },
   })
@@ -4955,6 +4959,8 @@ export async function publishDelToroLombardiaArticle() {
     source: 'cover-composited',
   })
 
+  const raceLombardia = await prisma.race.findUnique({ where: { slug: 'il-lombardia-2026' }, select: { id: true } })
+
   const baseFields = {
     title,
     subtitle: 'Tras el quinto puesto agridulce del Mundial, el mexicano prepara el final de temporada en Italia: Gran Piemonte, quizá; Il Lombardia, seguro',
@@ -4989,6 +4995,7 @@ export async function publishDelToroLombardiaArticle() {
       ...baseFields,
       heroImageId: heroImageId ?? undefined,
       riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: raceLombardia ? { set: [{ id: raceLombardia.id }] } : undefined,
       tags: { set: tagIds },
     },
     create: {
@@ -4996,6 +5003,7 @@ export async function publishDelToroLombardiaArticle() {
       ...baseFields,
       publishedAt: new Date(),
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: raceLombardia ? { connect: [{ id: raceLombardia.id }] } : undefined,
       tags: { connect: tagIds },
     },
   })
