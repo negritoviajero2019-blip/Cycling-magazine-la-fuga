@@ -4821,12 +4821,19 @@ export async function publishLuchoHerreraLegendArticle() {
   const riders = await prisma.rider.findMany({ where: { slug: { in: ['nairo-quintana', 'egan-bernal'] } }, select: { id: true } })
   const riderIds = riders.map((r) => r.id)
 
-  const latinosTag = await prisma.tag.upsert({
-    where: { slug: 'latinos' },
-    update: {},
-    create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
-  })
-  const tagIds = [{ id: latinosTag.id }]
+  const [ultimaHoraTag, latinosTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'latinos' },
+      update: {},
+      create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, latinosTag.id].map((id) => ({ id }))
 
   const title = 'Lucho Herrera, el Jardinerito de Fusagasugá que abrió el camino de Nairo: la Vuelta de 1987'
   const heroImageId = await ensureCustomHeroImage('lucho-herrera-jardinerito-vuelta-1987', {
