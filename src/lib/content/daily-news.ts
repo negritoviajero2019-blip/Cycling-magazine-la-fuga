@@ -5021,7 +5021,7 @@ export async function publishDelToroLombardiaArticle() {
 // ————————————————————————————————————————————————————————————
 
 const granPiemonteDelToroContent = `
-<p>Mañana, jueves 8 de octubre, se corre el Gran Piemonte, la clásica italiana de 185&nbsp;km entre Asti y Bra, y lo hace con un campeón defensor que habla español: Isaac del Toro, ganador de la edición 2025, buscará el bicampeonato antes de afrontar Il Lombardia el sábado. Será su regreso a la competencia después del Mundial de Montreal, donde fue quinto a un segundo del podio, y un ensayo a menos de 48 horas del último monumento de la temporada.</p>
+<p>Mañana, jueves 8 de octubre, se corre el Gran Piemonte, la clásica italiana entre Asti y Bra (185&nbsp;km con la salida neutralizada, 181 de carrera), y lo hace con un campeón defensor que habla español: Isaac del Toro, ganador de la edición 2025, buscará el bicampeonato antes de afrontar Il Lombardia el sábado. Será su regreso a la competencia después del Mundial de Montreal, donde fue quinto a un segundo del podio, y un ensayo a menos de 48 horas del último monumento de la temporada.</p>
 
 <h2>Qué se juega Del Toro</h2>
 
@@ -5029,7 +5029,7 @@ const granPiemonteDelToroContent = `
 
 <h2>El recorrido: colinas y un final en Bra</h2>
 
-<p>La carrera tiene 185&nbsp;km —una fuente italiana habla de 181— y unos 2.500&nbsp;m de desnivel, según Ciclismo al Día. Tras una primera parte muy ondulada entre Asti y Dogliani, aparecen las subidas más destacadas, Manera, Tre Cunei y Roddino, antes de un circuito final de 34,7&nbsp;km que se recorre una sola vez y pasa dos veces por La Morra. La subida más importante mide 7,1&nbsp;km al 3,8&nbsp;% y se corona a 14&nbsp;km de meta.</p>
+<p>La carrera mide 181&nbsp;km a ritmo de carrera; con los 4&nbsp;km neutralizados de la salida son los 185&nbsp;km que se citan habitualmente. El desnivel oficial es de 2.450&nbsp;m, según el cronotabla de la organización. Tras una primera parte muy ondulada entre Asti y Dogliani, aparecen las subidas más destacadas, Manera, Tre Cunei y Roddino, antes de un circuito final de 34,7&nbsp;km que se recorre una sola vez y pasa dos veces por La Morra. La última cima, La Morra, mide unos 7&nbsp;km al 3,8&nbsp;% y se corona a 13,6&nbsp;km de meta.</p>
 
 <p>En Bra, el final es técnico y ligeramente ascendente: unos 1.800&nbsp;m antes de la línea la carretera sube al 2-3&nbsp;%, el último kilómetro promedia un 5&nbsp;% con rampas del 8&nbsp;%, y hay dos curvas, a la izquierda y a la derecha, a 500 y 250&nbsp;m de meta. El rectilíneo final tiene 250&nbsp;m con una pendiente cercana al 1&nbsp;%, según Moveo. Favorece a quien sepa subir y también rematar.</p>
 
@@ -5045,7 +5045,7 @@ const granPiemonteDelToroContent = `
 
 <h2>Cuándo y dónde verla</h2>
 
-<p>La salida es a las 12:00, hora de Italia, es decir, a las 04:00 de la madrugada en el centro de México, con una llegada estimada hacia las 16:30 en Italia (08:30 en México). En México se transmite por ESPN y Disney+, según SDP Noticias, aunque ese medio publica una hora de salida distinta de la oficial, así que conviene confirmarla. En Italia se ve en abierto por Rai y RaiPlay. Los horarios por país, los canales y todo lo que hay que saber de la carrera están en la <a href="/races/gran-piemonte-2026">ficha completa del Gran Piemonte</a>.</p>
+<p>La salida es a las 12:00, hora de Italia, es decir, a las 04:00 de la madrugada en el centro de México, y el kilómetro 0 se da a las 12:10. Según el cronotabla oficial, la llegada se espera entre las 16:16 y las 16:42 en Italia (de 08:16 a 08:42 en México); a 43 km/h, hacia las 16:29. En México se transmite por ESPN y Disney+, según SDP Noticias, aunque ese medio publica una hora de salida distinta de la oficial, así que conviene confirmarla. En Italia se ve en abierto por Rai y RaiPlay. Los horarios por país, los canales y todo lo que hay que saber de la carrera están en la <a href="/races/gran-piemonte-2026">ficha completa del Gran Piemonte</a>.</p>
 
 <h2>Una clásica con más de un siglo</h2>
 

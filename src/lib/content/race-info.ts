@@ -6,6 +6,10 @@
  * se pudo verificar no se incluye.
  */
 
+import type { ProfileMarker } from '@/components/editorial/race/ElevationProfile'
+import { GRAN_PIEMONTE_2026_PROFILE } from './race-profiles/gran-piemonte-2026'
+import { IL_LOMBARDIA_2026_PROFILE } from './race-profiles/il-lombardia-2026'
+
 export interface RaceClimb {
   name: string
   /** Kilómetros que faltan para la meta cuando se corona/inicia la subida (si no se conoce, se omite y no se dibuja en el mapa). */
@@ -33,12 +37,28 @@ export interface RaceBroadcast {
   note?: string
 }
 
+export interface RaceProfile {
+  /** [km de carrera, altitud en m], muestreo regular. */
+  points: [number, number][]
+  totalKm: number
+  start: { name: string; alt: number }
+  finish: { name: string; alt: number }
+  markers: ProfileMarker[]
+  credit?: string
+}
+
 export interface RaceHistoryItem {
   title: string
   text: string
 }
 
 export interface RaceInfo {
+  /** Altimetría con el estilo de cronoescalada (ver ElevationProfile). */
+  profile?: RaceProfile
+  /** Texto de distancia si no es simplemente `${distanceKm} km` (p. ej. con tramo neutralizado). */
+  distanceLabel?: string
+  /** Aclaración bajo la tabla de horarios (hora de km 0, ventana de llegada). */
+  timesNote?: string
   slug: string
   tagline: string
   edition: string
@@ -93,16 +113,35 @@ const ilLombardia2026: RaceInfo = {
   climbsCount: 9,
   heroImage: '/images/races/il-lombardia-2026-hero.jpg',
   climbs: [
-    { name: 'Colle dei Pasta / Bocche di Gavarno', kmToGo: 224 },
-    { name: 'Selvino', kmToGo: 207 },
-    { name: 'Colle di Berbenno', kmToGo: 173 },
-    { name: 'Valpiana', kmToGo: 153 },
-    { name: 'Giovenzana', kmToGo: 136 },
-    { name: 'Madonna del Ghisallo', kmToGo: 60.6, detail: '8,6 km al 5,4 % de media; su santuario está dedicado a la patrona de los ciclistas' },
-    { name: 'San Fermo della Battaglia (1.ª vez)', kmToGo: 27.1 },
-    { name: 'Civiglio', kmToGo: 16.7, detail: '4,2 km al 9,7 %, con descenso técnico' },
-    { name: 'San Fermo della Battaglia (2.ª vez)', kmToGo: 5.2, detail: 'la cima queda a 5,2 km de la meta' },
+    { name: 'Bocche del Gavarno (Colle dei Pasta)', kmToGo: 224.8, detail: 'cima a 413 m · km 14,2' },
+    { name: 'Selvino', kmToGo: 207.1, detail: 'cima a 947 m · km 31,9' },
+    { name: 'Colle di Berbenno', kmToGo: 173.3, detail: 'cima a 697 m · km 65,7' },
+    { name: 'Valpiana', kmToGo: 153.5, detail: 'cima a 989 m, el punto más alto del recorrido · km 85,5' },
+    { name: 'Giovenzana', kmToGo: 102.9, detail: 'cima a 670 m · km 136,1' },
+    { name: 'Madonna del Ghisallo', kmToGo: 60.6, detail: 'cima a 758 m · 8,6 km al 5,4 % de media; su santuario está dedicado a la patrona de los ciclistas' },
+    { name: 'San Fermo della Battaglia (1.ª vez)', kmToGo: 27.1, detail: 'cima a 397 m · primer paso del circuito de Como' },
+    { name: 'Civiglio', kmToGo: 16.7, detail: 'cima a 613 m · 4,2 km al 9,7 %, con descenso técnico' },
+    { name: 'San Fermo della Battaglia (2.ª vez)', kmToGo: 5.2, detail: 'cima a 397 m · la última ascensión promedia cerca del 7 % y la cima queda a 5,2 km de meta' },
   ],
+  profile: {
+    points: IL_LOMBARDIA_2026_PROFILE,
+    totalKm: 239,
+    start: { name: 'Bérgamo', alt: 255 },
+    finish: { name: 'Como', alt: 201 },
+    markers: [
+      { name: 'Bocche del Gavarno', km: 14.2, alt: 413, row: 1 },
+      { name: 'Selvino', km: 31.9, alt: 947, row: 0 },
+      { name: 'Colle di Berbenno', km: 65.7, alt: 697, row: 1 },
+      { name: 'Valpiana', km: 85.5, alt: 989, row: 0 },
+      { name: 'Giovenzana', km: 136.1, alt: 670, row: 0 },
+      { name: 'Madonna del Ghisallo', km: 178.4, alt: 758, lengthKm: 8.6, gradientPct: 5.4, row: 1 },
+      { name: 'San Fermo', km: 211.9, alt: 397, row: 0 },
+      { name: 'Civiglio', km: 222.3, alt: 613, lengthKm: 4.2, gradientPct: 9.7, row: 1 },
+      { name: 'San Fermo', km: 233.8, alt: 397, row: 0 },
+    ],
+    credit:
+      'Perfil reconstruido a partir de la altimetría oficial de la organización (km desde la salida). Longitud y pendiente de Ghisallo y Civiglio según CyclingUpToDate.',
+  },
   finale:
     'El final vuelve a ser un circuito en torno a Como, como en 2022: tras coronar San Fermo por última vez quedan unos 5 km de descenso por carretera ancha, con dos túneles iluminados y dos grandes rotondas antes de la línea.',
   broadcasts: [
@@ -208,19 +247,37 @@ const granPiemonte2026: RaceInfo = {
   start: 'Asti',
   finish: 'Bra',
   startUtc: '2026-10-08T10:00:00Z',
-  finishUtc: '2026-10-08T14:30:00Z',
-  distanceKm: 185,
-  elevationM: 2500,
+  finishUtc: '2026-10-08T14:29:00Z',
+  distanceKm: 181,
+  distanceLabel: '185 km (181 de carrera)',
+  timesNote:
+    'Salida a las 12:00 (con 4 km neutralizados); el km 0 se da a las 12:10. Llegada estimada entre las 16:16 y las 16:42 según la media (45-41 km/h); a 43 km/h, hacia las 16:29. Horarios oficiales de la organización.',
+  elevationM: 2450,
   climbsCount: 10,
   heroImage: '/images/races/gran-piemonte-2026-hero.jpg',
   climbs: [
-    { name: 'Manera', detail: 'una de las subidas más destacadas del recorrido' },
-    { name: 'Tre Cunei', detail: 'otra de las subidas principales' },
-    { name: 'Roddino', detail: 'otra de las subidas principales del recorrido' },
-    { name: 'Subida clave previa a la meta', kmToGo: 14, detail: '7,1 km al 3,8 % de media; se corona a 14 km de Bra' },
-    { name: 'La Morra (1.º paso)', detail: 'dos ascensiones a La Morra en el circuito final de 34,7 km' },
-    { name: 'La Morra (2.º paso)', detail: 'segunda ascensión del circuito final' },
+    { name: 'Manera', kmToGo: 127.7, detail: 'cima a 625 m · 4,8 km al 6,2 % · la más dura de las tres primeras' },
+    { name: 'Tre Cunei', kmToGo: 114.8, detail: 'cima a 714 m · 8,0 km al 4,0 % · el punto más alto del recorrido' },
+    { name: 'Roddino', kmToGo: 101.4, detail: 'cima a 566 m · 5,5 km al 4,9 %' },
+    { name: 'La Morra (1.º paso)', kmToGo: 48.3, detail: 'cima a 495 m · unos 7 km al 3,8 % · entrada al circuito final de 34,7 km' },
+    { name: 'Cherasco (Strada Vecchia)', kmToGo: 29.8, detail: 'cima a 288 m · subida corta dentro del circuito final' },
+    { name: 'La Morra (2.º paso)', kmToGo: 13.6, detail: 'cima a 495 m · unos 7 km al 3,8 % · última cima, a 13,6 km de Bra' },
   ],
+  profile: {
+    points: GRAN_PIEMONTE_2026_PROFILE,
+    totalKm: 181,
+    start: { name: 'Asti', alt: 137 },
+    finish: { name: 'Bra', alt: 280 },
+    markers: [
+      { name: 'Manera', km: 53.3, alt: 625, lengthKm: 4.8, gradientPct: 6.2, row: 0 },
+      { name: 'Tre Cunei', km: 66.2, alt: 714, lengthKm: 8, gradientPct: 4, row: 1 },
+      { name: 'Roddino', km: 79.6, alt: 566, lengthKm: 5.5, gradientPct: 4.9, row: 0 },
+      { name: 'La Morra', km: 132.7, alt: 495, lengthKm: 7, gradientPct: 3.8, row: 0 },
+      { name: 'La Morra', km: 167.4, alt: 495, lengthKm: 7, gradientPct: 3.8, row: 0 },
+    ],
+    credit:
+      'Perfil reconstruido a partir de la altimetría y el cronotabla oficiales del GranPiemonte (km de carrera, sin los 4 km neutralizados). Subidas: longitud y pendiente medias según Sky Sport / OA Sport.',
+  },
   finale:
     'En Bra el final es técnico y ligeramente ascendente: unos 1.800 m antes de meta la carretera sube al 2-3 %, el último kilómetro promedia un 5 % con rampas del 8 %, y hay dos curvas (izquierda y derecha) a 500 y 250 m de la línea. El rectilíneo final mide 250 m, con una pendiente de alrededor del 1 %. Favorece a corredores explosivos que sepan subir y también rematar.',
   broadcasts: [
@@ -280,11 +337,11 @@ const granPiemonte2026: RaceInfo = {
     },
   ],
   facts: [
-    'Es la edición número 110: la anterior fue la 109.ª, la que ganó Del Toro el 9 de octubre de 2025.',
+    'Es la edición número 110: la anterior fue la 109.ª, la que ganó Del Toro el 9 de octubre de 2025. El desnivel oficial es de 2.450 m.',
     'Se corre a menos de 48 horas de Il Lombardia: muchos equipos la usan como ensayo, y Del Toro la elige como regreso a la competencia tras el Mundial de Montreal.',
     'El circuito final de 34,7 km se recorre una sola vez e incluye dos ascensiones a La Morra; la meta en Bra es ligeramente ascendente.',
     'Según Ciclo21, Jacopo Mosca (33 años) se retira en esta carrera y será director deportivo de Lidl en 2027.',
-    'La distancia oficial es de 185 km según la organización y la mayoría de medios; una fuente italiana habla de 181 km.',
+    'La carrera mide 181 km a ritmo de carrera; con los 4 km neutralizados de la salida desde el Start Village son 185 km. Por eso las fuentes hablan de una u otra cifra.',
   ],
   latinos:
     'Isaac del Toro defiende el título que ganó en 2025 y busca el bicampeonato antes de Il Lombardia. Con él corren el ecuatoriano Jhonatan Narváez (UAE) y, entre las opciones que cita Ciclismo al Día, el venezolano Orluis Aular (Movistar).',

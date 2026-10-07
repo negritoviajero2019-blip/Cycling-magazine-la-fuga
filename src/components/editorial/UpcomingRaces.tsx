@@ -42,7 +42,7 @@ export function UpcomingRaces({ races }: { races: UpcomingRace[] }) {
                   if (!info) return null
                   return (
                     <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
-                      <span className="rounded-full bg-lime px-2 py-0.5 font-extrabold text-primary">{info.distanceKm} km</span>
+                      <span className="rounded-full bg-lime px-2 py-0.5 font-extrabold text-primary">{info.distanceLabel ?? `${info.distanceKm} km`}</span>
                       <span>
                         {info.start} → {info.finish}
                       </span>

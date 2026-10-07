@@ -2,6 +2,7 @@ import Link from 'next/link'
 import fs from 'node:fs'
 import path from 'node:path'
 import { RiderAvatar } from '../RiderAvatar'
+import { ElevationProfile } from './ElevationProfile'
 import { BROADCAST_TIMEZONES, formatInZone, type RaceInfo } from '@/lib/content/race-info'
 
 interface RiderLite {
@@ -67,11 +68,11 @@ function IllustratedBackdrop() {
   )
 }
 
-function ClimbMap({ info }: { info: RaceInfo }) {
+function ClimbMap({ info, showTrack = true }: { info: RaceInfo; showTrack?: boolean }) {
   const located = info.climbs.filter((c) => c.kmToGo !== undefined)
   return (
     <div>
-      <div className="relative mb-2 h-16 rounded-lg bg-surface-soft">
+      {showTrack && <div className="relative mb-2 h-16 rounded-lg bg-surface-soft">
         <div className="absolute inset-x-4 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-border" />
         <div
           className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-lime"
@@ -92,10 +93,13 @@ function ClimbMap({ info }: { info: RaceInfo }) {
           )
         })}
       </div>
-      <div className="mb-5 flex justify-between text-[11px] font-bold uppercase tracking-wide text-muted">
-        <span>Salida · {info.start}</span>
-        <span>Meta · {info.finish}</span>
-      </div>
+      }
+      {showTrack && (
+        <div className="mb-5 flex justify-between text-[11px] font-bold uppercase tracking-wide text-muted">
+          <span>Salida · {info.start}</span>
+          <span>Meta · {info.finish}</span>
+        </div>
+      )}
       <ol className="divide-y divide-border rounded-lg border border-border bg-surface">
         {info.climbs.map((climb, i) => (
           <li key={climb.name} className="flex items-start gap-3 p-3 text-sm">
@@ -160,7 +164,7 @@ export function RaceFicha({
 
       <section className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
         {[
-          { label: 'Distancia', value: `${info.distanceKm} km` },
+          { label: 'Distancia', value: info.distanceLabel ?? `${info.distanceKm} km` },
           { label: 'Desnivel', value: `≈ ${info.elevationM.toLocaleString('es-ES', { useGrouping: 'always' })} m` },
           { label: 'Ascensiones', value: String(info.climbsCount) },
           { label: 'Salida → meta', value: `${info.start} → ${info.finish}` },
@@ -201,12 +205,17 @@ export function RaceFicha({
             ))}
           </ul>
         </div>
-        <p className="mt-3 text-xs text-muted">Los horarios son estimados y los canales pueden cambiar según tu proveedor y tu país.</p>
+        <p className="mt-3 text-xs text-muted">
+          {info.timesNote ? `${info.timesNote} ` : ''}Los horarios son estimados y los canales pueden cambiar según tu proveedor y tu país.
+        </p>
       </section>
 
       <section className="mt-12">
         <SectionTitle kicker="Recorrido">Mapa de subidas</SectionTitle>
-        <ClimbMap info={info} />
+        {info.profile && <ElevationProfile {...info.profile} />}
+        <div className={info.profile ? 'mt-6' : ''}>
+          <ClimbMap info={info} showTrack={!info.profile} />
+        </div>
         <p className="mt-4 max-w-3xl rounded-xl border-l-4 border-lime bg-surface-soft p-4 text-sm leading-relaxed">
           <strong>El final: </strong>
           {info.finale}
