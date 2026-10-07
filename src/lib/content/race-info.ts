@@ -8,8 +8,8 @@
 
 export interface RaceClimb {
   name: string
-  /** Kilómetros que faltan para la meta cuando se corona/inicia la subida. */
-  kmToGo: number
+  /** Kilómetros que faltan para la meta cuando se corona/inicia la subida (si no se conoce, se omite y no se dibuja en el mapa). */
+  kmToGo?: number
   detail?: string
 }
 
@@ -200,8 +200,109 @@ const ilLombardia2026: RaceInfo = {
   ],
 }
 
+const granPiemonte2026: RaceInfo = {
+  slug: 'gran-piemonte-2026',
+  tagline: 'La clásica de las colinas del Piamonte, a dos días de Il Lombardia: Del Toro defiende el título que ganó en solitario en 2025.',
+  edition: '110.ª edición',
+  level: 'UCI ProSeries · 1.Pro',
+  start: 'Asti',
+  finish: 'Bra',
+  startUtc: '2026-10-08T10:00:00Z',
+  finishUtc: '2026-10-08T14:30:00Z',
+  distanceKm: 185,
+  elevationM: 2500,
+  climbsCount: 10,
+  heroImage: '/images/races/gran-piemonte-2026-hero.jpg',
+  climbs: [
+    { name: 'Manera', detail: 'una de las subidas más destacadas del recorrido' },
+    { name: 'Tre Cunei', detail: 'otra de las subidas principales' },
+    { name: 'Roddino', detail: 'otra de las subidas principales del recorrido' },
+    { name: 'Subida clave previa a la meta', kmToGo: 14, detail: '7,1 km al 3,8 % de media; se corona a 14 km de Bra' },
+    { name: 'La Morra (1.º paso)', detail: 'dos ascensiones a La Morra en el circuito final de 34,7 km' },
+    { name: 'La Morra (2.º paso)', detail: 'segunda ascensión del circuito final' },
+  ],
+  finale:
+    'En Bra el final es técnico y ligeramente ascendente: unos 1.800 m antes de meta la carretera sube al 2-3 %, el último kilómetro promedia un 5 % con rampas del 8 %, y hay dos curvas (izquierda y derecha) a 500 y 250 m de la línea. El rectilíneo final mide 250 m, con una pendiente de alrededor del 1 %. Favorece a corredores explosivos que sepan subir y también rematar.',
+  broadcasts: [
+    { region: 'Italia', channels: 'Rai · RaiPlay (gratis)', note: 'También en Eurosport, HBO Max, Discovery+, DAZN, TimVision y Prime Video Channels, según Moveo.' },
+    { region: 'España', channels: 'Eurosport · HBO Max · DAZN', note: 'Según la guía de plataformas de Moveo (Telepass); las operadoras pueden variar.' },
+    { region: 'México', channels: 'ESPN · Disney+', note: 'Según SDP Noticias. La hora que publica ese medio no coincide con la de salida oficial: usa la de esta tabla.' },
+    { region: 'Resto de Latinoamérica', channels: 'ESPN Latinoamérica / DirecTV (por confirmar)', note: 'No encontramos una guía oficial por país; confirma con tu proveedor.' },
+  ],
+  favorites: [
+    { name: 'Isaac del Toro', slug: 'isaac-del-toro', team: 'UAE Team Emirates-XRG', note: 'Campeón defensor: ganó en 2025 en solitario. Vuelve a competir tras el Mundial y llega con Il Lombardia en mente.' },
+    { name: 'Brandon McNulty', slug: 'brandon-mcnulty', team: 'UAE Team Emirates-XRG', note: 'Campeón del mundo y compañero de Del Toro en un UAE construido alrededor del mexicano.' },
+    { name: 'Mads Pedersen', slug: 'mads-pedersen', team: 'Lidl-Trek', note: 'CyclingUpToDate lo señala como máximo favorito, aunque con poco apoyo y forma irregular.' },
+    { name: 'Michael Matthews', slug: 'michael-matthews', note: 'Plata en el Mundial de Montreal; La Fedeltà lo cita entre los favoritos.' },
+    { name: 'Laurence Pithie', slug: 'laurence-pithie', note: 'Entre las apuestas de CyclingUpToDate.' },
+    { name: 'Alessandro Romele', slug: 'alessandro-romele', team: 'XDS Astana', note: 'Entre las apuestas de CyclingUpToDate; fue cuarto en la Coppa Bernocchi.' },
+    { name: 'Orluis Aular', slug: 'orluis-aular', team: 'Movistar', note: 'El venezolano, que subió al podio de la Coppa Bernocchi, aparece entre las opciones de Ciclismo al Día.' },
+    { name: 'Jhonatan Narváez', slug: 'jhonatan-narvaez', team: 'UAE Team Emirates-XRG', note: 'El ecuatoriano, junto a Del Toro, como corredor de terreno quebrado, según Ciclismo al Día.' },
+    { name: 'Romain Grégoire', slug: 'romain-gregoire', note: 'Entre los nombres propios de la lista de salida que destaca CyclingUpToDate.' },
+  ],
+  lastWinner: {
+    year: 2025,
+    winner: 'Isaac del Toro',
+    team: 'UAE Team Emirates-XRG',
+    detail: 'Ganó en solitario, en 4 h 08\' 24" sobre 179 km; fue una de sus 15 victorias de 2025.',
+    podium: ['1. Isaac del Toro (México) — 4 h 08\' 24"', '2. Marc Hirschi (Suiza) — a 40"', '3. Bauke Mollema (Países Bajos) — a 44"'],
+  },
+  recentWinners: [
+    { year: 2025, winner: 'Isaac del Toro (México)', team: 'UAE Team Emirates-XRG' },
+    { year: 2024, winner: 'Neilson Powless (EE. UU.)', team: 'EF Education-EasyPost' },
+    { year: 2023, winner: 'Andrea Bagioli (Italia)', team: 'Soudal Quick-Step' },
+    { year: 2022, winner: 'Iván García Cortina (España)', team: 'Movistar Team' },
+    { year: 2021, winner: 'Matt Walls (Gran Bretaña)', team: 'Bora-Hansgrohe' },
+    { year: 2020, winner: 'George Bennett (Nueva Zelanda)', team: 'Jumbo-Visma' },
+    { year: 2019, winner: 'Egan Bernal (Colombia)', team: 'Team INEOS' },
+    { year: 2018, winner: 'Sonny Colbrelli (Italia)', team: 'Bahrain-Merida' },
+  ],
+  history: [
+    {
+      title: '1906 · Primera edición',
+      text: 'La primera edición del Giro del Piemonte, como se llamó durante décadas, la ganó Giovanni Gerbi (Maino), el mismo ciclista que había ganado el primer Giro di Lombardia un año antes.',
+    },
+    {
+      title: 'Siglo de interrupciones',
+      text: 'Se ha disputado más de cien veces, pero con parones: no hubo carrera en 1907 y 1909, en los años de la Segunda Guerra Mundial (1943-1944), y entre otros años en 1968, 1975-1976, 2000 y 2007. También se canceló en 2013 y 2014 por problemas económicos.',
+    },
+    {
+      title: '2009 · Se llama Gran Piemonte',
+      text: 'Desde 2009 se llama Gran Piemonte y se corre a mediados de octubre, unos días antes de Il Lombardia. Fue una 1.HC entre 2005 y 2019 y desde 2020 es una 1.Pro de la UCI ProSeries. La organiza RCS Sport.',
+    },
+    {
+      title: 'Récords y ganadores',
+      text: 'Costante Girardengo, Aldo Bini, Gino Bartali y Fiorenzo Magni ganaron tres veces cada uno. Italia domina con 82 victorias, seguida de Bélgica (7) y Francia (3).',
+    },
+    {
+      title: 'Dos latinoamericanos en siete años',
+      text: 'El colombiano Egan Bernal la ganó en 2019 y el mexicano Isaac del Toro en 2025, en la edición número 109.',
+    },
+  ],
+  facts: [
+    'Es la edición número 110: la anterior fue la 109.ª, la que ganó Del Toro el 9 de octubre de 2025.',
+    'Se corre a menos de 48 horas de Il Lombardia: muchos equipos la usan como ensayo, y Del Toro la elige como regreso a la competencia tras el Mundial de Montreal.',
+    'El circuito final de 34,7 km se recorre una sola vez e incluye dos ascensiones a La Morra; la meta en Bra es ligeramente ascendente.',
+    'Según Ciclo21, Jacopo Mosca (33 años) se retira en esta carrera y será director deportivo de Lidl en 2027.',
+    'La distancia oficial es de 185 km según la organización y la mayoría de medios; una fuente italiana habla de 181 km.',
+  ],
+  latinos:
+    'Isaac del Toro defiende el título que ganó en 2025 y busca el bicampeonato antes de Il Lombardia. Con él corren el ecuatoriano Jhonatan Narváez (UAE) y, entre las opciones que cita Ciclismo al Día, el venezolano Orluis Aular (Movistar).',
+  sources: [
+    { name: 'Giro d\'Italia — recorrido oficial', url: 'https://www.giroditalia.it/en/news/granpiemonte-2026-the-route-for-the-110th-edition-has-been-unveiled/' },
+    { name: 'CyclingUpToDate — Del Toro regresa', url: 'https://cyclinguptodate.com/cycling/isaac-del-toro-returns-to-racing-at-gran-piemonte-ahead-of-his-main-objective-il-lombardia' },
+    { name: 'Moveo (Telepass) — recorrido y TV', url: 'https://moveo.telepass.com/gran-piemonte-2026/' },
+    { name: 'Ciclismo al Día — previa', url: 'https://ciclismoaldia.es/ciclismo/gran-piemonte-2026-previa-perfil-favoritos-y-pronosticos' },
+    { name: 'SDP Noticias — canal en México', url: 'https://www.sdpnoticias.com/deportes/isaac-del-toro-dia-hora-y-canal-para-ver-al-mexicano-en-el-gran-piemonte-2026/' },
+    { name: 'Wikipedia — Gran Piemonte', url: 'https://en.wikipedia.org/wiki/Gran_Piemonte' },
+    { name: 'Wikipedia — Gran Piemonte 2025', url: 'https://en.wikipedia.org/wiki/2025_Gran_Piemonte' },
+    { name: 'Excélsior — prelista', url: 'https://www.excelsior.com.mx/deportes/isaac-toro-va-por-bicampeonato-prelista-gran-piemonte-2026' },
+  ],
+}
+
 export const RACE_INFO: Record<string, RaceInfo> = {
   [ilLombardia2026.slug]: ilLombardia2026,
+  [granPiemonte2026.slug]: granPiemonte2026,
 }
 
 export function getRaceInfo(slug: string): RaceInfo | undefined {

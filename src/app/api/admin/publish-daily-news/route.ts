@@ -42,12 +42,14 @@ import {
   publishDelToroLombardiaArticle,
   publishVermetteTituloArticle,
   publishLuchoHerreraLegendArticle,
+  publishGranPiemonteDelToroArticle,
   publishMcNultyWorldsArticle,
   publishDelToroFifthWorldsArticle,
   publishDelToroWorldsControversyArticle,
   publishVermetteWhistlerArticle,
 } from '@/lib/content/daily-news'
 import { applyPublicationSchedule } from '@/lib/content/schedule'
+import { ensureRaces } from '@/lib/content/races-seed'
 
 /**
  * Artículos publicados uno por uno a partir de la lista diaria de
@@ -60,6 +62,7 @@ export async function POST() {
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
   try {
+    await ensureRaces()
     const results = await Promise.all([
       publishPogacarBackOnBikeArticle(),
       publishDelToroEvenepoelAnalysisArticle(),
@@ -102,6 +105,7 @@ export async function POST() {
       publishDelToroLombardiaArticle(),
       publishVermetteTituloArticle(),
       publishLuchoHerreraLegendArticle(),
+      publishGranPiemonteDelToroArticle(),
       publishMcNultyWorldsArticle(),
       publishDelToroFifthWorldsArticle(),
       publishDelToroWorldsControversyArticle(),

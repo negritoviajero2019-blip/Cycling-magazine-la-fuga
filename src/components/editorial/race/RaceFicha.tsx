@@ -68,15 +68,17 @@ function IllustratedBackdrop() {
 }
 
 function ClimbMap({ info }: { info: RaceInfo }) {
+  const located = info.climbs.filter((c) => c.kmToGo !== undefined)
   return (
     <div>
       <div className="relative mb-2 h-16 rounded-lg bg-surface-soft">
         <div className="absolute inset-x-4 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-border" />
         <div
           className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-lime"
-          style={{ left: '1rem', width: `calc((100% - 2rem) * ${(info.distanceKm - (info.climbs[info.climbs.length - 1]?.kmToGo ?? 0)) / info.distanceKm})` }}
+          style={{ left: '1rem', width: `calc((100% - 2rem) * ${located.length ? (info.distanceKm - Math.min(...located.map((c) => c.kmToGo as number))) / info.distanceKm : 0})` }}
         />
         {info.climbs.map((climb, i) => {
+          if (climb.kmToGo === undefined) return null
           const pct = ((info.distanceKm - climb.kmToGo) / info.distanceKm) * 100
           return (
             <span
@@ -102,10 +104,12 @@ function ClimbMap({ info }: { info: RaceInfo }) {
               <p className="font-semibold">{climb.name}</p>
               {climb.detail && <p className="text-xs text-muted">{climb.detail}</p>}
             </div>
-            <p className="whitespace-nowrap text-right text-xs">
-              <span className="block font-bold text-accent">a {km(climb.kmToGo)} km de meta</span>
-              <span className="text-muted">km {km(info.distanceKm - climb.kmToGo)}</span>
-            </p>
+            {climb.kmToGo !== undefined && (
+              <p className="whitespace-nowrap text-right text-xs">
+                <span className="block font-bold text-accent">a {km(climb.kmToGo)} km de meta</span>
+                <span className="text-muted">km {km(info.distanceKm - climb.kmToGo)}</span>
+              </p>
+            )}
           </li>
         ))}
       </ol>

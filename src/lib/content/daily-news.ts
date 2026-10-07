@@ -5010,3 +5010,129 @@ export async function publishDelToroLombardiaArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Gran Piemonte 2026 (jueves 8 oct): Del Toro defiende el título de
+// 2025. Previa con la ficha de carrera. Distancia: 185 km (organización
+// y mayoría) vs 181 km (una fuente italiana); hora de México según la
+// salida oficial 12:00 CEST (SDP Noticias publica una hora distinta).
+// Fuentes: Giro d'Italia (RCS), CyclingUpToDate, Moveo, Ciclismo al Día,
+// SDP Noticias, Excélsior, Wikipedia, Ciclo21.
+// ————————————————————————————————————————————————————————————
+
+const granPiemonteDelToroContent = `
+<p>Mañana, jueves 8 de octubre, se corre el Gran Piemonte, la clásica italiana de 185&nbsp;km entre Asti y Bra, y lo hace con un campeón defensor que habla español: Isaac del Toro, ganador de la edición 2025, buscará el bicampeonato antes de afrontar Il Lombardia el sábado. Será su regreso a la competencia después del Mundial de Montreal, donde fue quinto a un segundo del podio, y un ensayo a menos de 48 horas del último monumento de la temporada.</p>
+
+<h2>Qué se juega Del Toro</h2>
+
+<p>El mexicano de UAE Team Emirates-XRG vuelve a correr tras el Mundial y lo hace en una carrera que conoce bien. Según CyclingUpToDate, el equipo está construido alrededor de él, con Filippo Baroncini, Benoît Cosnefroy y el campeón del mundo Brandon McNulty también en la lista. Del Toro ya dijo que le faltaban Gran Piemonte y Lombardía, y que Il Lombardia era seguro; ahora el Gran Piemonte confirma su regreso. La participación se anunció primero como prelista y no es definitiva hasta que el equipo confirme su alineación.</p>
+
+<h2>El recorrido: colinas y un final en Bra</h2>
+
+<p>La carrera tiene 185&nbsp;km —una fuente italiana habla de 181— y unos 2.500&nbsp;m de desnivel, según Ciclismo al Día. Tras una primera parte muy ondulada entre Asti y Dogliani, aparecen las subidas más destacadas, Manera, Tre Cunei y Roddino, antes de un circuito final de 34,7&nbsp;km que se recorre una sola vez y pasa dos veces por La Morra. La subida más importante mide 7,1&nbsp;km al 3,8&nbsp;% y se corona a 14&nbsp;km de meta.</p>
+
+<p>En Bra, el final es técnico y ligeramente ascendente: unos 1.800&nbsp;m antes de la línea la carretera sube al 2-3&nbsp;%, el último kilómetro promedia un 5&nbsp;% con rampas del 8&nbsp;%, y hay dos curvas, a la izquierda y a la derecha, a 500 y 250&nbsp;m de meta. El rectilíneo final tiene 250&nbsp;m con una pendiente cercana al 1&nbsp;%, según Moveo. Favorece a quien sepa subir y también rematar.</p>
+
+<h2>Su victoria de 2025</h2>
+
+<p>El 9 de octubre de 2025, Del Toro ganó el Gran Piemonte en solitario, en 4 horas, 8 minutos y 24 segundos sobre 179&nbsp;km. El suizo Marc Hirschi fue segundo, a 40 segundos, y el neerlandés Bauke Mollema tercero, a 44. Con ese triunfo llegó a 15 victorias en 2025, según Excélsior. En 2019 la había ganado el colombiano Egan Bernal, de modo que dos latinoamericanos la han ganado en los últimos siete años.</p>
+
+<h2>Los rivales</h2>
+
+<p>Los pronósticos no coinciden. CyclingUpToDate señala a Mads Pedersen (Lidl-Trek) como máximo favorito, aunque con poco apoyo y forma irregular, y cita entre las apuestas a Alessandro Romele, Laurence Pithie y Michael Matthews. La prensa italiana (La Fedeltà y Moveo) coloca a Del Toro y a McNulty entre los grandes favoritos, junto a Pedersen y Matthews, que fue segundo en el Mundial. Ciclismo al Día, en cambio, advierte que Del Toro y Jhonatan Narváez necesitarían un grupo muy reducido para llegar a Bra. Otros nombres de la lista son Marc Hirschi, Romain Grégoire, Dorian Godon, Ben Turner y Joshua Tarling, con unos 168 corredores de 24 equipos, según Rouleur y PCS.</p>
+
+<p>También hay presencia latina: además de Del Toro, corren el ecuatoriano Narváez y, entre las opciones que cita Ciclismo al Día, el venezolano Orluis Aular (Movistar), que acaba de subir al podio de la Coppa Bernocchi.</p>
+
+<h2>Cuándo y dónde verla</h2>
+
+<p>La salida es a las 12:00, hora de Italia, es decir, a las 04:00 de la madrugada en el centro de México, con una llegada estimada hacia las 16:30 en Italia (08:30 en México). En México se transmite por ESPN y Disney+, según SDP Noticias, aunque ese medio publica una hora de salida distinta de la oficial, así que conviene confirmarla. En Italia se ve en abierto por Rai y RaiPlay. Los horarios por país, los canales y todo lo que hay que saber de la carrera están en la <a href="/races/gran-piemonte-2026">ficha completa del Gran Piemonte</a>.</p>
+
+<h2>Una clásica con más de un siglo</h2>
+
+<p>La primera edición se corrió en 1906 y la ganó Giovanni Gerbi. Desde 2009 se llama Gran Piemonte y se disputa a mediados de octubre, unos días antes de Il Lombardia; desde 2020 es una prueba 1.Pro. Costante Girardengo, Aldo Bini, Gino Bartali y Fiorenzo Magni son los corredores con más victorias, con tres cada uno. Y la jornada tendrá otra despedida: según Ciclo21, el italiano Jacopo Mosca (33 años) se retira en esta carrera y será director deportivo de Lidl en 2027.</p>
+`.trim()
+
+export async function publishGranPiemonteDelToroArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['isaac-del-toro', 'brandon-mcnulty', 'mads-pedersen', 'michael-matthews', 'jhonatan-narvaez', 'orluis-aular', 'egan-bernal']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+  const race = await prisma.race.findUnique({ where: { slug: 'gran-piemonte-2026' }, select: { id: true } })
+
+  const [ultimaHoraTag, latinosTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'latinos' },
+      update: {},
+      create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, latinosTag.id].map((id) => ({ id }))
+
+  const title = 'Gran Piemonte: Del Toro defiende el título y busca el bicampeonato antes de Il Lombardia'
+  const heroImageId = await ensureCustomHeroImage('gran-piemonte-2026-del-toro-defiende-titulo', {
+    url: '/images/headers/gran-piemonte-2026-cover.jpg',
+    altText: 'Gran Piemonte 2026: Del Toro defiende el título entre Asti y Bra',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'Mañana jueves 8 de octubre, 185 km entre Asti y Bra: el mexicano regresa a la competencia tras el Mundial como campeón defensor',
+    excerpt:
+      'El Gran Piemonte se corre mañana, jueves 8 de octubre, sobre 185 km entre Asti y Bra. Isaac del Toro defiende el título de 2025 y busca el bicampeonato antes de Il Lombardia. Horarios y dónde verla.',
+    content: granPiemonteDelToroContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.giroditalia.it/en/news/granpiemonte-2026-the-route-for-the-110th-edition-has-been-unveiled/',
+      'https://cyclinguptodate.com/cycling/isaac-del-toro-returns-to-racing-at-gran-piemonte-ahead-of-his-main-objective-il-lombardia',
+      'https://moveo.telepass.com/gran-piemonte-2026/',
+      'https://ciclismoaldia.es/ciclismo/gran-piemonte-2026-previa-perfil-favoritos-y-pronosticos',
+      'https://www.sdpnoticias.com/deportes/isaac-del-toro-dia-hora-y-canal-para-ver-al-mexicano-en-el-gran-piemonte-2026/',
+      'https://www.excelsior.com.mx/deportes/isaac-toro-va-por-bicampeonato-prelista-gran-piemonte-2026',
+      'https://en.wikipedia.org/wiki/2025_Gran_Piemonte',
+      'https://en.wikipedia.org/wiki/Gran_Piemonte',
+      'https://www.ciclo21.com/ciclobreves-internacionales-2026-octubre-6/',
+    ]),
+    sourceNames: toJsonField(['Giro d\'Italia', 'CyclingUpToDate', 'Moveo', 'Ciclismo al Día', 'SDP Noticias', 'Excélsior', 'Wikipedia', 'Ciclo21']),
+    seoTitle: 'Gran Piemonte 2026: Del Toro defiende el título | Horarios y dónde ver',
+    seoDescription:
+      'Gran Piemonte 2026: Isaac del Toro defiende el título el jueves 8 de octubre, 185 km entre Asti y Bra. Recorrido, favoritos, horarios en México y dónde ver.',
+    readingTime: 5,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug: 'gran-piemonte-2026-del-toro-defiende-titulo' },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug: 'gran-piemonte-2026-del-toro-defiende-titulo',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
