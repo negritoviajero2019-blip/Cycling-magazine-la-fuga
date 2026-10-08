@@ -5073,7 +5073,9 @@ export async function publishGranPiemonteDelToroArticle() {
       create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
     }),
   ])
-  const tagIds = [ultimaHoraTag.id, latinosTag.id].map((id) => ({ id }))
+  // La previa ya no es noticia de última hora (se corrió el 8 oct): solo 'latinos'.
+  void ultimaHoraTag
+  const tagIds = [latinosTag.id].map((id) => ({ id }))
 
   const title = 'Gran Piemonte: Del Toro defiende el título y busca el bicampeonato antes de Il Lombardia'
   const heroImageId = await ensureCustomHeroImage('gran-piemonte-2026-del-toro-defiende-titulo', {
@@ -5095,7 +5097,7 @@ export async function publishGranPiemonteDelToroArticle() {
     authorId: author.id,
     heroImageId,
     status: 'published',
-    breakingNews: true,
+    breakingNews: false,
     featured: false,
     sourceUrls: toJsonField([
       'https://www.giroditalia.it/en/news/granpiemonte-2026-the-route-for-the-110th-edition-has-been-unveiled/',
@@ -5126,6 +5128,131 @@ export async function publishGranPiemonteDelToroArticle() {
     },
     create: {
       slug: 'gran-piemonte-2026-del-toro-defiende-titulo',
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Gran Piemonte 2026, crónica (jueves 8 oct): gana Dorian Godon al
+// esprint en Bra; Del Toro ataca a 13 km y es cazado a 1,5 km.
+// Segundo/tercero: OA Sport (Charmig 2.º, Bettiol 3.º) vs Claro Sports
+// (Bettiol 2.º) — se atribuye y se marca pendiente del orden oficial.
+// Posición de Del Toro: sin confirmar (no está entre los diez primeros
+// según OA Sport). Fuentes: Claro Sports (en vivo), OA Sport (en vivo),
+// Dicodusport, Tuttobiciweb (GP Lazio), Ciclismo Internacional.
+// ————————————————————————————————————————————————————————————
+
+const granPiemonteGodonContent = `
+<p>Isaac del Toro lo intentó a lo grande, pero no alcanzó. El mexicano atacó a 13&nbsp;km de la meta del Gran Piemonte, llegó a abrir 30 segundos sobre el pelotón y fue cazado a 1,5&nbsp;km de Bra, y el francés Dorian Godon (Netcompany INEOS) ganó al esprint la 110.ª edición, con un tiempo de 4 horas, 6 minutos y 19 segundos, según OA Sport. El campeón defensor se quedó sin bicampeonato en una carrera de 185&nbsp;km entre Asti y Bra.</p>
+
+<h2>El ataque de Del Toro</h2>
+
+<p>La carrera estuvo controlada durante buena parte del día. La fuga se rompió en La Morra, el pelotón la fue neutralizando y el UAE Team Emirates-XRG tomó las riendas antes de ceder el control por momentos al Uno-X. En la segunda ascensión a La Morra, según la cobertura en vivo de Claro Sports, atacó primero Gijs Leemreize, respondió Neilson Powless y Jhonatan Narváez se movió por el UAE. Poco después aceleró Del Toro y solo pudo seguirle Finn Fisher-Black.</p>
+
+<p>Los dos se turnaron al frente, con unos 25 segundos de ventaja. A 13&nbsp;km de meta, el mexicano se fue solo y llegó a abrir 30 segundos, pero Fisher-Black volvió a contactar con él. A 6&nbsp;km la ventaja ya había bajado a unos 19 segundos, y a 1,5&nbsp;km el pelotón los absorbió. Con ello se esfumó la opción de defender el título de 2025, cuando ganó en solitario con 40 segundos sobre Marc Hirschi.</p>
+
+<h2>El esprint de Bra</h2>
+
+<p>La llegada a Bra es ligeramente ascendente y con curvas en los últimos 500 metros. Según OA Sport, a unos 200-250&nbsp;m de meta una caída en una semicurva frenó a buena parte del grupo. Godon arrancó primero y se impuso sin que lo alcanzaran, delante de Anthon Charmig (Uno-X Mobility) y de Alberto Bettiol (XDS Astana), que había trabajado para su compañero Guillermo Silva, cortado por la caída.</p>
+
+<p>Los puestos de honor no están claros: OA Sport pone a Charmig segundo y a Bettiol tercero, mientras que la cobertura de Claro Sports presenta a Bettiol como segundo. Esperamos el orden oficial para confirmarlo.</p>
+
+<h2>Los diez primeros, según OA Sport</h2>
+
+<p>1. Dorian Godon (Netcompany INEOS), 4h06'19"; 2. Anthon Charmig (Uno-X Mobility); 3. Alberto Bettiol (XDS Astana); 4. Lukas Nerurkar (EF Education-EasyPost); 5. Quinten Hermans (Pinarello Q36.5); 6. Fred Wright (Pinarello Q36.5); 7. Afonso Eulálio (Bahrain-Victorious); 8. Michael Matthews (Jayco AlUla); 9. Jhonatan Narváez (UAE Team Emirates-XRG); 10. Pau Martí (NSN Cycling Team). Del Toro no aparece entre los diez primeros y todavía no localizamos su puesto exacto.</p>
+
+<h2>Godon, un ganador que venía en forma</h2>
+
+<p>El triunfo no llega de sorpresa. Godon ganó el Gran Premio del Lazio el 19 de septiembre y fue quinto en la Coppa Bernocchi, y las previas italianas ya lo citaban entre los velocistas capaces de sobrevivir a un recorrido de 2.450&nbsp;m de desnivel y de ganar en un final ligeramente ascendente como el de Bra.</p>
+
+<h2>Del Toro y la rodilla, rumbo a Lombardía</h2>
+
+<p>El mexicano reconoció ante Eurosport, en plena carrera, que tenía dolor en la rodilla, y antes de la salida había contado a CyclingPro que, tras el Mundial, tuvo que lidiar con el jetlag y con una molestia en esa articulación. No sabemos si influyó en el resultado. Lo cierto es que el ataque de este jueves, con 30 segundos sobre el pelotón, demuestra que tiene piernas para intentarlo, y que a dos días de Il Lombardia la rodilla es la gran duda. El monumento de la temporada se corre este sábado, 10 de octubre, y las claves de la carrera están en la <a href="/races/il-lombardia-2026">ficha de Il Lombardia</a>.</p>
+`.trim()
+
+export async function publishGranPiemonteGodonArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['isaac-del-toro', 'dorian-godon', 'finn-fisher-black', 'alberto-bettiol', 'anthon-charmig', 'jhonatan-narvaez']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+  const race = await prisma.race.findUnique({ where: { slug: 'gran-piemonte-2026' }, select: { id: true } })
+
+  const [ultimaHoraTag, latinosTag, clasicasTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'latinos' },
+      update: {},
+      create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'clasicas' },
+      update: {},
+      create: { slug: 'clasicas', name: 'Clásicas', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, latinosTag.id, clasicasTag.id].map((id) => ({ id }))
+
+  const slug = 'gran-piemonte-2026-godon-gana-ataque-del-toro'
+  const title = 'Godon gana el Gran Piemonte al esprint; el ataque de Del Toro a 13 km no bastó'
+  const heroImageId = await ensureCustomHeroImage(slug, {
+    url: '/images/headers/gran-piemonte-2026-godon-cover.jpg',
+    altText: 'Gran Piemonte 2026: Godon gana al esprint en Bra tras el ataque de Del Toro',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'El francés se impuso en Bra; el mexicano, campeón defensor, llegó a sacar 30 segundos y fue cazado a 1,5 km de meta',
+    excerpt:
+      'Dorian Godon ganó el Gran Piemonte 2026 al esprint en Bra. Isaac del Toro, campeón defensor, atacó a 13 km, abrió 30 segundos y fue alcanzado a 1,5 km de la meta.',
+    content: granPiemonteGodonContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.clarosports.com/ciclismo/isaac-del-toro-en-vivo-resultados-y-posiciones-al-momento-del-gran-piemonte-2026-hoy-8-de-octubre/',
+      'https://www.oasport.it/2026/10/live-gran-piemonte-2026-in-diretta-del-toro-favorito-per-il-bis/',
+      'https://dicodusport.fr/blog/gran-piemonte-le-classement-et-les-resultats-du-tour-du-piemont-2026-remporte-par-dorian-godon/',
+      'https://www.tuttobiciweb.it/article/2026/09/19/1789827590/gp-lazio-2026-vittoria-dorian-godon',
+      'https://ciclismointernacional.com/isaac-del-toro-llega-tocado-a-lombardia-2026-con-problemas-en-la-rodilla',
+    ]),
+    sourceNames: toJsonField(['Claro Sports', 'OA Sport', 'Dicodusport', 'Tuttobiciweb', 'Ciclismo Internacional']),
+    seoTitle: 'Gran Piemonte 2026: Godon gana al esprint y Del Toro ataca a 13 km',
+    seoDescription:
+      'Gran Piemonte 2026: Dorian Godon gana al esprint en Bra. Isaac del Toro, campeón defensor, atacó a 13 km y fue alcanzado a 1,5 km. Resultado y crónica.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug,
       ...baseFields,
       publishedAt: new Date(),
       riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
