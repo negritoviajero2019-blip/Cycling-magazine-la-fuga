@@ -5263,3 +5263,121 @@ export async function publishGranPiemonteGodonArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Mercado 2027 (9 oct): Tejada ficha por Netcompany INEOS. Contrato:
+// el comunicado oficial solo dice "a partir de 2027"; "tres años" es
+// un adelanto de Semana (vía D. Benson), no confirmado. Welsford →
+// Jayco AlUla (2027-2028) según Ciclo21; la salida de INEOS la confirma
+// el titular de Cyclingnews. Fuentes: ProCyclingUK, Domestique, Semana,
+// El Tiempo, Ciclo21, Cyclingnews, CyclingUpToDate, Velo.
+// ————————————————————————————————————————————————————————————
+
+const tejadaIneosContent = `
+<p>Harold Tejada tiene equipo para 2027: el Netcompany INEOS confirmó este viernes 9 de octubre el fichaje del escalador colombiano, de 29 años, que deja el XDS Astana después de siete temporadas. Será compañero de Egan Bernal y Brandon Rivera, y llega en una jornada en la que el equipo británico también anunció a Markel Beloki y despidió a Sam Welsford.</p>
+
+<h2>Qué ha anunciado el equipo</h2>
+
+<p>El comunicado del equipo, recogido por ProCyclingUK, dice que Tejada se incorpora "a partir de 2027" y no detalla la duración del contrato. Semana había adelantado antes del anuncio que firmaría por tres años, según información del periodista Daniel Benson, pero ese dato no figura en el comunicado oficial y conviene tomarlo con cautela. Geraint Thomas, director de carreras del equipo, lo describió como un escalador fuerte y sólido, con mucha experiencia, que da profundidad al grupo de montaña y más opciones en la alta montaña. Tejada, por su parte, dijo estar muy ilusionado con este nuevo capítulo y que siempre vio al INEOS como una referencia del ciclismo.</p>
+
+<h2>Una temporada que le abrió la puerta</h2>
+
+<p>Tejada llegó al Astana en 2020 desde Medellín. Su 2026 fue el mejor de su carrera: cuarto en la general del UAE Tour, victoria en la sexta etapa de la París-Niza, en Apt, tras un ataque en el tramo final, y décimo en la Vuelta a España, su 11.ª grande. Según ProCyclingUK, también fue segundo en la etapa 13 del Tour de Francia, en Belfort, tras escaparse con Mauro Schmid. Antes de la París-Niza, su otra victoria profesional era una etapa del Tour Colombia de 2024.</p>
+
+<h2>Un grupo de colombianos en el INEOS</h2>
+
+<p>En el Netcompany INEOS se reunirá con Egan Bernal, campeón del Tour de 2019, y con Brandon Rivera. Bernal dijo el jueves, según Domestique, que se tomó tiempo para pensar en su futuro y que su intención "por ahora" es seguir corriendo la próxima temporada. Tejada tiene todavía una carrera pendiente con el Astana: según Semana, disputará Il Lombardia este sábado como despedida del equipo, junto a Sergio Higuita, que en 2027 correrá con el Caja Rural.</p>
+
+<h2>El resto del movimiento en INEOS</h2>
+
+<p>El mismo día el equipo anunció a Markel Beloki, de 21 años, procedente del EF Education-EasyPost: es hijo de Joseba Beloki, ganó el Tour de l'Ain 2026 y fue 13.º en la Itzulia. Es el primer fichaje del invierno que confirma el equipo, según CyclingUpToDate. Esas incorporaciones coinciden con la salida del velocista australiano Sam Welsford, de 30 años, que rompe después de una sola temporada el contrato de dos años que firmó en diciembre de 2025. Según Ciclo21, que cita el anuncio de Jayco AlUla, ficha por el equipo australiano para 2027 y 2028. El oro olímpico de persecución por equipos de París 2024 llegó a ganar 13 carreras profesionales.</p>
+
+<p>Otro movimiento del día: el italiano Davide Ballerini, de 32 años, ficha por el Pinarello para 2027 y 2028, según Ciclo21. Los otros fichajes, rumores y renovaciones de la temporada están en nuestro repaso del <a href="/news/mercado-fichajes-2027-octubre">mercado de 2027</a>.</p>
+`.trim()
+
+export async function publishTejadaIneosArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['harold-tejada', 'egan-bernal', 'sergio-higuita', 'sam-welsford', 'brandon-rivera', 'markel-beloki']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const [ultimaHoraTag, latinosTag, mercadoTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'latinos' },
+      update: {},
+      create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'mercado-de-fichajes' },
+      update: {},
+      create: { slug: 'mercado-de-fichajes', name: 'Mercado de fichajes', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, latinosTag.id, mercadoTag.id].map((id) => ({ id }))
+
+  const slug = 'harold-tejada-ficha-netcompany-ineos-2027'
+  const title = 'Harold Tejada ficha por Netcompany INEOS para 2027 y será compañero de Egan Bernal'
+  const heroImageId = await ensureCustomHeroImage(slug, {
+    url: '/images/headers/harold-tejada-ineos-2027-cover.jpg',
+    altText: 'Harold Tejada ficha por Netcompany INEOS para 2027',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'El escalador colombiano deja el XDS Astana tras siete temporadas; el equipo también ficha a Beloki y pierde a Welsford',
+    excerpt:
+      'Netcompany INEOS confirmó el fichaje de Harold Tejada para 2027. El colombiano, de 29 años, deja el XDS Astana y se une a Egan Bernal y Brandon Rivera.',
+    content: tejadaIneosContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://procyclinguk.com/harold-tejada-joins-netcompany-ineos-2027',
+      'https://www.domestiquecycling.com/en/news/netcompany-ineos-snap-up-harold-tejada-after-seven-seasons-with-xds-astana/',
+      'https://www.semana.com/deportes/ciclismo/articulo/harold-tejada-fue-presentado-por-su-nuevo-equipo-es-oficial-y-firma-contrato-para-2027/202611/',
+      'https://www.eltiempo.com/deportes/ciclismo/harold-tejada-sacude-la-bolsa-de-ciclistas-en-el-world-tour-firma-con-el-ineos-y-se-convierte-en-nuevo-companero-de-lujo-de-egan-bernal-3592424',
+      'https://ciclo21.com/mercado-fichajes-2027-octub-9',
+      'https://www.cyclingnews.com/pro-cycling/transfers/netcompany-ineos-add-climbers-markel-beloki-and-harold-tejada-as-sam-welsford-exits-after-just-one-season/',
+      'https://cyclinguptodate.com/cycling/ineos-confirm-first-transfer-of-its-winter-period-spanish-climber-from-ef-education-easypost-joins-british-team',
+      'https://veloracycling.com/news/sam-welsford-joins-ineos-grenadiers-2026',
+    ]),
+    sourceNames: toJsonField(['ProCyclingUK', 'Domestique', 'Semana', 'El Tiempo', 'Ciclo21', 'Cyclingnews', 'CyclingUpToDate', 'Velo']),
+    seoTitle: 'Harold Tejada ficha por Netcompany INEOS para 2027',
+    seoDescription:
+      'Harold Tejada, escalador colombiano de 29 años, deja el XDS Astana y ficha por Netcompany INEOS para 2027. Se une a Egan Bernal; el equipo también ficha a Beloki y pierde a Welsford.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug,
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
