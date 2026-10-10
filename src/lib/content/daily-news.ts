@@ -5381,3 +5381,120 @@ export async function publishTejadaIneosArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Il Lombardia 2026 (sáb 10 oct): gana Paul Seixas (20 años y 16 días,
+// el más joven de la historia) con ataque en el Civiglio a 19,2 km.
+// Clasificación: Es Ciclismo (tiempos oficiales); crónica: Ciclismo
+// Internacional, VAVEL, Claro Sports. Protesta por la seguridad tras la
+// muerte de Finlay Tarling (14 ago, Volta a Portugal): Domestique/Velo.
+// ————————————————————————————————————————————————————————————
+
+const lombardiaSeixasContent = `
+<p>Paul Seixas ganó Il Lombardia 2026 con un ataque en solitario en el Civiglio, a 19,2&nbsp;km de Como, y a los 20 años y 16 días se convirtió en el ganador más joven de la historia de la carrera. El francés del Decathlon CMA CGM cruzó la meta en 5 horas, 49 minutos y 28 segundos, 48 segundos por delante de Enric Mas (Movistar) y 1:05 antes que Giulio Ciccone (Lidl-Trek), en la 120.ª edición, de 239&nbsp;km entre Bérgamo y Como. Es su primer monumento.</p>
+
+<h2>El ataque del Civiglio</h2>
+
+<p>La carrera tuvo una fuga de unos 15 corredores, con Ben O'Connor entre los más activos, que llegó a tener unos tres minutos. Entre los favoritos, el primer movimiento fuerte llegó a 61,5&nbsp;km, cuando Matteo Jorgenson se escapó con Quinn Simmons, Brandon McNulty y Christian Scaroni, un grupo que fue neutralizado a 44&nbsp;km. Después, según Ciclismo Internacional, el UAE y el Visma tomaron el control del pelotón en el Civiglio, con Adam Yates marcando el ritmo para Isaac del Toro.</p>
+
+<p>Seixas atacó a 19,2&nbsp;km de meta con una aceleración sostenida más que explosiva. A 18,3&nbsp;km ya había dejado atrás a Tom Pidcock y a Ciccone, y en la cima del Civiglio llevaba unos 25 segundos sobre Ciccone y Mas. Al pie de la última subida, San Fermo della Battaglia, su ventaja rondaba los 40 segundos. Mas atacó allí a Ciccone y lo descolgó, pero no consiguió acercarse al francés: a unos 5&nbsp;km de meta, Seixas llevaba 47 segundos sobre Mas y 57 sobre Ciccone, según VAVEL.</p>
+
+<h2>Un relevo tras cinco años de Pogačar</h2>
+
+<p>Con Pogačar ausente por las lesiones de su caída en la Vuelta, Il Lombardia tuvo un ganador distinto después de cinco ediciones seguidas del esloveno (2021-2025). Seixas es, además, el primer vencedor que no es Pogačar desde Bauke Mollema en 2019, y rompió un récord de juventud que, según VAVEL, se remontaba a 1905. Su 2026 ya apuntaba en esa dirección: ganó el Tour del País Vasco y la Flecha Valona, donde también fue el vencedor más joven de la historia, y fue bronce en la contrarreloj del Mundial de Montreal.</p>
+
+<h2>Los diez primeros</h2>
+
+<p>1. Paul Seixas (Decathlon CMA CGM), 5h49'28"; 2. Enric Mas (Movistar), a 0'48"; 3. Giulio Ciccone (Lidl-Trek), a 1'05"; 4. Remco Evenepoel (Red Bull-Bora), a 1'20"; 5. Brandon McNulty (UAE Team Emirates-XRG), mismo tiempo; 6. Tom Pidcock (Pinarello Q36.5); 7. Pello Bilbao (Bahrain-Victorious); 8. Christian Scaroni (XDS Astana); 9. Filippo Zana (Soudal Quick-Step); 10. Mathys Rondel (Tudor), todos a 1'20", según Es Ciclismo. Evenepoel, que no pudo seguir el ritmo de Seixas en la montaña, ganó el esprint del grupo perseguidor. Bilbao terminó séptimo en la última carrera de su etapa como profesional y Ciccone corrió su última carrera con el Lidl-Trek.</p>
+
+<h2>Del Toro, 28.º</h2>
+
+<p>Para el mexicano fue un día cuesta arriba. Isaac del Toro (UAE Team Emirates-XRG) terminó 28.º, a 4:59, tras perder contacto con los favoritos en el Civiglio; Ciclismo Internacional señala que tuvo problemas de rodilla. Había sido quinto en 2025. Entre los latinoamericanos, el colombiano Juan Rodríguez (EF Education-EasyPost) fue 35.º, a 6:58; Santiago Buitrago (Bahrain-Victorious), 59.º, a 8:06; y Einer Rubio (Movistar), 66.º, a 8:52. Ion Izagirre, que corrió su despedida con la muñeca fracturada, terminó 86.º, a 13:47.</p>
+
+<h2>La carrera empezó con una protesta</h2>
+
+<p>La salida se retrasó unos cinco minutos porque el pelotón se quedó parado en señal de protesta por la seguridad de los corredores, tras la muerte del joven Finlay Tarling, de 19 años, el 14 de agosto en la Volta a Portugal. Remco Evenepoel actuó como portavoz y Brandon McNulty estuvo al frente del grupo. Según Velo, la UCI no respondió de inmediato, y el padre de Tarling agradeció el gesto: "Las cosas deben cambiar".</p>
+`.trim()
+
+export async function publishLombardiaSeixasArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'clasicas' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['paul-seixas', 'enric-mas', 'giulio-ciccone', 'remco-evenepoel', 'isaac-del-toro', 'brandon-mcnulty', 'pello-bilbao', 'ion-izagirre']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+  const race = await prisma.race.findUnique({ where: { slug: 'il-lombardia-2026' }, select: { id: true } })
+
+  const [ultimaHoraTag, clasicasTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'clasicas' },
+      update: {},
+      create: { slug: 'clasicas', name: 'Clásicas', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, clasicasTag.id].map((id) => ({ id }))
+
+  const slug = 'il-lombardia-2026-seixas-gana-mas-segundo'
+  const title = 'Seixas gana Il Lombardia con 20 años y es el campeón más joven de la historia'
+  const heroImageId = await ensureCustomHeroImage(slug, {
+    url: '/images/headers/lombardia-2026-seixas-cover.jpg',
+    altText: 'Il Lombardia 2026: Paul Seixas gana y es el vencedor más joven de la historia',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'El francés atacó en el Civiglio a 19 km de Como; Mas fue segundo y Ciccone tercero, y Del Toro terminó 28.º',
+    excerpt:
+      'Paul Seixas (Decathlon CMA CGM) ganó Il Lombardia 2026 con un ataque en solitario en el Civiglio. A los 20 años y 16 días es el ganador más joven de la historia. Mas fue segundo y Del Toro, 28.º.',
+    content: lombardiaSeixasContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://ciclismointernacional.com/il-lombardia-2026-cronica-resultados-finales-seixas',
+      'https://www.vavel.com/es/ciclismo/2026/10/10/1274688-seixas-conquista-lombardia-y-mas-resurge-con-una-exhibicion.html',
+      'https://www.esciclismo.com/actualidad/carretera/93479.html',
+      'https://www.clarosports.com/ciclismo/paul-seixas-gana-y-hace-historia-en-el-giro-de-lombardia-2026-isaac-del-toro-termina-en-el-lugar-28/',
+      'https://velo.outsideonline.com/road/road-racing/il-lombardia-riders-safety-protest/',
+      'https://www.domestiquecycling.com/en/news/we-cannot-keep-accepting-that-riders-are-dying-evenepoel-leads-safety-protest-ahead-of-il-lombardia/',
+    ]),
+    sourceNames: toJsonField(['Ciclismo Internacional', 'VAVEL', 'Es Ciclismo', 'Claro Sports', 'Velo', 'Domestique']),
+    seoTitle: 'Il Lombardia 2026: Seixas gana y es el más joven de la historia',
+    seoDescription:
+      'Paul Seixas gana Il Lombardia 2026 con 20 años tras atacar en el Civiglio. Enric Mas, segundo; Ciccone, tercero; Del Toro, 28.º. Resultados y crónica.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { set: [{ id: race.id }] } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug,
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      races: race ? { connect: [{ id: race.id }] } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
