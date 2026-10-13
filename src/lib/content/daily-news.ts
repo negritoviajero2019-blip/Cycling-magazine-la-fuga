@@ -5498,3 +5498,224 @@ export async function publishLombardiaSeixasArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Tecnología (13 oct): gama Specialized Tarmac SL9 completa. Análisis
+// editorial, no contenido pagado. Datos: BikeRadar (25 ago 2026, tabla de
+// precios y fichas), TOUR (prueba, 28 ago 2026), Escape Collective y
+// Cyclist (afirmaciones de Specialized). Fotos oficiales de Specialized
+// (specialized.com), acreditadas al pie. Precios de lista; varían por mercado.
+// ————————————————————————————————————————————————————————————
+
+const tarmacSl9Content = `
+<p>Specialized ha completado la gama del Tarmac SL9, su bici de carretera de competición. El S-Works llegó en junio de 2026, justo antes del Tour de Francia, y a finales de agosto la marca presentó los tres niveles que faltaban: S-Level, Expert y Comp. Si estás comparando bicis de carretera de alto rendimiento, esta es la gama completa, con tres modelos que destacan por motivos distintos: la más rápida, la que mejor equilibra rendimiento y precio, y la más accesible. Este artículo es un análisis editorial, no contenido patrocinado.</p>
+
+<figure>
+  <img src="/images/articles/tarmac-sl9-lateral.jpg" alt="Specialized S-Works Tarmac SL9 vista lateral" />
+  <figcaption>Specialized Tarmac SL9. Foto: Specialized.</figcaption>
+</figure>
+
+<h2>La más rápida: S-Works Tarmac SL9</h2>
+
+<p>Es la cabeza de la gama y el modelo con el que Specialized presume de su bici más rápida. Su cuadro Fact 12r pesa 687&nbsp;g (talla 56) y la bici completa, según la marca, ronda los 6,5&nbsp;kg. Specialized asegura que es 4&nbsp;W más eficiente que el Tarmac SL8 a 45&nbsp;km/h y que supera a la Colnago Y1Rs, la Cervélo S5 y la Factor One. Las mejoras son sobre todo aerodinámicas: una dirección 4&nbsp;mm más estrecha, una horquilla nueva y una aleta tras el tubo del sillín.</p>
+
+<p>La revista TOUR la midió en su banco: la bici de prueba, con Dura-Ace Di2, pesó 6,49&nbsp;kg (unos 60&nbsp;g menos que la SL8 más ligera), con ruedas Roval CLX Sprint de radios de carbono y neumáticos de 30&nbsp;mm. Necesitó 205&nbsp;W para vencer el aire a 45&nbsp;km/h, cuatro vatios mejor que la SL8, y empató con la Giant Propel en la nota más alta de su comparativa. Su veredicto: un equilibrio muy completo entre peso, aerodinámica, manejo y comodidad, con la geometría sin cambios respecto a la SL8.</p>
+
+<p>El precio es la contra: 14.000 dólares con SRAM Red AXS y 13.500 con Shimano Di2 en Estados Unidos, 13.999 euros en Europa y 11.999 libras en el Reino Unido. Las reseñas coinciden en que quien ya tiene una SL8 gana poco con el cambio.</p>
+
+<h2>La mejor relación: Tarmac SL9 S-Level</h2>
+
+<p>El S-Level sustituye al antiguo nivel Pro y es, probablemente, el punto más interesante de la gama. Comparte las formas de los tubos con el S-Works, pero usa el carbono Fact 10r, más pesado: 822&nbsp;g el cuadro y unos 7,1&nbsp;kg la bici completa, frente a los 6,5&nbsp;kg del S-Works. Monta SRAM Red AXS o Shimano Dura-Ace Di2 con potenciómetro de doble pierna y ruedas Roval Rapide CL III. Cuesta 10.500 dólares con Red AXS y 10.000 con Dura-Ace, 10.499 euros y 8.799 libras: unos 3.200 libras menos que el S-Works en el Reino Unido. BikeRadar señala que las diferencias (cuadro, ruedas, sillín, caja de pedalier) difícilmente cambian la sensación de marcha, aunque todavía no la ha probado.</p>
+
+<figure>
+  <img src="/images/articles/tarmac-sl9-tres-cuartos.jpg" alt="Specialized Tarmac SL9 vista de tres cuartos" />
+  <figcaption>Las formas aerodinámicas son comunes a toda la gama. Foto: Specialized.</figcaption>
+</figure>
+
+<h2>La más accesible: Tarmac SL9 Comp</h2>
+
+<p>La Comp es la puerta de entrada: 4.500 dólares (también 4.499 euros y 3.999 libras) con Shimano 105 Di2 o SRAM Rival AXS, ruedas de aluminio DT Swiss R470, neumáticos S-Works Turbo y sin potenciómetro. Entre ella y el S-Level queda la Expert, con ruedas de carbono Roval C38 y grupos Ultegra Di2 o Force AXS, desde 6.600 dólares en la versión Di2 y 7.000 en la AXS (6.999 euros y 5.999 libras). Las tres nuevas comparten el cuadro Fact 10r y la aerodinámica del S-Works.</p>
+
+<h2>Precios de lista por nivel</h2>
+
+<table style="width:100%;border-collapse:collapse;font-size:0.95em">
+  <thead>
+    <tr style="text-align:left;border-bottom:2px solid #888"><th style="padding:8px 10px">Modelo</th><th style="padding:8px 10px">EE. UU.</th><th style="padding:8px 10px">Europa</th><th style="padding:8px 10px">Reino Unido</th></tr>
+  </thead>
+  <tbody>
+    <tr style="border-bottom:1px solid #ccc"><td style="padding:8px 10px">S-Works (AXS / Di2)</td><td style="padding:8px 10px">14.000 / 13.500 $</td><td style="padding:8px 10px">13.999 €</td><td style="padding:8px 10px">11.999 £</td></tr>
+    <tr style="border-bottom:1px solid #ccc"><td style="padding:8px 10px">S-Level (AXS / Di2)</td><td style="padding:8px 10px">10.500 / 10.000 $</td><td style="padding:8px 10px">10.499 €</td><td style="padding:8px 10px">8.799 £</td></tr>
+    <tr style="border-bottom:1px solid #ccc"><td style="padding:8px 10px">Expert (AXS / Di2)</td><td style="padding:8px 10px">7.000 / 6.600 $</td><td style="padding:8px 10px">6.999 €</td><td style="padding:8px 10px">5.999 £</td></tr>
+    <tr style="border-bottom:1px solid #ccc"><td style="padding:8px 10px">Comp (AXS / Di2)</td><td style="padding:8px 10px">4.500 $</td><td style="padding:8px 10px">4.499 €</td><td style="padding:8px 10px">3.999 £</td></tr>
+  </tbody>
+</table>
+
+<p>Los precios son los de lista que publicó BikeRadar y pueden variar por mercado y distribuidor; en México conviene confirmarlos con el distribuidor oficial.</p>
+
+<figure>
+  <img src="/images/articles/tarmac-sl9-ruta.jpg" alt="Ciclista con la Specialized Tarmac SL9 en carretera" />
+  <figcaption>La gama completa busca cubrir desde el competidor hasta el aficionado exigente. Foto: Specialized.</figcaption>
+</figure>
+
+<h2>Qué elegir</h2>
+
+<p>Para quien compite o quiere lo último sin mirar el precio, el S-Works es la referencia. Para quien quiere casi toda la aerodinámica de la gama alta con un ahorro de unos 3.500 dólares (en Red AXS), el S-Level es la compra más racional. Y la Comp permite entrar al mismo diseño de cuadro por menos de la mitad de lo que cuesta el S-Level, a costa de ruedas de aluminio y de un cuadro más pesado. Las tres se pueden comparar en detalle en la web de Specialized, que publica una guía de niveles.</p>
+`.trim()
+
+export async function publishTarmacSl9Article() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'tecnologia' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const tecnologiaTag = await prisma.tag.upsert({
+    where: { slug: 'tecnologia' },
+    update: {},
+    create: { slug: 'tecnologia', name: 'Tecnología', type: 'topic' },
+  })
+  const tagIds = [{ id: tecnologiaTag.id }]
+
+  const slug = 'specialized-tarmac-sl9-gama-completa-cual-elegir'
+  const title = 'Specialized Tarmac SL9: la gama completa, de 4.500 a 14.000 dólares'
+  const heroImageId = await ensureCustomHeroImage(slug, {
+    url: '/images/headers/specialized-tarmac-sl9-cover.jpg',
+    altText: 'Specialized Tarmac SL9: la gama completa, de la Comp al S-Works',
+    credit: 'Foto: Specialized',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'S-Works, S-Level, Expert y Comp: qué cambia entre ellas y cuál conviene según el presupuesto',
+    excerpt:
+      'Specialized completó la gama del Tarmac SL9. Repasamos la más rápida (S-Works), la mejor relación (S-Level) y la más accesible (Comp), con peso, aerodinámica, versiones y precios.',
+    content: tarmacSl9Content,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.bikeradar.com/news/specialized-unveils-cheaper-tarmac-sl9s',
+      'https://www.tour-magazin.de/en/aero-road-bike/top-of-the-class-the-specialized-s-works-tarmac-sl9-put-to-the-test/',
+      'https://escapecollective.com/specialized-reveals-rest-of-tarmac-sl9-line/',
+      'https://www.specialized.com/us/en/tarmac-sl9-bike-level-guide',
+    ]),
+    sourceNames: toJsonField(['BikeRadar', 'TOUR', 'Escape Collective', 'Specialized']),
+    seoTitle: 'Specialized Tarmac SL9: gama completa, versiones y precios',
+    seoDescription:
+      'Specialized Tarmac SL9: S-Works, S-Level, Expert y Comp. Peso, aerodinámica, versiones y precios (de 4.500 a 14.000 dólares) para comparar y elegir.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug },
+    update: { ...baseFields, heroImageId: heroImageId ?? undefined, tags: { set: tagIds } },
+    create: { slug, ...baseFields, publishedAt: new Date(), tags: { connect: tagIds } },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Mercado 2027 (13 oct): Ganna deja el INEOS y ficha por Lidl-Trek hasta
+// 2029. Fuentes: ProCyclingUK, Es Ciclismo, Cyclingnews (titular),
+// CyclingFlash (titular), Brújula Bike. Carátula: la entrega el usuario.
+// ————————————————————————————————————————————————————————————
+
+const gannaLidlContent = `
+<p>Filippo Ganna deja el Netcompany INEOS y fichará por el Lidl-Trek las próximas tres temporadas, hasta finales de 2029. El equipo estadounidense anunció este martes 13 de octubre el fichaje del doble campeón del mundo de contrarreloj, que pone fin a ocho años en la estructura británica y sale con un año de antelación sobre su contrato anterior.</p>
+
+<h2>Una salida anticipada</h2>
+
+<p>Ganna, italiano de 30 años, tenía contrato con el INEOS hasta el final de la próxima temporada, así que el traspaso exigió un acuerdo entre las partes para liberarlo antes. Cyclingnews tituló la operación como una salida anticipada del INEOS, y a principios de octubre La Gazzetta dello Sport ya había adelantado las negociaciones. Es el último golpe de un mercado de invierno movido para el equipo británico, que el viernes pasado ya había anunciado a Harold Tejada y a Markel Beloki y despedido a Sam Welsford.</p>
+
+<h2>Qué aporta al Lidl-Trek</h2>
+
+<p>El corredor llega con un palmarés extenso: dos veces campeón del mundo de contrarreloj élite, plusmarquista de la hora de la UCI, campeón olímpico de persecución por equipos, ocho etapas del Giro, dos de la Vuelta y cinco de la Tirreno-Adriático, además de dos podios en Milán-San Remo. En 2026 ganó la Dwars door Vlaanderen, la contrarreloj de la etapa 10 del Giro (en Massa) y fue medallista en el Mundial de contrarreloj de Montreal, donde volvió a ser segundo por detrás de Remco Evenepoel.</p>
+
+<p>Ganna dijo estar "súper orgulloso" de unirse al equipo y declaró que tiene grandes objetivos, sobre todo en las clásicas. ProCyclingUK cuenta que quiere empezar pronto con el primer campamento del Lidl-Trek, que sus planes mantienen las grandes vueltas como parte importante de su programa —combinando el trabajo para los líderes con opciones propias— y que será el especialista en contrarreloj individual del equipo. En las clásicas, donde Mads Pedersen sigue siendo el eje, aportaría otra vía hacia la victoria: ataques repetidos, escapadas largas o persecuciones.</p>
+
+<h2>El mercado, en movimiento</h2>
+
+<p>El fichaje se suma a los últimos movimientos del invierno: Tejada llega al INEOS, Welsford se va al Jayco AlUla y Giulio Ciccone dejó el Lidl-Trek para fichar por el Pinarello-Q36.5. Repasamos todos los movimientos confirmados en nuestro <a href="/news/mercado-fichajes-2027-octubre">resumen del mercado de 2027</a>.</p>
+`.trim()
+
+export async function publishGannaLidlArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ultima-hora' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riderSlugs = ['filippo-ganna', 'mads-pedersen', 'giulio-ciccone']
+  const riders = await prisma.rider.findMany({ where: { slug: { in: riderSlugs } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const [ultimaHoraTag, mercadoTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'mercado-de-fichajes' },
+      update: {},
+      create: { slug: 'mercado-de-fichajes', name: 'Mercado de fichajes', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, mercadoTag.id].map((id) => ({ id }))
+
+  const slug = 'filippo-ganna-deja-ineos-ficha-lidl-trek-2029'
+  const title = 'Filippo Ganna deja el INEOS y ficha por Lidl-Trek hasta 2029'
+  const heroImageId = await ensureCustomHeroImage(slug, {
+    url: '/images/headers/ganna-lidl-trek-cover.jpg',
+    altText: 'Filippo Ganna deja el INEOS y ficha por Lidl-Trek hasta 2029',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'El doble campeón del mundo de contrarreloj pone fin a ocho años en el equipo británico y sale un año antes de lo previsto',
+    excerpt:
+      'Lidl-Trek anunció el fichaje de Filippo Ganna para 2027-2029. El italiano deja el Netcompany INEOS tras ocho años y quiere centrarse en las clásicas y en la contrarreloj.',
+    content: gannaLidlContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://procyclinguk.com/filippo-ganna-joins-lidl-trek-through-2029/',
+      'https://www.esciclismo.com/actualidad/carretera/93520.html',
+      'https://www.cyclingnews.com/pro-cycling/transfers/filippo-ganna-makes-early-exit-from-netcompany-ineos-to-move-to-lidl-trek/',
+      'https://en.brujulabike.com/another-impactful-move-in-the-transfer-market-filippo-ganna-leaves-ineos-and-signs-with-lidl-trek-until-2029/',
+    ]),
+    sourceNames: toJsonField(['ProCyclingUK', 'Es Ciclismo', 'Cyclingnews', 'Brújula Bike']),
+    seoTitle: 'Filippo Ganna ficha por Lidl-Trek hasta 2029',
+    seoDescription:
+      'Filippo Ganna deja el Netcompany INEOS tras ocho años y ficha por Lidl-Trek hasta 2029. Contrato, palmarés y planes para 2027.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug,
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
