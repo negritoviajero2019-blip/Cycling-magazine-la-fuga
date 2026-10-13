@@ -8,6 +8,7 @@ import { sportsEventJsonLd } from '@/lib/seo/structured-data'
 import { formatDate } from '@/lib/content/format-date'
 import { RaceFicha } from '@/components/editorial/race/RaceFicha'
 import { getRaceInfo } from '@/lib/content/race-info'
+import { getRaceBrief } from '@/lib/content/race-brief'
 import { prisma, safeQuery } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
@@ -39,6 +40,7 @@ export default async function RacePage({ params }: Props) {
   })
 
   const info = getRaceInfo(race.slug)
+  const brief = info ? undefined : getRaceBrief(race.slug)
   const riders = info
     ? await safeQuery(
         () =>
@@ -103,6 +105,33 @@ export default async function RacePage({ params }: Props) {
       </dl>
 
       {race.description && <p className="mt-6 max-w-2xl text-sm leading-relaxed">{race.description}</p>}
+
+      {brief && (
+        <section className="mt-8 max-w-2xl space-y-4 text-sm leading-relaxed">
+          <p>{brief.summary}</p>
+          <dl className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <dt className="text-muted">Distancia</dt>
+              <dd className="font-semibold">{brief.distance}</dd>
+            </div>
+            <div>
+              <dt className="text-muted">Perfil</dt>
+              <dd className="font-semibold">{brief.profile}</dd>
+            </div>
+          </dl>
+          {brief.topRider && (
+            <p>
+              <strong>{brief.topRider.name}:</strong> {brief.topRider.note}
+            </p>
+          )}
+          <ul className="list-disc space-y-1 pl-5">
+            {brief.details.map((d) => (
+              <li key={d}>{d}</li>
+            ))}
+          </ul>
+          <p className="text-xs text-muted">Fuentes: {brief.sources.join(', ')}.</p>
+        </section>
+      )}
 
       {race.stages.length > 0 && (
         <section className="mt-10">
