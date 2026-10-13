@@ -60,6 +60,9 @@ export async function getHomeSections() {
               { category: { slug: 'ultima-hora' } },
               { tags: { some: { slug: 'ultima-hora' } } },
               { breakingNews: true },
+              // Todo lo de corredores latinos (y especialmente mexicanos) entra al carrusel.
+              { category: { slug: 'latinos' } },
+              { tags: { some: { slug: 'latinos' } } },
             ],
           },
           orderBy: { publishedAt: 'desc' },
