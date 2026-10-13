@@ -5755,12 +5755,20 @@ export async function publishDelToroCierreArticle() {
   const riders = await prisma.rider.findMany({ where: { slug: { in: ['isaac-del-toro'] } }, select: { id: true } })
   const riderIds = riders.map((r) => r.id)
 
-  const latinosTag = await prisma.tag.upsert({
-    where: { slug: 'latinos' },
-    update: {},
-    create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
-  })
-  const tagIds = [{ id: latinosTag.id }]
+  // Con la etiqueta 'ultima-hora' entra en el carrusel de la portada (su filtro: categoría, etiqueta o breakingNews).
+  const [latinosTag, ultimaHoraTag] = await Promise.all([
+    prisma.tag.upsert({
+      where: { slug: 'latinos' },
+      update: {},
+      create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+    }),
+    prisma.tag.upsert({
+      where: { slug: 'ultima-hora' },
+      update: {},
+      create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' },
+    }),
+  ])
+  const tagIds = [latinosTag.id, ultimaHoraTag.id].map((id) => ({ id }))
 
   const slug = 'isaac-del-toro-cierra-temporada-2026-balance-rodilla'
   const title = 'Isaac del Toro cierra su temporada 2026: un año de victorias y una rodilla sin explicar'
