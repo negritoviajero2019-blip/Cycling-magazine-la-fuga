@@ -5719,3 +5719,102 @@ export async function publishGannaLidlArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Del Toro cierra la temporada 2026 (13 oct): mensaje de despedida,
+// balance del año y la rodilla (sin diagnóstico público). Contradicciones
+// entre medios: nº de etapas en Tirreno y Tour AURA (N+ vs Excélsior) →
+// no se dan cifras. Posición en Gran Piemonte (82.º): N+ y Excélsior.
+// Fuentes: Excélsior, N+, Ciclismo Internacional, Domestique, La Lista.
+// ————————————————————————————————————————————————————————————
+
+const delToroCierreContent = `
+<p>Isaac del Toro puso punto final a su temporada 2026 con un mensaje de agradecimiento tras Il Lombardia, donde terminó 28.º. "Es mi último día del año; gracias a todos por acompañarme siempre, tanto en los buenos momentos como en los mejores", escribió en sus redes, según Excélsior. Y añadió: "La última clásica no salió como queríamos, pero así es el juego de la vida; estoy muy agradecido por la oportunidad y feliz de estar aquí". Detrás de ese cierre hay un año de grandes victorias y un asunto que casi no se ha explicado: una molestia en la rodilla.</p>
+
+<h2>Un año de victorias</h2>
+
+<p>El balance, según N+ y Excélsior, es el de un año sobresaliente. Del Toro ganó la general del UAE Tour, de la Tirreno-Adriático, del Tour Auvergne-Rhône-Alpes y de la Lidl Deutschland Tour, y se llevó el Grand Prix Cycliste de Montréal. Fue tercero en la Strade Bianche y, en su debut en el Tour de Francia, ganó la etapa 2, terminó tercero en París y se llevó el maillot blanco de mejor joven. En el Mundial de Montreal fue quinto en la prueba de ruta y sexto en la contrarreloj.</p>
+
+<p>También hubo golpes. En abril se cayó en la etapa 3 de la Itzulia, un día en el que abandonó; el director médico del UAE, Adriano Rotunno, habló de un desgarro muscular en el muslo derecho y varias abrasiones, y el propio Del Toro agradeció en Instagram que "no fue lo peor que pudo pasar". Las diferencias entre medios en el número exacto de etapas ganadas en la Tirreno y en el Tour Auvergne-Rhône-Alpes nos llevan a no dar cifras de victorias de etapa para esas dos carreras.</p>
+
+<h2>La rodilla: lo que se sabe y lo que no</h2>
+
+<p>El asunto del que menos se ha hablado es la rodilla. Del Toro reconoció antes del Gran Piemonte que tenía molestias desde que viajó a Europa tras el Mundial de Canadá: "No sé qué lo provoca. Los problemas comenzaron después de mi vuelo", dijo, y añadió que tenía la misma bici y las mismas zapatillas. En el Gran Piemonte, donde defendía el título, atacó en el tramo final y fue cazado a 1,5&nbsp;km de meta; terminó 82.º, según N+ y Excélsior.</p>
+
+<p>Tras Il Lombardia explicó, según Ciclismo Internacional, que fue "una temporada muy larga" y que su cuerpo "no tenía fuerzas para dar más", con unos 60 días de competencia y la rodilla pasándole factura en las últimas subidas. A Bicisport le dijo que la rodilla no le molesta pedaleando sino sentado en el sillín, que "dejamos que las cosas sigan su curso" y que no es "una situación normal"; también contó que no había podido entrenar bien. Lo que no se ha publicado es el diagnóstico, si hubo pruebas médicas, ni un parte del UAE Team Emirates-XRG: Domestique señala que el equipo no ha emitido ninguna declaración sobre su estado físico.</p>
+
+<h2>Qué viene en 2027</h2>
+
+<p>Del Toro volverá a casa a descansar y recuperarse por completo. El equipo se reunirá a finales de octubre en los Emiratos Árabes Unidos para fijar objetivos. Según Domestique, se espera que debute a principios de enero en el campeonato nacional de México y que corra las nuevas carreras creadas en el país, algo que no ha confirmado; Ciclismo Internacional añade que el director deportivo Joxean Fernández Matxin expresó reservas sobre esa idea. En lo deportivo, se espera que lidere al UAE en el Giro de Italia, y el CEO del equipo, Mauro Gianetti, dijo que "probablemente esté listo" para pelear por una gran vuelta.</p>
+`.trim()
+
+export async function publishDelToroCierreArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riders = await prisma.rider.findMany({ where: { slug: { in: ['isaac-del-toro'] } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+
+  const latinosTag = await prisma.tag.upsert({
+    where: { slug: 'latinos' },
+    update: {},
+    create: { slug: 'latinos', name: 'Latinos', type: 'topic' },
+  })
+  const tagIds = [{ id: latinosTag.id }]
+
+  const slug = 'isaac-del-toro-cierra-temporada-2026-balance-rodilla'
+  const title = 'Isaac del Toro cierra su temporada 2026: un año de victorias y una rodilla sin explicar'
+  const heroImageId = await ensureCustomHeroImage(slug, {
+    url: '/images/headers/del-toro-cierra-temporada-2026-cover.jpg',
+    altText: 'Isaac del Toro cierra su temporada 2026 con un mensaje de agradecimiento',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'El mexicano se despide del año tras Il Lombardia con un balance histórico y una molestia en la rodilla de la que el UAE no ha dado detalles',
+    excerpt:
+      'Isaac del Toro cerró su temporada 2026 con un mensaje de gratitud. Repasamos su año, de las victorias en el UAE Tour y la Tirreno al podio del Tour, y lo poco que se sabe de su rodilla.',
+    content: delToroCierreContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.excelsior.com.mx/deportes/isaac-toro-le-dice-adios-2026',
+      'https://www.nmas.com.mx/deportes/issac-del-toro-cierra-temporada-como-le-fue-ciclista-mexicano-2026-lista-logros/',
+      'https://ciclismointernacional.com/isaac-del-toro-revela-los-motivos-de-su-crisis-en-lombardia-no-tenia-mas-fuerzas',
+      'https://www.domestiquecycling.com/en/news/isaac-del-toro-reveals-true-extent-of-knee-injury-after-il-lombardia-collapse/',
+      'https://la-lista.com/deportes/isaac-del-toro-agradece-que-no-fue-lo-peor-que-pudo-pasar-tras-caida-y-retiro-de-la-itzulia-2026',
+    ]),
+    sourceNames: toJsonField(['Excélsior', 'N+', 'Ciclismo Internacional', 'Domestique', 'La Lista']),
+    seoTitle: 'Isaac del Toro cierra su temporada 2026: balance y rodilla',
+    seoDescription:
+      'Isaac del Toro cierra su 2026 con un mensaje de gratitud tras Il Lombardia. Balance de sus victorias, el podio del Tour y lo que se sabe de su rodilla.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug,
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
