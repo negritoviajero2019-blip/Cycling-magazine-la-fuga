@@ -5826,3 +5826,204 @@ export async function publishDelToroCierreArticle() {
 
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Mundial de pista, Shanghái (14-18 oct 2026): México. Fuentes: Infobae
+// (figuras, primer día), LJA/OEM (selección), Ciclo21. Sede: Velódromo de
+// Shanghái (Chongming). Yareli Acevedo: campeona mundial de puntos 2025
+// (Santiago); según Infobae corre ómnium y eliminación en 2026.
+// ————————————————————————————————————————————————————————————
+
+const mundialPistaContent = `
+<p>Nueve ciclistas mexicanos compiten del 14 al 18 de octubre en el Campeonato Mundial de Ciclismo de Pista 2026, en el velódromo de Shanghái, en el distrito de Chongming, con más de 399 corredores de 45 países y 22 títulos en juego. México llega con una campeona del mundo en la delegación, Yareli Acevedo, y con el objetivo de destacar en velocidad y resistencia, en un Mundial que otorga puntos para la clasificación a los Juegos Olímpicos de Los Ángeles 2028.</p>
+
+<h2>La delegación mexicana</h2>
+
+<p>Según Infobae, la selección está integrada así. <strong>Rama femenil:</strong> Yareli Acevedo, campeona mundial de carrera por puntos en 2025 (en Santiago de Chile), que competirá en ómnium y eliminación; Daniela Gaxiola, dos veces olímpica, en velocidad por equipos, velocidad individual y keirin; Yuli Verdugo, en velocidad por equipos y contrarreloj de 1&nbsp;km; Jessica Salazar, en el equipo de velocidad; y Andrea Robles, en scratch y contrarreloj de 1&nbsp;km. <strong>Rama varonil:</strong> Ricardo Peña, olímpico en París 2024, en eliminación y ómnium; Sebastián Ruiz, en persecución individual; y Fernando Nava, en scratch y carrera por puntos. María José Vizcaíno aparece como suplente del equipo de velocidad.</p>
+
+<h2>El primer día, sin los resultados esperados</h2>
+
+<p>La jornada inaugural, el miércoles 14, no salió como se esperaba. En la velocidad por equipos femenil, María José Vizcaíno, Yuli Verdugo y Daniela Gaxiola marcaron 49,029 segundos en la clasificación y terminaron 15.as de 18 equipos, a 3,187 segundos de Gran Bretaña, la mejor del día con 45,842. Solo avanzaban ocho equipos, y el último pasó con 47,547 (Francia). En el scratch femenil, Andrea Robles fue 24.ª; ganó la neerlandesa Lorena Wiebes, por delante de Lara Gillespie y Maria Martins.</p>
+
+<h2>Lo que queda por delante</h2>
+
+<p>El calendario sigue hasta el domingo 18 (horarios de la Ciudad de México, según Infobae). El jueves 15 se disputan las rondas de velocidad individual femenil. El viernes 16 hay ómnium femenil (pruebas I y II), carrera por puntos varonil, con Fernando Nava, y las semifinales y finales de velocidad individual femenil. El sábado 17 se corre el ómnium varonil, con Ricardo Peña, y el kilómetro contrarreloj femenil. El domingo 18 cierran la eliminación varonil, también con Peña, y la carrera por puntos femenil. Publicaremos los resultados de los mexicanos conforme se vayan dando.</p>
+`.trim()
+
+export async function publishMundialPistaMexicoArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'latinos' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riders = await prisma.rider.findMany({
+    where: { slug: { in: ['yareli-acevedo', 'daniela-gaxiola', 'ricardo-pena'] } },
+    select: { id: true },
+  })
+  const riderIds = riders.map((r) => r.id)
+
+  const [latinosTag, ultimaHoraTag] = await Promise.all([
+    prisma.tag.upsert({ where: { slug: 'latinos' }, update: {}, create: { slug: 'latinos', name: 'Latinos', type: 'topic' } }),
+    prisma.tag.upsert({ where: { slug: 'ultima-hora' }, update: {}, create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' } }),
+  ])
+  const tagIds = [latinosTag.id, ultimaHoraTag.id].map((id) => ({ id }))
+
+  const slug = 'mundial-pista-2026-shanghai-nueve-mexicanos'
+  const title = 'Mundial de pista, Shanghái: nueve mexicanos compiten y Yareli Acevedo llega como campeona'
+  const heroImageId = await ensureCustomHeroImage(slug, {
+    url: '/images/headers/mundial-pista-2026-mexicanos-cover.jpg',
+    altText: 'Mundial de pista 2026 en Shanghái: nueve mexicanos compiten del 14 al 18 de octubre',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'Del 14 al 18 de octubre, con Yareli Acevedo, Daniela Gaxiola, Yuli Verdugo y Ricardo Peña; el primer día, sin los resultados esperados',
+    excerpt:
+      'Nueve ciclistas mexicanos compiten en el Mundial de pista de Shanghái (14 al 18 de octubre). Quiénes son, en qué pruebas corren, cómo les fue el primer día y el calendario que viene.',
+    content: mundialPistaContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://infobae.com/mexico/deportes/2026/10/14/mexico-busca-brillar-en-el-mundial-de-ciclismo-de-pista-2026-estas-son-las-figuras-nacionales-a-seguir',
+      'https://www.infobae.com/mexico/deportes/2026/10/14/asi-le-fue-a-los-mexicanos-en-el-primer-dia-de-actividades-en-el-campeonato-mundial-de-ciclismo-de-pista/',
+      'https://www.lja.mx/2026/10/mexico-llega-al-mundial-de-ciclismo-de-pista-2026-con-una-campeona-defensora-y-nueve-seleccionados/',
+    ]),
+    sourceNames: toJsonField(['Infobae', 'LJA']),
+    seoTitle: 'Mundial de pista 2026 en Shanghái: los nueve mexicanos',
+    seoDescription:
+      'Mundial de ciclismo de pista 2026 en Shanghái (14 al 18 de octubre): los nueve mexicanos, sus pruebas, el primer día y el calendario.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug,
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// Seixas y UAE (14 oct): análisis. Hechos: Gianetti a D. Benson (CyclingUpToDate,
+// 11 oct), contacto con el agente, contrato Decathlon hasta fin de 2027,
+// oferta "XXL" (reportada), reunión del equipo 19-23 oct (reportada),
+// Visma interés público. Versiones contradictorias → se marcan como tales.
+// Fuentes: CyclingUpToDate, Domestique (13 oct), Cyclist, Ciclismo al Día.
+// ————————————————————————————————————————————————————————————
+
+const seixasUaeContent = `
+<p>Paul Seixas ganó Il Lombardia con 20 años y, pocos días después, el debate sobre su futuro ya está en el centro del mercado: el director del UAE Team Emirates-XRG, Mauro Gianetti, ha reconocido que habló con el agente del francés y que "si él pide venir con nosotros, no le diría que no". Seixas tiene contrato con el Decathlon CMA CGM hasta finales de 2027 y ha confirmado que lo cumplirá, así que lo que está en juego es 2028. Esto es lo que se sabe, lo que se reporta y lo que no está confirmado.</p>
+
+<h2>Su talento y su progresión</h2>
+
+<p>En 2026 Seixas pasó de promesa a protagonista: ganó el Tour del País Vasco y la Flecha Valona (el vencedor más joven de la historia), fue bronce en la contrarreloj del Mundial de Montreal y, el sábado, Il Lombardia, también como el campeón más joven. Su dominio en la montaña y en la contrarreloj le ha colocado en la conversación con Pogačar y Evenepoel, y por eso los equipos grandes lo siguen de cerca.</p>
+
+<h2>El interés del UAE</h2>
+
+<p>Gianetti lo dijo a Daniel Benson, según CyclingUpToDate (11 de octubre): "Si él pide venir con nosotros, no le diría que no. No tengo idea de si vendrá con nosotros; es difícil decirlo. La decisión es suya, no del equipo", y añadió que la impresión es que no decidirá pronto. El directivo confirmó una breve conversación con el agente. En marzo, además, Gianetti ya había hablado de juntar a Pogačar y Seixas como "más que un sueño", según Domestique. El UAE tiene ya a Pogačar y a Isaac del Toro en su plantilla, de modo que una llegada de Seixas plantearía una gestión de líderes muy particular.</p>
+
+<h2>Las opciones reales</h2>
+
+<p>El Decathlon quiere quedárselo: su director Dominique Serieys ha dicho que "Paul va a ganar con nosotros" y Charpentier se preguntó "qué más podría conseguir en otro lugar". Según Domestique, el equipo le habría ofrecido un contrato "XXL" de varios millones de euros que podría convertirlo en el mejor pagado del pelotón, y trasladará su estructura de pagos a Suiza desde 2027 para ofrecer más margen; Romain Bardet será el director deportivo del equipo. Estas condiciones se reportan, pero no se han confirmado oficialmente. Además del UAE, el Visma | Lease a Bike ha reconocido públicamente su interés y se cita al Netcompany INEOS, sin confirmación.</p>
+
+<p>La situación no está clara: una versión, basada en un podcast de Wielerflits que recoge CyclingFlash, llegó a decir que el UAE ya no estaba en la carrera, y una cuenta francesa en redes aseguró que había un precontrato con el equipo emiratí; no hemos podido verificar ninguna de las dos. Tampoco hay información sobre una cláusula de salida ni sobre el coste de un traspaso antes de 2028.</p>
+
+<h2>Qué podría aportar</h2>
+
+<p>Nuestra lectura, no un dato confirmado: Seixas aportaría un segundo líder de primer nivel para las grandes vueltas en un equipo que ya cuenta con Pogačar y Del Toro, algo que cambiaría los repartos de calendario del UAE. Según Domestique, Seixas se reunirá con sus compañeros del Decathlon en el Service Course, en los Alpes franceses, del 19 al 23 de octubre para planificar 2027, y esa semana podría dar más pistas. Su agente, Joona Laukka, no ha querido hablar de planes más allá de 2027 y, según Domestique, ha dicho que Seixas "no tiene prisa".</p>
+`.trim()
+
+export async function publishSeixasUaeArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'analisis' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+
+  const riders = await prisma.rider.findMany({
+    where: { slug: { in: ['paul-seixas', 'isaac-del-toro', 'tadej-pogacar'] } },
+    select: { id: true },
+  })
+  const riderIds = riders.map((r) => r.id)
+
+  const [ultimaHoraTag, mercadoTag] = await Promise.all([
+    prisma.tag.upsert({ where: { slug: 'ultima-hora' }, update: {}, create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' } }),
+    prisma.tag.upsert({
+      where: { slug: 'mercado-de-fichajes' },
+      update: {},
+      create: { slug: 'mercado-de-fichajes', name: 'Mercado de fichajes', type: 'topic' },
+    }),
+  ])
+  const tagIds = [ultimaHoraTag.id, mercadoTag.id].map((id) => ({ id }))
+
+  const slug = 'seixas-uae-posible-futuro-2028'
+  const title = '¿Seixas al UAE? Lo que se sabe, lo que se reporta y lo que no está confirmado'
+  const heroImageId = await ensureCustomHeroImage(slug, {
+    url: '/images/headers/seixas-uae-posible-cover.jpg',
+    altText: '¿Seixas a UAE? Su talento, el interés del equipo y las opciones reales',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'Gianetti confirma contacto con el agente del campeón de Il Lombardia; su contrato con el Decathlon llega hasta 2027 y lo que está en juego es 2028',
+    excerpt:
+      'Mauro Gianetti dijo que "no le diría que no" a Paul Seixas. Repasamos su talento, el interés del UAE, la oferta reportada del Decathlon y qué es dato y qué rumor.',
+    content: seixasUaeContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://cyclinguptodate.com/cycling/if-he-asks-to-come-to-us-i-wouldnt-say-no-uae-openly-court-paul-seixas-as-battle-for-french-superstars-future-intensifies',
+      'https://www.domestiquecycling.com/en/news/paul-seixas-season-is-over-and-so-he-could-soon-decide-his-team-for-beyond-2027/',
+      'https://www.domestiquecycling.com/en/news/uae-boss-gianetti-hails-paul-seixas-as-extraordinary-talent-amid-growing-transfer-interest/',
+      'https://cyclingflash.com/news/uae-emirates-xrg-drops-out-of-the-battle-for-paul-seixas',
+      'https://ciclismoaldia.es/ciclismo/no-le-diriamos-que-no-uae-corteja-abiertamente-a-paul-seixas',
+    ]),
+    sourceNames: toJsonField(['CyclingUpToDate', 'Domestique', 'CyclingFlash', 'Ciclismo al Día']),
+    seoTitle: 'Seixas al UAE: lo que se sabe y lo que se reporta',
+    seoDescription:
+      'Gianetti confirma contacto con el agente de Paul Seixas. Su contrato con el Decathlon llega a 2027. Qué se sabe, qué se reporta y qué no está confirmado sobre su futuro.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug,
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+
+  return { slug: article.slug }
+}
