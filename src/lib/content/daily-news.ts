@@ -6290,21 +6290,21 @@ export async function publishRoglicLombardiaArticle() {
 // ————————————————————————————————————————————————————————————
 
 const carapazNsnContent = `
-<p>Richard Carapaz dejaría el EF Education-EasyPost un año antes de que termine su contrato y correría en 2027 con el NSN Cycling, el equipo suizo en el que figura el exfutbolista Andrés Iniesta como copropietario. Lo adelantó el medio neerlandés WielerFlits, que asegura haber verificado la operación con varias fuentes y que el NSN se impuso al INEOS Grenadiers y al Pinarello-Q36.5 en la pelea por el ecuatoriano. A la fecha no hay un comunicado oficial del corredor ni de los equipos que hayamos podido comprobar.</p>
+<p>Richard Carapaz es oficialmente jugador del NSN Cycling: el equipo anunció este viernes 16 de octubre su fichaje por tres temporadas, 2027, 2028 y 2029, y el ecuatoriano deja el EF Education-EasyPost, con el que tenía contrato, un año antes de lo previsto. La operación confirma lo que había adelantado el medio neerlandés WielerFlits, que aseguraba que el NSN, el equipo suizo en el que figura el exfutbolista Andrés Iniesta como copropietario, se había impuesto al INEOS Grenadiers y al Pinarello-Q36.5.</p>
 
-<h2>Qué se reporta y qué no</h2>
+<h2>Lo que dice el anuncio</h2>
 
-<p>Según WielerFlits, recogido por Domestique y Brújula Bike, Carapaz estaba vinculado al EF hasta finales de 2027 y su salida se habría facilitado porque el equipo estadounidense tiene poco margen de presupuesto y el ecuatoriano quería aprovechar su buen año. Nadie ha dado cifras de la operación ni de cómo se resolvería su contrato. En agosto, el exdirector Johan Bruyneel ya había dicho en el pódcast The Move que era muy probable que Carapaz cambiara de equipo. Sobre la duración del nuevo contrato, hay discrepancias: el medio francés Velo-Club y una versión de Primicias hablan de tres temporadas, hasta finales de 2029, y de un anuncio oficial en video, pero no hemos podido verificar ese anuncio y otros medios, como Domestique, siguen hablando de una operación no confirmada.</p>
+<p>Según ProCyclingUK y Escape Collective, el director general del NSN, Kjell Carlström, destacó que "Richard es de esos corredores cuya pasión por el ciclismo es muy evidente" y que su "experiencia y liderazgo serán extremadamente valiosos" tanto para los objetivos deportivos como para el desarrollo de los jóvenes. Carapaz, por su parte, dijo que llegar al NSN le recuerda a cuando firmó su primer contrato profesional y que ser uno de los líderes del equipo es una parte importante del atractivo, según ProCyclingUK. El EF despidió al corredor en Instagram con un video y el mensaje "Gracias, Richie. Por todo", según Velo. No hemos encontrado una declaración del EF sobre las condiciones de la salida, ni datos de cifras o compensación.</p>
 
 <h2>Un año con golpes personales y dos etapas del Tour</h2>
 
-<p>Carapaz, de 33 años, vivió un 2026 difícil: según los medios, perdió a su madre y una operación en abril le dejó fuera del Giro. Volvió en junio y fue segundo en el Tour de Suiza, y en el Tour de Francia ganó dos etapas de montaña (Orcières-Merlette y Alpe d'Huez), conquistó su segunda clasificación de la montaña y fue elegido el más combativo. También fue segundo en la Clásica de San Sebastián, por detrás de Remco Evenepoel, y cuarto en la Vuelta a España. Se retiró del Mundial de Montreal por cansancio. En el INEOS corrió de 2020 a 2022 y fue campeón olímpico de ruta en Tokio.</p>
+<p>Carapaz, de 33 años, vivió un 2026 difícil: según los medios, perdió a su madre y una operación en abril le dejó fuera del Giro. Volvió en junio y fue segundo en el Tour de Suiza, y en el Tour de Francia ganó dos etapas de montaña (Orcières-Merlette y, 26 segundos por delante de Remco Evenepoel, Alpe d'Huez), conquistó su segunda clasificación de la montaña y fue elegido el más combativo. También fue segundo en la Clásica de San Sebastián, por detrás de Evenepoel, y cuarto en la Vuelta a España. Se retiró del Mundial de Montreal por cansancio. Fue campeón olímpico de ruta en Tokio y ganó el Giro de 2019; en el INEOS corrió de 2020 a 2022.</p>
 
-<h2>El NSN, el equipo de Iniesta</h2>
+<h2>El NSN de Iniesta y la pregunta del liderazgo</h2>
 
-<p>El NSN Cycling es el antiguo Israel-Premier Tech, renombrado tras la compra de la empresa Never Say Never, cofundada por Iniesta, junto con la inversora Stoneweg. Presentó su nueva identidad en Barcelona en diciembre de 2025. Para 2027 el equipo ya ha anunciado a Santiago Buitrago (contrato hasta 2029, según Brújula Bike), a Lennert Van Eetvelt y a Kasper Asgreen, y cuenta con el eritreo Biniam Girmay como una de sus figuras. Con Carapaz, el proyecto tendría un líder de grandes vueltas junto a un grupo de escaladores.</p>
+<p>El NSN Cycling es el antiguo Israel-Premier Tech, renombrado tras la compra de la empresa Never Say Never, cofundada por Iniesta, junto con la inversora Stoneweg. Presentó su nueva identidad en Barcelona en diciembre de 2025. Para 2027 ya había anunciado a Santiago Buitrago (tres años desde 2027), a Lennert Van Eetvelt (hasta 2029) y a Kasper Asgreen (dos años), y cuenta con el eritreo Biniam Girmay como una de sus figuras. ProCyclingUK señala que la gran pregunta será cómo repartirá el equipo el liderazgo en las grandes vueltas entre Carapaz, Buitrago y Van Eetvelt.</p>
 
-<p>Si el fichaje se confirma, el INEOS perdería una de las apuestas que se le atribuían para reforzar su equipo de montaña, en una semana en la que también ha fichado a Tejada, Beloki, Blackmore y Shaw y ha perdido a Ganna y Welsford. Actualizaremos la nota cuando haya un comunicado oficial.</p>
+<p>Para el INEOS, que esta semana también ha fichado a Tejada, Beloki, Blackmore y Shaw y ha perdido a Ganna y Welsford, es la pérdida de una apuesta de montaña que se le atribuía.</p>
 `.trim()
 
 export async function publishCarapazNsnArticle() {
@@ -6327,7 +6327,7 @@ export async function publishCarapazNsnArticle() {
   const tagIds = [latinosTag.id, ultimaHoraTag.id, mercadoTag.id].map((id) => ({ id }))
 
   const slug = 'richard-carapaz-nsn-cycling-2027-deja-ef-iniesta'
-  const title = 'Carapaz dejaría el EF y correría en 2027 con el NSN de Iniesta, según WielerFlits'
+  const title = 'Carapaz ficha por el NSN de Iniesta hasta 2029 y deja el EF un año antes'
   const heroImageId = await ensureCustomHeroImage(slug, {
     url: '/images/headers/carapaz-nsn-2027-cover.jpg',
     altText: 'Carapaz y su futuro para 2027: el NSN de Andrés Iniesta, frente al INEOS',
@@ -6339,9 +6339,9 @@ export async function publishCarapazNsnArticle() {
 
   const baseFields = {
     title,
-    subtitle: 'El ecuatoriano rompería un año antes su contrato con el EF; el NSN se habría impuesto al INEOS y al Pinarello-Q36.5, aunque no hay anuncio oficial',
+    subtitle: 'El equipo lo anunció oficialmente este 16 de octubre: tres años, 2027-2029; el NSN se habría impuesto al INEOS y al Pinarello-Q36.5, según WielerFlits',
     excerpt:
-      'WielerFlits reporta que Richard Carapaz dejará el EF Education-EasyPost para fichar por el NSN Cycling de Andrés Iniesta en 2027. Qué se sabe, qué se reporta y qué no está confirmado.',
+      'El NSN Cycling de Andrés Iniesta anunció el fichaje de Richard Carapaz por tres años (2027-2029). Deja el EF un año antes de terminar su contrato. Qué dice el anuncio y qué viene.',
     content: carapazNsnContent,
     categoryId: category.id,
     authorId: author.id,
@@ -6358,9 +6358,9 @@ export async function publishCarapazNsnArticle() {
       'https://www.velo-club.net/actualites/richard-carapaz-nsn-cycling-team-2027-2029/',
     ]),
     sourceNames: toJsonField(['Domestique', 'Brújula Bike', 'Ciclismo Internacional', 'CyclingFlash', 'Primicias', 'Velo-Club']),
-    seoTitle: 'Carapaz al NSN de Iniesta en 2027: lo que se sabe',
+    seoTitle: 'Carapaz ficha por el NSN de Iniesta hasta 2029',
     seoDescription:
-      'Richard Carapaz dejaría el EF Education-EasyPost y correría con el NSN Cycling de Andrés Iniesta en 2027, según WielerFlits. Qué se sabe y qué no está confirmado.',
+      'El NSN Cycling anunció a Richard Carapaz por tres años, hasta 2029, tras dejar el EF un año antes. Su 2026, el equipo de Iniesta y la pelea con el INEOS.',
     readingTime: 3,
   }
 
