@@ -5839,7 +5839,7 @@ const mundialPistaContent = `
 
 <h2>La delegación mexicana</h2>
 
-<p>Según Infobae, la selección está integrada así. <strong>Rama femenil:</strong> Yareli Acevedo, campeona mundial de carrera por puntos en 2025 (en Santiago de Chile), que competirá en ómnium y eliminación; Daniela Gaxiola, dos veces olímpica, en velocidad por equipos, velocidad individual y keirin; Yuli Verdugo, en velocidad por equipos y contrarreloj de 1&nbsp;km; Jessica Salazar, en el equipo de velocidad; y Andrea Robles, en scratch y contrarreloj de 1&nbsp;km. <strong>Rama varonil:</strong> Ricardo Peña, olímpico en París 2024, en eliminación y ómnium; Sebastián Ruiz, en persecución individual; y Fernando Nava, en scratch y carrera por puntos. María José Vizcaíno aparece como suplente del equipo de velocidad.</p>
+<p>Según Infobae, la selección está integrada así. <strong>Rama femenil:</strong> Yareli Acevedo, campeona mundial de carrera por puntos en 2025 (en Santiago de Chile), que competirá en eliminación y ómnium y defenderá su título en la carrera por puntos; Daniela Gaxiola, dos veces olímpica, en velocidad por equipos, velocidad individual y keirin; Yuli Verdugo, en velocidad por equipos y contrarreloj de 1&nbsp;km; Jessica Salazar, en el equipo de velocidad; y Andrea Robles, en scratch y contrarreloj de 1&nbsp;km. <strong>Rama varonil:</strong> Ricardo Peña, olímpico en París 2024, en eliminación y ómnium; Sebastián Ruiz, en persecución individual; y Fernando Nava, en scratch y carrera por puntos. María José Vizcaíno aparece como suplente del equipo de velocidad.</p>
 
 <h2>El primer día, sin los resultados esperados</h2>
 
@@ -6025,5 +6025,258 @@ export async function publishSeixasUaeArticle() {
     },
   })
 
+  return { slug: article.slug }
+}
+
+// ————————————————————————————————————————————————————————————
+// 16 oct 2026: tres artículos. (1) Mundial de pista, balance mexicano;
+// (2) INEOS reconstruye; (3) Roglič, entre el retiro y 2027.
+// Solo el de Roglič entra al carrusel (decisión del usuario): los otros dos
+// no llevan categoría/etiqueta 'latinos' ni 'ultima-hora' ni breakingNews.
+// ————————————————————————————————————————————————————————————
+
+const pistaBalanceContent = `
+<p>México no ha tenido su semana en el Mundial de pista de Shanghái: tras los dos primeros días de competencia, ningún mexicano ha avanzado a una final ni ha subido al podio. La esperanza sigue viva: Yareli Acevedo, campeona mundial de la carrera por puntos en 2025, todavía tiene pruebas por delante, entre ellas la defensa de su título.</p>
+
+<h2>Lo que ha pasado</h2>
+
+<p>El miércoles 14, el equipo de velocidad femenil (María José Vizcaíno, Yuli Verdugo y Daniela Gaxiola) fue 15.º de 18 con 49,029 segundos y quedó fuera de la siguiente ronda, a 3,187 de Gran Bretaña, la mejor de la clasificación (el oro fue para China, la plata para Gran Bretaña y el bronce para Alemania). En el scratch femenil, Andrea Robles fue 24.ª, en una prueba que ganó la neerlandesa Lorena Wiebes.</p>
+
+<p>El jueves 15, Daniela Gaxiola terminó 30.ª en la velocidad individual y no pasó a las rondas siguientes. Yareli Acevedo debutó en la eliminación y fue 18.ª de 23, en una prueba que ganó la belga Lotte Kopecky, con la japonesa Yumi Kajihara y la estadounidense Megan Jastrab en el podio. Y en el scratch varonil, Fernando Nava no completó la carrera. Así lo cuentan Hoy Tamaulipas, Crónica y Agssports.</p>
+
+<h2>Lo que queda</h2>
+
+<p>La esperanza mexicana está en Yareli Acevedo, que además de la eliminación corre el ómnium y la carrera por puntos, donde defiende el título que ganó en Santiago de Chile; no encontramos los resultados de su ómnium. Ricardo Peña corre eliminación y ómnium, y Sebastián Ruiz, la persecución individual. Las fuentes no coinciden en el día exacto de cada prueba, así que publicaremos los resultados conforme se vayan dando.</p>
+
+<p>Mientras tanto, el Mundial ya tiene su gran historia: el italiano Jonathan Milan ganó la persecución individual con récord mundial, según Mundo Ciclístico. Los mexicanos, por ahora, esperan su turno.</p>
+`.trim()
+
+export async function publishPistaBalanceArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'ciclismo-femenino' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const riders = await prisma.rider.findMany({
+    where: { slug: { in: ['yareli-acevedo', 'daniela-gaxiola', 'ricardo-pena'] } },
+    select: { id: true },
+  })
+  const riderIds = riders.map((r) => r.id)
+  const pistaTag = await prisma.tag.upsert({
+    where: { slug: 'ciclismo-de-pista' },
+    update: {},
+    create: { slug: 'ciclismo-de-pista', name: 'Ciclismo de pista', type: 'topic' },
+  })
+  const tagIds = [{ id: pistaTag.id }]
+
+  const slug = 'mundial-pista-2026-mexico-sin-medallas-primeros-dias'
+  const title = 'Mundial de pista: México sin finales en los primeros días; Yareli Acevedo, la gran esperanza'
+  const heroImageId = await ensureCustomHeroImage(slug, {
+    url: '/images/headers/mundial-pista-2026-balance-cover.jpg',
+    altText: 'Mundial de pista 2026: balance de los mexicanos en Shanghái',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'Gaxiola fue 30.ª, Yareli 18.ª en eliminación y el equipo de velocidad, 15.º; el ómnium y la carrera por puntos, lo que queda',
+    excerpt:
+      'Balance de México tras los dos primeros días del Mundial de pista en Shanghái: resultados de Gaxiola, Acevedo, Robles y Nava, y lo que queda para Yareli Acevedo.',
+    content: pistaBalanceContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://hoytamaulipas.net/notas/629978/Mexico-arranca-sin-medallas-en-Mundial-de-Ciclismo-de-Pista-en-China.html',
+      'https://www.cronica.com.mx/deportes/2026/10/15/yareli-acevedo-queda-el-top-20-en-el-mundial-de-pista-en-shanghai/',
+      'https://www.agssports.com/2026/10/ciclismo-de-pista-shanghai-mexico-debut',
+      'https://infobae.com/mexico/deportes/2026/10/15/yareli-acevedo-debuta-en-el-campeonato-mundial-de-ciclismo-de-pista-como-le-fue-en-su-presentacion',
+      'https://www.revistamundociclistico.com/2026/mundial-de-pista-shanghai-2026-oro-arcoiris-y-record-del-mundo-para-jonathan-milan-en-la-persecucion-individual/',
+    ]),
+    sourceNames: toJsonField(['Hoy Tamaulipas', 'Crónica', 'Agssports', 'Infobae', 'Mundo Ciclístico']),
+    seoTitle: 'Mundial de pista 2026: balance de México en Shanghái',
+    seoDescription:
+      'Mundial de pista Shanghái 2026: cómo les fue a los mexicanos (Gaxiola, Yareli Acevedo, Robles, Nava) y qué pruebas quedan.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug,
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
+  return { slug: article.slug }
+}
+
+const ineosReconstruyeContent = `
+<p>En una semana, el Netcompany INEOS ha anunciado a cuatro corredores para 2027 y ha perdido a dos de sus nombres más reconocibles. El equipo británico, que durante unos días pareció desbordado por las salidas, ha respondido en el mercado con un mensaje claro: apuesta por la montaña y por el talento joven.</p>
+
+<h2>Las incorporaciones</h2>
+
+<p>El viernes 9 de octubre llegaron el colombiano Harold Tejada (29 años, desde el XDS Astana) y el español Markel Beloki (21, desde el EF Education-EasyPost, hijo de Joseba Beloki). El jueves 15, según IDL Pro Cycling, el equipo anunció al británico Joe Blackmore, de 23 años y procedente del NSN, con contrato de tres años, y a James Shaw, de 30 años y también del EF. Blackmore ganó el Tour de l'Avenir en 2024 y la Lieja sub-23, y su 2026 se vio afectado por una lesión de rodilla; dijo que "ha sido un año duro con las lesiones, pero me ha motivado aún más". Geraint Thomas, director del equipo, lo describió como "un corredor al que seguimos de cerca y con un potencial enorme". Un titular relacionado habla de un tercer fichaje en dos días, el escalador francés Clément Champoussin, que no hemos podido confirmar.</p>
+
+<h2>Las salidas</h2>
+
+<p>En sentido contrario, el INEOS perdió a Filippo Ganna, que ficha por el Lidl-Trek hasta 2029 tras ocho años en el equipo, y al velocista australiano Sam Welsford, que rompió tras una sola temporada el contrato que había firmado y, según Ciclo21, irá al Jayco AlUla en 2027 y 2028. Ganna y Welsford eran dos de las piezas más visibles para la contrarreloj y los esprints.</p>
+
+<h2>Qué dice el mercado</h2>
+
+<p>Nuestra lectura, no un dato oficial: la plantilla que dibujan estos movimientos es más de montaña y más joven. Tejada, Beloki, Shaw y Blackmore son, en su mayoría, escaladores o corredores de etapas, mientras que el equipo se queda sin su gran especialista en contrarreloj y sin un velocista de peso. Egan Bernal dijo la semana pasada, según Domestique, que su intención "por ahora" es seguir corriendo en 2027, y Carlos Rodríguez y Benjamin Noval Jr. ya estaban confirmados. IDL Pro Cycling cree que aún hay más movimientos por venir; lo iremos viendo en los próximos días.</p>
+`.trim()
+
+export async function publishIneosReconstruyeArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'analisis' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const mercadoTag = await prisma.tag.upsert({
+    where: { slug: 'mercado-de-fichajes' },
+    update: {},
+    create: { slug: 'mercado-de-fichajes', name: 'Mercado de fichajes', type: 'topic' },
+  })
+  const tagIds = [{ id: mercadoTag.id }]
+
+  const slug = 'ineos-reconstruye-plantilla-2027-blackmore-shaw-tejada-beloki'
+  const title = 'El INEOS responde al éxodo: Tejada, Beloki, Blackmore y Shaw, y las salidas de Ganna y Welsford'
+  const heroImageId = await ensureCustomHeroImage(slug, {
+    url: '/images/headers/ineos-reconstruye-2027-cover.jpg',
+    altText: 'Netcompany INEOS reconstruye su plantilla para 2027',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'En una semana, el equipo británico ha anunciado a cuatro corredores y perdido a dos de sus nombres más visibles',
+    excerpt:
+      'Netcompany INEOS anunció a Tejada, Beloki, Joe Blackmore y James Shaw para 2027, mientras Ganna se va al Lidl-Trek y Welsford al Jayco AlUla. Repasamos los movimientos y lo que dibujan.',
+    content: ineosReconstruyeContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://idlprocycling.com/cycling/netcompany-ineos-turn-the-tide-in-the-2026-transfer-season-sign-two-british-talents-we-believe-there-is-a-lot-more-to-come',
+      'https://procyclinguk.com/harold-tejada-joins-netcompany-ineos-2027',
+      'https://cyclinguptodate.com/cycling/ineos-confirm-first-transfer-of-its-winter-period-spanish-climber-from-ef-education-easypost-joins-british-team',
+      'https://procyclinguk.com/filippo-ganna-joins-lidl-trek-through-2029/',
+      'https://ciclo21.com/mercado-fichajes-2027-octub-9',
+    ]),
+    sourceNames: toJsonField(['IDL Pro Cycling', 'ProCyclingUK', 'CyclingUpToDate', 'Ciclo21']),
+    seoTitle: 'INEOS 2027: Tejada, Beloki, Blackmore y Shaw; salen Ganna y Welsford',
+    seoDescription:
+      'Netcompany INEOS anuncia a Tejada, Beloki, Blackmore y Shaw para 2027 y pierde a Ganna y Welsford. Los movimientos del equipo británico y lo que dibujan.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug },
+    update: { ...baseFields, heroImageId: heroImageId ?? undefined, tags: { set: tagIds } },
+    create: { slug, ...baseFields, publishedAt: new Date(), tags: { connect: tagIds } },
+  })
+  return { slug: article.slug }
+}
+
+const roglicLombardiaContent = `
+<p>Primož Roglič terminó Il Lombardia en el puesto 68, a 9 minutos y 8 segundos de Paul Seixas, y sigue sin decir si esa carrera fue la última de su carrera. A los 36 años (cumple 37 a finales de octubre), el esloveno deja el Red Bull-BORA-hansgrohe al terminar 2026 y no tiene equipo confirmado para 2027, ni una decisión pública sobre si seguir.</p>
+
+<h2>Retiro o continuidad</h2>
+
+<p>Antes de Lombardía, Roglič dijo a Cyclingnews que era posible que fuera su última carrera. Sobre 2027, respondió "todavía no lo sé", y contó que, de haber ganado una quinta Vuelta a España en lugar de quedar segundo, ya habría colgado la bicicleta. Cyclingnews añade que se inclina por seguir. En julio, según Domestique, el director del equipo, Ralph Denk, había confirmado que su intención era seguir corriendo en 2027. Esa postura y sus palabras antes de Lombardía no coinciden del todo, y no hemos encontrado declaraciones posteriores a la carrera.</p>
+
+<h2>Los equipos que suenan</h2>
+
+<p>Lo más sólido es la conversación con el Lotto-Intermarché: Het Laatste Nieuws, citado por Domestique en agosto, aseguró que "fuentes de ambos lados" confirmaron que ya hubo negociaciones, aunque sin acuerdo cerrado y con interés, según el medio, mutuo. El Lotto necesitaría un líder con experiencia junto a Jarno Widar, y perderá a Lennert Van Eetvelt y Arnaud De Lie. Daniel Benson situó en julio al Pinarello-Q36.5 como destino posible, pero lo describió como un rumor sin acuerdo, y el Tudor Pro Cycling también aparece en algunos reportes. El Bahrain Victorious se descartó a sí mismo. Nada de esto está confirmado.</p>
+
+<h2>Cómo llega</h2>
+
+<p>Su temporada tuvo un golpe y una alegría. En julio le atropelló un coche durante un entrenamiento y se perdió la Clásica de San Sebastián y la Vuelta a Burgos. Aun así, ganó el título europeo de contrarreloj en Eslovenia a principios de octubre y fue segundo en la Vuelta a España, que ganó Enric Mas. Con cuatro Vueltas en su palmarés, su decisión es una de las que más espera el mercado.</p>
+`.trim()
+
+export async function publishRoglicLombardiaArticle() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'analisis' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const riders = await prisma.rider.findMany({ where: { slug: { in: ['primoz-roglic'] } }, select: { id: true } })
+  const riderIds = riders.map((r) => r.id)
+  const [ultimaHoraTag, mercadoTag] = await Promise.all([
+    prisma.tag.upsert({ where: { slug: 'ultima-hora' }, update: {}, create: { slug: 'ultima-hora', name: 'Última Hora', type: 'topic' } }),
+    prisma.tag.upsert({
+      where: { slug: 'mercado-de-fichajes' },
+      update: {},
+      create: { slug: 'mercado-de-fichajes', name: 'Mercado de fichajes', type: 'topic' },
+    }),
+  ])
+  // Etiqueta 'ultima-hora' + breakingNews: entra al carrusel de la portada.
+  const tagIds = [ultimaHoraTag.id, mercadoTag.id].map((id) => ({ id }))
+
+  const slug = 'roglic-tras-lombardia-retiro-o-2027-lotto-pinarello'
+  const title = 'Roglič, tras Il Lombardia: entre el retiro y un equipo para 2027'
+  const heroImageId = await ensureCustomHeroImage(slug, {
+    url: '/images/headers/roglic-lombardia-2027-cover.jpg',
+    altText: 'Primož Roglič, entre el retiro y un equipo para 2027',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'El esloveno, 68.º en Lombardía, deja el Red Bull-BORA sin equipo confirmado y sin decir si sigue; Lotto-Intermarché es la pista más sólida',
+    excerpt:
+      'Roglič terminó 68.º en Il Lombardia y no ha dicho si sigue. Qué se sabe del retiro, de Lotto-Intermarché, Pinarello-Q36.5 y Tudor, y qué es rumor.',
+    content: roglicLombardiaContent,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: true,
+    featured: false,
+    sourceUrls: toJsonField([
+      'https://www.cyclingnews.com/pro-cycling/teams-riders/primoz-roglic-says-its-possible-il-lombardia-will-be-the-final-race-of-his-career/',
+      'https://www.domestiquecycling.com/en/news/roglics-2027-future-might-take-an-unexpected-turn-as-belgian-team-enters-picture/',
+      'https://www.domestiquecycling.com/en/news/roglic-emerges-as-rumoured-pinarello-q36-5-target-for-2027/',
+      'https://www.cyclingnews.com/pro-cycling/transfers/2027-transfer-drama-heats-up-as-grand-tour-champion-primoz-roglic-reportedly-eyes-switch-to-lotto-intermarche-for-next-season/',
+      'https://www.esciclismo.com/actualidad/carretera/93479.html',
+    ]),
+    sourceNames: toJsonField(['Cyclingnews', 'Domestique', 'Es Ciclismo']),
+    seoTitle: 'Roglič tras Il Lombardia: retiro o equipo para 2027',
+    seoDescription:
+      'Roglič terminó 68.º en Il Lombardia y no ha dicho si sigue. Qué se sabe de su futuro y de Lotto-Intermarché, Pinarello-Q36.5 y Tudor.',
+    readingTime: 3,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug },
+    update: {
+      ...baseFields,
+      heroImageId: heroImageId ?? undefined,
+      riders: riderIds.length ? { set: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { set: tagIds },
+    },
+    create: {
+      slug,
+      ...baseFields,
+      publishedAt: new Date(),
+      riders: riderIds.length ? { connect: riderIds.map((id) => ({ id })) } : undefined,
+      tags: { connect: tagIds },
+    },
+  })
   return { slug: article.slug }
 }
