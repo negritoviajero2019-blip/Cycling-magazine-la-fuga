@@ -6382,3 +6382,89 @@ export async function publishCarapazNsnArticle() {
   })
   return { slug: article.slug }
 }
+
+// ————————————————————————————————————————————————————————————
+// Grandes vueltas: Tour de Francia 1989, LeMond vs Fignon (8 segundos).
+// Artículo de archivo (no noticia del día): categoría 'grand-tours', sin
+// etiqueta ultima-hora; featured=true para entrar al carrusel (decisión del
+// usuario, 17 oct 2026). Fuentes: Wikipedia (1989 Tour de France), Irish
+// Times, Velomotion, Tour Magazin. Cifras: etapa 21 = 24,5 km (Irish Times da 25,4).
+// ————————————————————————————————————————————————————————————
+
+const lemondFignon1989Content = `
+<p>El 23 de julio de 1989, en los Campos Elíseos, Greg LeMond le quitó el Tour de Francia a Laurent Fignon por 8 segundos, la diferencia más corta de la historia de la carrera. Para llegar ahí tuvo que recuperar 50 segundos en una contrarreloj de 24,5&nbsp;km que nadie creía que pudiera ganar. Esta es la batalla que cerró un Tour que cambió la forma de correr contra el reloj.</p>
+
+<h2>Dos corredores, dos situaciones</h2>
+
+<p>LeMond, primer estadounidense campeón del Tour (1986), había estado a punto de morir en la Pascua de 1987, cuando su cuñado le disparó por accidente en una jornada de caza y unos 60 perdigones le alcanzaron; una cirugía de urgencia le salvó la vida. Llegó al Tour de 1989 con el AD Renting, un equipo pequeño que, según Wikipedia, aún no le había pagado al empezar la carrera. Fignon, campeón en 1983 y 1984, corría con el Super U y era favorito para recuperar el título. El defensor, el español Pedro Delgado, ganador de 1988, perdió casi tres minutos al llegar tarde a su salida del prólogo y terminó tercero.</p>
+
+<h2>Un Tour de ida y vuelta</h2>
+
+<p>Fue el Tour más corto en más de ochenta años, con 3.285&nbsp;km en 21 etapas y un prólogo. LeMond se puso líder tras ganar la contrarreloj de la etapa 5. Fignon se vistió de amarillo en los Pirineos, en Superbagnères, tras un ataque tardío; LeMond recuperó el maillot en la contrarreloj de Orcières-Merlette, en la etapa 15, y Fignon se lo quitó de nuevo en la etapa 17, la llegada a Alpe d'Huez, y lo llevó hasta el último día con 50 segundos de ventaja.</p>
+
+<h2>Los 24,5 kilómetros finales</h2>
+
+<p>La última etapa, de Versailles a París, era una contrarreloj individual de 24,5&nbsp;km. Con 50 segundos de ventaja, Fignon parecía tener el Tour ganado. LeMond hizo 26 minutos y 57 segundos, a 54,5&nbsp;km/h, la contrarreloj más rápida de la historia del Tour hasta entonces. Fignon hizo 27 minutos y 55 segundos, 58 segundos más, y fue tercero de la etapa. La cuenta lo dice todo: 58 menos 50, 8 segundos.</p>
+
+<h2>El material, parte de la historia</h2>
+
+<p>LeMond corrió con manillar de triatlón (los "tribars", que reducían la resistencia al aire), un casco aerodinámico en forma de gota y una rueda trasera lenticular; Fignon usó dos ruedas lenticulares y un manillar normal, y corrió sin casco. Según Wikipedia, Fignon y su director cuestionaron si ese manillar era legal, pero no presentaron reclamación. En su autobiografía, citado por el Irish Times, Fignon recordó la cuenta mental que hizo en esos minutos: ocho segundos.</p>
+
+<h2>Lo que quedó</h2>
+
+<p>La final de 1989 es una de las remontadas más recordadas del ciclismo y sigue siendo, según Wikipedia, la diferencia más corta de la historia del Tour. Y dejó una lección que hoy parece obvia: la aerodinámica gana carreras. Hoy esas ventajas mínimas se buscan en túneles de viento; en 1989 se encontraron en un manillar que venía del triatlón.</p>
+`.trim()
+
+export async function publishLemondFignon1989Article() {
+  const category = await prisma.category.findUniqueOrThrow({ where: { slug: 'grand-tours' } })
+  const author = await prisma.author.findUniqueOrThrow({ where: { slug: 'redaccion' } })
+  const grandToursTag = await prisma.tag.upsert({
+    where: { slug: 'grand-tours' },
+    update: {},
+    create: { slug: 'grand-tours', name: 'Grand Tours', type: 'topic' },
+  })
+  const tagIds = [{ id: grandToursTag.id }]
+
+  const slug = 'tour-1989-lemond-fignon-ocho-segundos'
+  const title = 'LeMond y Fignon, Tour 1989: los 8 segundos que lo decidieron todo'
+  const heroImageId = await ensureCustomHeroImage(slug, {
+    url: '/images/headers/lemond-fignon-1989-cover.jpg',
+    altText: 'Tour de Francia 1989: la batalla de LeMond y Fignon, decidida por 8 segundos',
+    credit: 'Ilustración: La Fuga',
+    width: 1672,
+    height: 941,
+    source: 'cover-composited',
+  })
+
+  const baseFields = {
+    title,
+    subtitle: 'Fignon llegaba a la última contrarreloj con 50 segundos de ventaja; LeMond ganó la etapa por 58 y el Tour por la diferencia más corta de la historia',
+    excerpt:
+      'El 23 de julio de 1989, Greg LeMond le quitó el Tour a Laurent Fignon por 8 segundos en una contrarreloj de 24,5 km. La historia de la batalla más famosa de las grandes vueltas.',
+    content: lemondFignon1989Content,
+    categoryId: category.id,
+    authorId: author.id,
+    heroImageId,
+    status: 'published',
+    breakingNews: false,
+    featured: true,
+    sourceUrls: toJsonField([
+      'https://en.wikipedia.org/wiki/1989_Tour_de_France',
+      'https://www.irishtimes.com/sport/other-sports/sporting-upsets-eight-eternal-seconds-between-lemond-and-fignon-1.4347984',
+      'https://velomotion.net/2019/07/radsport-tour-de-france-geschichte-1989-lemond-fignon/',
+      'https://www.tour-magazin.de/en/professional-cycling/tour-de-france/tour-de-france-a-look-back-at-the-most-dramatic-individual-time-trial-decisions-of-the-tour/',
+    ]),
+    sourceNames: toJsonField(['Wikipedia', 'Irish Times', 'Velomotion', 'Tour Magazin']),
+    seoTitle: 'LeMond y Fignon, Tour 1989: los 8 segundos',
+    seoDescription:
+      'Tour de Francia 1989: Greg LeMond le quitó el Tour a Laurent Fignon por 8 segundos en la última contrarreloj. La historia de la batalla más famosa de las grandes vueltas.',
+    readingTime: 4,
+  }
+
+  const article = await prisma.article.upsert({
+    where: { slug },
+    update: { ...baseFields, heroImageId: heroImageId ?? undefined, tags: { set: tagIds } },
+    create: { slug, ...baseFields, publishedAt: new Date(), tags: { connect: tagIds } },
+  })
+  return { slug: article.slug }
+}

@@ -63,6 +63,9 @@ export async function getHomeSections() {
               // Todo lo de corredores latinos (y especialmente mexicanos) entra al carrusel.
               { category: { slug: 'latinos' } },
               { tags: { some: { slug: 'latinos' } } },
+              // Artículos marcados como destacados (featured) también entran al carrusel; al
+              // estar en él, la portada los excluye de "Últimas noticias" y "Radar".
+              { featured: true },
             ],
           },
           orderBy: { publishedAt: 'desc' },
